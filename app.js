@@ -185,12 +185,13 @@ function prepareHeroPreview() {
   if (!frame) {
     return;
   }
+  let autoStepTimer = null;
 
   const applyPreviewStyle = () => {
     try {
       const doc = frame.contentDocument;
       if (!doc?.head || doc.getElementById("hero-preview-style")) {
-        return;
+        return doc;
       }
       const style = doc.createElement("style");
       style.id = "hero-preview-style";
@@ -208,13 +209,30 @@ function prepareHeroPreview() {
       `;
       doc.head.appendChild(style);
       frame.contentWindow?.scrollTo(0, 0);
+      return doc;
     } catch (error) {
       // The preview is decorative; keep the page usable if the iframe is not ready.
+      return null;
     }
   };
 
-  frame.addEventListener("load", applyPreviewStyle);
+  const startAutoStep = () => {
+    window.clearInterval(autoStepTimer);
+    autoStepTimer = window.setInterval(() => {
+      const doc = applyPreviewStyle();
+      const nextButton = doc?.getElementById("nextBtn");
+      if (nextButton && !nextButton.disabled) {
+        nextButton.click();
+      }
+    }, 2400);
+  };
+
+  frame.addEventListener("load", () => {
+    applyPreviewStyle();
+    startAutoStep();
+  });
   applyPreviewStyle();
+  startAutoStep();
 }
 
 function useInlineMaterialViewer() {

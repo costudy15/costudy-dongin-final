@@ -341,7 +341,7 @@ h1 {
   height: 38px;
   border-radius: 50%;
   background: rgba(228, 35, 28, 0.14);
-  animation: heroCursor 7.2s ease-in-out infinite;
+  animation: heroCursorTap 7.2s ease-in-out infinite;
 }
 
 .hero-motion-cursor::before {
@@ -398,6 +398,33 @@ h1 {
   animation-delay: 3.5s;
 }
 
+.hero-motion-tap {
+  position: absolute;
+  right: 34px;
+  bottom: 46px;
+  min-height: 30px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(228, 35, 28, 0.94);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 900;
+  box-shadow: var(--shadow-pop);
+  transform-origin: center;
+  animation: heroTapLabel 2.4s ease-in-out infinite;
+}
+
+.hero-motion-tap::before {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: inherit;
+  border: 2px solid rgba(228, 35, 28, 0.3);
+  opacity: 0;
+  transform: scale(0.86);
+  animation: heroTapRing 2.4s ease-out infinite;
+}
+
 .hero-motion-progress {
   position: absolute;
   left: 18px;
@@ -420,11 +447,14 @@ h1 {
   animation: heroProgress 7.2s linear infinite;
 }
 
-@keyframes heroCursor {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  24% { transform: translate(34%, 12%) scale(1.04); }
-  48% { transform: translate(162%, -46%) scale(0.96); }
-  72% { transform: translate(235%, 62%) scale(1.06); }
+@keyframes heroCursorTap {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.95; }
+  22% { transform: translate(42%, 10%) scale(1.03); }
+  46% { transform: translate(220%, 86%) scale(0.98); }
+  60% { transform: translate(430%, 210%) scale(1); }
+  66% { transform: translate(430%, 210%) scale(0.72); opacity: 1; }
+  72% { transform: translate(430%, 210%) scale(1.12); opacity: 0.9; }
+  86% { transform: translate(268%, 126%) scale(1); }
 }
 
 @keyframes heroPulse {
@@ -438,6 +468,18 @@ h1 {
   58% { opacity: 0; transform: translateY(-6px); }
 }
 
+@keyframes heroTapLabel {
+  0%, 54%, 100% { transform: scale(1); }
+  62% { transform: scale(0.94); }
+  72% { transform: scale(1.05); }
+}
+
+@keyframes heroTapRing {
+  0%, 52% { opacity: 0; transform: scale(0.86); }
+  62% { opacity: 0.7; transform: scale(0.9); }
+  100% { opacity: 0; transform: scale(1.35); }
+}
+
 @keyframes heroProgress {
   0% { transform: scaleX(0); }
   100% { transform: scaleX(1); }
@@ -447,6 +489,8 @@ h1 {
   .hero-motion-cursor,
   .hero-motion-cursor::before,
   .hero-motion-step,
+  .hero-motion-tap,
+  .hero-motion-tap::before,
   .hero-motion-progress::after {
     animation: none;
   }
