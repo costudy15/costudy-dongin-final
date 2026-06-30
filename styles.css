@@ -260,7 +260,7 @@ h1 {
 .intro-visual {
   position: relative;
   margin: 0;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 10 / 9;
   border-radius: var(--r-lg);
   overflow: hidden;
   background:
