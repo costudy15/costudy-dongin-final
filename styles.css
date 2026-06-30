@@ -736,6 +736,12 @@ video {
   padding: clamp(10px, 3vw, 18px);
 }
 
+.writing-stage {
+  place-items: start center;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 #writing-image, #variation-image {
   display: none;
   width: min(100%, 960px);
@@ -745,6 +751,11 @@ video {
   background: #fff;
   box-shadow: var(--shadow-sm);
   cursor: pointer;
+}
+
+#writing-image {
+  width: min(100%, 1180px);
+  max-height: none;
 }
 
 .writing-strip, .variation-strip {
@@ -952,6 +963,18 @@ video {
 
   .viewer.inline-viewer .mode-panel {
     padding: 12px;
+  }
+
+  .writing-stage {
+    place-items: start start;
+    min-height: 72vh;
+    padding: 8px;
+  }
+
+  #writing-image {
+    width: clamp(720px, 185vw, 980px);
+    max-width: none;
+    border-radius: 10px;
   }
 }
 
