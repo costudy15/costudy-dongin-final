@@ -132,6 +132,8 @@ const els = {
   filters: document.querySelectorAll(".filter"),
   modeTabs: document.querySelectorAll(".mode-tab"),
   panels: document.querySelectorAll(".mode-panel"),
+  workspace: $(".workspace"),
+  viewer: $(".viewer"),
   selectedGroup: $("#selected-group"),
   selectedTitle: $("#selected-title"),
   video: $("#solution-video"),
@@ -178,6 +180,36 @@ function selectedWritingProblem() {
   return writingProblems[state.writingIndex] || null;
 }
 
+function useInlineMaterialViewer() {
+  return window.matchMedia("(max-width: 680px)").matches;
+}
+
+function placeMaterialViewer(shouldScroll = false) {
+  if (!els.viewer || !els.list || !els.workspace) {
+    return;
+  }
+
+  if (useInlineMaterialViewer()) {
+    const activeCard = Array.from(els.list.querySelectorAll(".material-card")).find((card) => card.dataset.id === state.selectedId);
+    const target = activeCard || els.list.lastElementChild;
+    if (target) {
+      target.insertAdjacentElement("afterend", els.viewer);
+    } else {
+      els.list.appendChild(els.viewer);
+    }
+    els.viewer.classList.add("inline-viewer");
+  } else {
+    els.workspace.appendChild(els.viewer);
+    els.viewer.classList.remove("inline-viewer");
+  }
+
+  if (shouldScroll) {
+    window.requestAnimationFrame(() => {
+      els.viewer.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+}
+
 function updateCounts() {
   els.videoCount.textContent = `${materials.filter((item) => item.video).length}/${materials.length}`;
   els.handCount.textContent = `${materials.filter((item) => item.hand).length}/${materials.length}`;
@@ -196,6 +228,9 @@ function filteredMaterials() {
 }
 
 function renderList() {
+  if (els.viewer?.parentElement === els.list) {
+    els.viewer.remove();
+  }
   els.list.innerHTML = "";
   filteredMaterials().forEach((item) => {
     const button = document.createElement("button");
@@ -216,9 +251,11 @@ function renderList() {
       state.selectedId = item.id;
       renderCurrentMaterial();
       renderList();
+      placeMaterialViewer(true);
     });
     els.list.appendChild(button);
   });
+  placeMaterialViewer(false);
 }
 
 function renderCurrentMaterial() {
@@ -547,10 +584,12 @@ els.writingPrev.addEventListener("click", () => changeWritingProblem(-1));
 els.writingReveal.addEventListener("click", revealWritingAnswer);
 els.writingNext.addEventListener("click", () => changeWritingProblem(1));
 els.writingImage.addEventListener("click", handleWritingImageClick);
+window.addEventListener("resize", () => placeMaterialViewer(false));
 
 updateCounts();
 renderList();
 renderCurrentMaterial();
+placeMaterialViewer(false);
 renderVariationList();
 renderVariationStrip();
 renderVariationViewer();
