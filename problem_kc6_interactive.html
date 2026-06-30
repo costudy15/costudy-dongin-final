@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>코스터디 단계별 풀이</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<style>
+:root{--tx:#222;--mut:#666;--faint:#9a988f;--line:#e6e5e1;--surf:#f6f5f1;--pri:#185FA5;
+ --info:#E6F1FB;--infotx:#0C447C;--warnbg:#FAEEDA;--warntx:#854F0B;--okbg:#E1F5EE;--oktx:#0F6E56;--bd:#dcdbd6}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic","Apple SD Gothic Neo",sans-serif;color:var(--tx);background:#fff}
+.cs-app{display:flex;flex-direction:column;height:100vh;height:100dvh;max-width:680px;margin:0 auto;border-left:1px solid var(--line);border-right:1px solid var(--line)}
+/* 헤더 */
+.cs-doc{flex:0 0 auto;font-size:12px;color:var(--faint);padding:9px 14px;border-bottom:1px solid var(--line);
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cs-doc b{color:var(--mut);font-weight:600}
+/* 도형: 상단 고정 */
+.cs-figwrap{flex:0 0 auto;height:38vh;min-height:200px;padding:8px;display:flex;align-items:center;justify-content:center;
+ background:#fff;border-bottom:1px solid var(--line);position:relative;cursor:pointer}
+.cs-figwrap svg{width:100%;height:100%}
+.cs-taphint{position:absolute;right:10px;bottom:8px;font-size:11px;color:var(--faint);background:#fff;
+ padding:2px 8px;border-radius:10px;border:1px solid var(--line);opacity:.85}
+.fig-el{opacity:0;transition:opacity .4s ease}
+.fig-el.on{opacity:1}
+.dl{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .7s ease,opacity .25s ease}
+.dl.on{stroke-dashoffset:0}
+/* 본문(스크롤 영역) */
+.cs-stage{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 16px 18px}
+.cs-panel{display:none;animation:fade .25s ease}
+.cs-panel.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* 문제 패널 */
+.cs-prob{font-size:15.5px;line-height:1.75;color:#333}
+.cs-prob .lead{display:inline-block;font-size:12px;font-weight:600;color:var(--infotx);background:var(--info);
+ padding:3px 10px;border-radius:9px;margin-bottom:10px}
+/* 단계 패널 */
+.cs-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.cs-badge{font-size:12px;font-weight:600;background:var(--info);color:var(--infotx);padding:3px 10px;border-radius:9px}
+.cs-title{font-size:16px;font-weight:600}
+.cs-key{font-size:11px;font-weight:600;background:#FAEEDA;color:#854F0B;padding:2px 8px;border-radius:9px}
+.cs-type{font-size:11px;color:var(--faint);margin-left:auto}
+.cs-hint{font-size:14.5px;color:#4a4a44;background:var(--surf);border-radius:11px;padding:12px 14px;line-height:1.65}
+.cs-hint-tag{display:block;font-size:12px;font-weight:600;color:var(--warntx);margin-bottom:5px}
+.cs-body{display:none;margin-top:12px}
+.cs-body.show{display:block;animation:fade .25s ease}
+.cs-draw{font-size:14px;color:var(--warntx);background:var(--warnbg);padding:11px 13px;border-radius:11px;margin-bottom:10px;line-height:1.65}
+.cs-why{font-size:14px;color:var(--mut);line-height:1.65;margin:6px 0}
+.cs-math{margin:8px 0;font-size:1.02em;overflow-x:auto}
+.cs-tags{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
+.cs-tag{font-size:11px;color:var(--mut);background:var(--surf);padding:3px 9px;border-radius:9px}
+.cs-ans{font-size:16px;font-weight:600;color:var(--oktx);background:var(--okbg);padding:11px 14px;border-radius:11px;margin-top:12px;text-align:center}
+/* 하단 고정 내비 */
+.cs-nav{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:10px 14px;
+ border-top:1px solid var(--bd);background:#fff;box-shadow:0 -2px 10px rgba(0,0,0,.04)}
+.cs-prev{flex:0 0 auto;font-size:14px;font-family:inherit;background:#fff;border:1px solid var(--bd);border-radius:10px;
+ padding:11px 14px;color:var(--mut);cursor:pointer}
+.cs-prev:disabled{opacity:.4}
+.cs-mid{flex:1 1 auto;text-align:center}
+.cs-dots{display:flex;gap:5px;justify-content:center;margin-bottom:3px}
+.cs-dot{width:7px;height:7px;border-radius:50%;background:#d6d5cf}
+.cs-dot.fill{background:var(--pri)}
+.cs-prog{font-size:11px;color:var(--faint)}
+.cs-next{flex:0 0 auto;font-size:15px;font-weight:600;font-family:inherit;background:var(--pri);border:none;border-radius:10px;
+ padding:12px 18px;color:#fff;cursor:pointer;min-width:120px}
+.cs-next.reveal{background:#fff;color:var(--infotx);border:1px solid #9cc2e8}
+.cs-next:disabled{background:#cfd8e2;color:#fff}
+.katex{font-size:1.0em}
+.katex-display{margin:.5em 0}
+</style>
+</head>
+<body>
+<div class="cs-app" id="app">
+  <div class="cs-doc"><b>6. 원과 포물선이 접할 때 둘러싸인 넓이 — 120(a+b)</b> &middot; 2016 교육청 고2 9월 29번 · 어려움</div>
+  <div class="cs-figwrap" id="figtap">
+    <svg viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet">
+      <title>원 C(중심 A, r=√2)과 y=½x²의 접점 P,Q, 둘러싸인 넓이</title>
+      <line x1="44.0" y1="252.25" x2="344.0" y2="252.25" stroke="#888780" stroke-width="1.4"/>
+      <line x1="194.0" y1="322.0" x2="194.0" y2="20.0" stroke="#888780" stroke-width="1.4"/>
+      <text x="338.0" y="267.25" fill="#888780" font-size="13" font-style="italic">x</text>
+      <text x="182.0" y="267.25" fill="#888780" font-size="11">O</text>
+      <path id="par" class="fig-el" d="M 47.12 79.67 L 47.75 81.14 L 48.37 82.6 L 49.0 84.05 L 49.62 85.5 L 50.25 86.94 L 50.87 88.37 L 51.5 89.8 L 52.12 91.22 L 52.75 92.64 L 53.37 94.05 L 54.0 95.45 L 54.62 96.85 L 55.25 98.24 L 55.87 99.62 L 56.5 101.0 L 57.12 102.37 L 57.75 103.74 L 58.37 105.1 L 59.0 106.45 L 59.62 107.8 L 60.25 109.14 L 60.87 110.47 L 61.5 111.8 L 62.12 113.12 L 62.75 114.44 L 63.37 115.75 L 64.0 117.05 L 64.62 118.35 L 65.25 119.64 L 65.87 120.92 L 66.5 122.2 L 67.12 123.47 L 67.75 124.74 L 68.37 126.0 L 69.0 127.25 L 69.62 128.5 L 70.25 129.74 L 70.87 130.97 L 71.5 132.2 L 72.12 133.42 L 72.75 134.64 L 73.37 135.85 L 74.0 137.05 L 74.62 138.25 L 75.25 139.44 L 75.87 140.62 L 76.5 141.8 L 77.12 142.97 L 77.75 144.14 L 78.37 145.3 L 79.0 146.45 L 79.62 147.6 L 80.25 148.74 L 80.87 149.87 L 81.5 151.0 L 82.12 152.12 L 82.75 153.24 L 83.37 154.35 L 84.0 155.45 L 84.62 156.55 L 85.25 157.64 L 85.87 158.72 L 86.5 159.8 L 87.12 160.87 L 87.75 161.94 L 88.37 163.0 L 89.0 164.05 L 89.62 165.1 L 90.25 166.14 L 90.87 167.17 L 91.5 168.2 L 92.12 169.22 L 92.75 170.24 L 93.37 171.25 L 94.0 172.25 L 94.62 173.25 L 95.25 174.24 L 95.87 175.22 L 96.5 176.2 L 97.12 177.17 L 97.75 178.14 L 98.37 179.1 L 99.0 180.05 L 99.62 181.0 L 100.25 181.94 L 100.87 182.87 L 101.5 183.8 L 102.12 184.72 L 102.75 185.64 L 103.37 186.55 L 104.0 187.45 L 104.62 188.35 L 105.25 189.24 L 105.87 190.12 L 106.5 191.0 L 107.12 191.87 L 107.75 192.74 L 108.37 193.6 L 109.0 194.45 L 109.62 195.3 L 110.25 196.14 L 110.87 196.97 L 111.5 197.8 L 112.12 198.62 L 112.75 199.44 L 113.37 200.25 L 114.0 201.05 L 114.62 201.85 L 115.25 202.64 L 115.87 203.42 L 116.5 204.2 L 117.12 204.97 L 117.75 205.74 L 118.37 206.5 L 119.0 207.25 L 119.62 208.0 L 120.25 208.74 L 120.87 209.47 L 121.5 210.2 L 122.12 210.92 L 122.75 211.64 L 123.37 212.35 L 124.0 213.05 L 124.62 213.75 L 125.25 214.44 L 125.87 215.12 L 126.5 215.8 L 127.12 216.47 L 127.75 217.14 L 128.37 217.8 L 129.0 218.45 L 129.62 219.1 L 130.25 219.74 L 130.87 220.37 L 131.5 221.0 L 132.12 221.62 L 132.75 222.24 L 133.37 222.85 L 134.0 223.45 L 134.62 224.05 L 135.25 224.64 L 135.87 225.22 L 136.5 225.8 L 137.12 226.37 L 137.75 226.94 L 138.37 227.5 L 139.0 228.05 L 139.62 228.6 L 140.25 229.14 L 140.87 229.67 L 141.5 230.2 L 142.12 230.72 L 142.75 231.24 L 143.37 231.75 L 144.0 232.25 L 144.62 232.75 L 145.25 233.24 L 145.87 233.72 L 146.5 234.2 L 147.12 234.67 L 147.75 235.14 L 148.37 235.6 L 149.0 236.05 L 149.62 236.5 L 150.25 236.94 L 150.87 237.37 L 151.5 237.8 L 152.12 238.22 L 152.75 238.64 L 153.37 239.05 L 154.0 239.45 L 154.62 239.85 L 155.25 240.24 L 155.87 240.62 L 156.5 241.0 L 157.12 241.37 L 157.75 241.74 L 158.37 242.1 L 159.0 242.45 L 159.62 242.8 L 160.25 243.14 L 160.87 243.47 L 161.5 243.8 L 162.12 244.12 L 162.75 244.44 L 163.37 244.75 L 164.0 245.05 L 164.62 245.35 L 165.25 245.64 L 165.87 245.92 L 166.5 246.2 L 167.12 246.47 L 167.75 246.74 L 168.37 247.0 L 169.0 247.25 L 169.62 247.5 L 170.25 247.74 L 170.87 247.97 L 171.5 248.2 L 172.12 248.42 L 172.75 248.64 L 173.37 248.85 L 174.0 249.05 L 174.62 249.25 L 175.25 249.44 L 175.87 249.62 L 176.5 249.8 L 177.12 249.97 L 177.75 250.14 L 178.37 250.3 L 179.0 250.45 L 179.62 250.6 L 180.25 250.74 L 180.87 250.87 L 181.5 251.0 L 182.12 251.12 L 182.75 251.24 L 183.37 251.35 L 184.0 251.45 L 184.62 251.55 L 185.25 251.64 L 185.87 251.72 L 186.5 251.8 L 187.12 251.87 L 187.75 251.94 L 188.37 252.0 L 189.0 252.05 L 189.62 252.1 L 190.25 252.14 L 190.87 252.17 L 191.5 252.2 L 192.12 252.22 L 192.75 252.24 L 193.37 252.25 L 194.0 252.25 L 194.62 252.25 L 195.25 252.24 L 195.87 252.22 L 196.5 252.2 L 197.12 252.17 L 197.75 252.14 L 198.37 252.1 L 199.0 252.05 L 199.62 252.0 L 200.25 251.94 L 200.87 251.87 L 201.5 251.8 L 202.12 251.72 L 202.75 251.64 L 203.37 251.55 L 204.0 251.45 L 204.62 251.35 L 205.25 251.24 L 205.87 251.12 L 206.5 251.0 L 207.12 250.87 L 207.75 250.74 L 208.37 250.6 L 209.0 250.45 L 209.62 250.3 L 210.25 250.14 L 210.87 249.97 L 211.5 249.8 L 212.12 249.62 L 212.75 249.44 L 213.37 249.25 L 214.0 249.05 L 214.62 248.85 L 215.25 248.64 L 215.87 248.42 L 216.5 248.2 L 217.12 247.97 L 217.75 247.74 L 218.37 247.5 L 219.0 247.25 L 219.62 247.0 L 220.25 246.74 L 220.87 246.47 L 221.5 246.2 L 222.12 245.92 L 222.75 245.64 L 223.37 245.35 L 224.0 245.05 L 224.62 244.75 L 225.25 244.44 L 225.87 244.12 L 226.5 243.8 L 227.12 243.47 L 227.75 243.14 L 228.37 242.8 L 229.0 242.45 L 229.62 242.1 L 230.25 241.74 L 230.87 241.37 L 231.5 241.0 L 232.12 240.62 L 232.75 240.24 L 233.37 239.85 L 234.0 239.45 L 234.62 239.05 L 235.25 238.64 L 235.87 238.22 L 236.5 237.8 L 237.12 237.37 L 237.75 236.94 L 238.37 236.5 L 239.0 236.05 L 239.62 235.6 L 240.25 235.14 L 240.87 234.67 L 241.5 234.2 L 242.12 233.72 L 242.75 233.24 L 243.37 232.75 L 244.0 232.25 L 244.62 231.75 L 245.25 231.24 L 245.87 230.72 L 246.5 230.2 L 247.12 229.67 L 247.75 229.14 L 248.37 228.6 L 249.0 228.05 L 249.62 227.5 L 250.25 226.94 L 250.87 226.37 L 251.5 225.8 L 252.12 225.22 L 252.75 224.64 L 253.37 224.05 L 254.0 223.45 L 254.62 222.85 L 255.25 222.24 L 255.87 221.62 L 256.5 221.0 L 257.12 220.37 L 257.75 219.74 L 258.37 219.1 L 259.0 218.45 L 259.62 217.8 L 260.25 217.14 L 260.87 216.47 L 261.5 215.8 L 262.12 215.12 L 262.75 214.44 L 263.37 213.75 L 264.0 213.05 L 264.62 212.35 L 265.25 211.64 L 265.87 210.92 L 266.5 210.2 L 267.12 209.47 L 267.75 208.74 L 268.37 208.0 L 269.0 207.25 L 269.62 206.5 L 270.25 205.74 L 270.87 204.97 L 271.5 204.2 L 272.12 203.42 L 272.75 202.64 L 273.37 201.85 L 274.0 201.05 L 274.62 200.25 L 275.25 199.44 L 275.87 198.62 L 276.5 197.8 L 277.12 196.97 L 277.75 196.14 L 278.37 195.3 L 279.0 194.45 L 279.62 193.6 L 280.25 192.74 L 280.87 191.87 L 281.5 191.0 L 282.12 190.12 L 282.75 189.24 L 283.37 188.35 L 284.0 187.45 L 284.62 186.55 L 285.25 185.64 L 285.87 184.72 L 286.5 183.8 L 287.12 182.87 L 287.75 181.94 L 288.37 181.0 L 289.0 180.05 L 289.62 179.1 L 290.25 178.14 L 290.87 177.17 L 291.5 176.2 L 292.12 175.22 L 292.75 174.24 L 293.37 173.25 L 294.0 172.25 L 294.62 171.25 L 295.25 170.24 L 295.87 169.22 L 296.5 168.2 L 297.12 167.17 L 297.75 166.14 L 298.37 165.1 L 299.0 164.05 L 299.62 163.0 L 300.25 161.94 L 300.87 160.87 L 301.5 159.8 L 302.12 158.72 L 302.75 157.64 L 303.37 156.55 L 304.0 155.45 L 304.62 154.35 L 305.25 153.24 L 305.87 152.12 L 306.5 151.0 L 307.12 149.87 L 307.75 148.74 L 308.37 147.6 L 309.0 146.45 L 309.62 145.3 L 310.25 144.14 L 310.87 142.97 L 311.5 141.8 L 312.12 140.62 L 312.75 139.44 L 313.37 138.25 L 314.0 137.05 L 314.62 135.85 L 315.25 134.64 L 315.87 133.42 L 316.5 132.2 L 317.12 130.97 L 317.75 129.74 L 318.37 128.5 L 319.0 127.25 L 319.62 126.0 L 320.25 124.74 L 320.87 123.47 L 321.5 122.2 L 322.12 120.92 L 322.75 119.64 L 323.37 118.35 L 324.0 117.05 L 324.62 115.75 L 325.25 114.44 L 325.87 113.12 L 326.5 111.8 L 327.12 110.47 L 327.75 109.14 L 328.37 107.8 L 329.0 106.45 L 329.62 105.1 L 330.25 103.74 L 330.87 102.37 L 331.5 101.0 L 332.12 99.62 L 332.75 98.24 L 333.37 96.85 L 334.0 95.45 L 334.62 94.05 L 335.25 92.64 L 335.87 91.22 L 336.5 89.8 L 337.12 88.37 L 337.75 86.94 L 338.37 85.5 L 339.0 84.05 L 339.62 82.6 L 340.25 81.14 L 340.87 79.67" fill="none" stroke="#185FA5" stroke-width="3"/>
+      <text id="parl" class="fig-el" x="300.25" y="89.75" fill="#185FA5" font-size="12" font-style="italic">y=½x²</text>
+      <path id="cir" class="fig-el" d="M 282.39 158.5 L 282.36 156.19 L 282.27 153.87 L 282.12 151.57 L 281.9 149.26 L 281.63 146.96 L 281.3 144.67 L 280.91 142.39 L 280.46 140.12 L 279.95 137.87 L 279.38 135.62 L 278.75 133.4 L 278.06 131.19 L 277.32 129.0 L 276.52 126.82 L 275.66 124.68 L 274.75 122.55 L 273.78 120.45 L 272.75 118.37 L 271.68 116.32 L 270.55 114.31 L 269.36 112.32 L 268.13 110.36 L 266.84 108.44 L 265.51 106.55 L 264.12 104.69 L 262.69 102.88 L 261.21 101.1 L 259.69 99.36 L 258.11 97.66 L 256.5 96.0 L 254.84 94.39 L 253.14 92.81 L 251.4 91.29 L 249.62 89.81 L 247.81 88.38 L 245.95 86.99 L 244.06 85.66 L 242.14 84.37 L 240.18 83.14 L 238.19 81.95 L 236.18 80.82 L 234.13 79.75 L 232.05 78.72 L 229.95 77.75 L 227.82 76.84 L 225.68 75.98 L 223.5 75.18 L 221.31 74.44 L 219.1 73.75 L 216.88 73.12 L 214.63 72.55 L 212.38 72.04 L 210.11 71.59 L 207.83 71.2 L 205.54 70.87 L 203.24 70.6 L 200.93 70.38 L 198.63 70.23 L 196.31 70.14 L 194.0 70.11 L 191.69 70.14 L 189.37 70.23 L 187.07 70.38 L 184.76 70.6 L 182.46 70.87 L 180.17 71.2 L 177.89 71.59 L 175.62 72.04 L 173.37 72.55 L 171.12 73.12 L 168.9 73.75 L 166.69 74.44 L 164.5 75.18 L 162.32 75.98 L 160.18 76.84 L 158.05 77.75 L 155.95 78.72 L 153.87 79.75 L 151.82 80.82 L 149.81 81.95 L 147.82 83.14 L 145.86 84.37 L 143.94 85.66 L 142.05 86.99 L 140.19 88.38 L 138.38 89.81 L 136.6 91.29 L 134.86 92.81 L 133.16 94.39 L 131.5 96.0 L 129.89 97.66 L 128.31 99.36 L 126.79 101.1 L 125.31 102.88 L 123.88 104.69 L 122.49 106.55 L 121.16 108.44 L 119.87 110.36 L 118.64 112.32 L 117.45 114.31 L 116.32 116.32 L 115.25 118.37 L 114.22 120.45 L 113.25 122.55 L 112.34 124.68 L 111.48 126.82 L 110.68 129.0 L 109.94 131.19 L 109.25 133.4 L 108.62 135.62 L 108.05 137.87 L 107.54 140.12 L 107.09 142.39 L 106.7 144.67 L 106.37 146.96 L 106.1 149.26 L 105.88 151.57 L 105.73 153.87 L 105.64 156.19 L 105.61 158.5 L 105.64 160.81 L 105.73 163.13 L 105.88 165.43 L 106.1 167.74 L 106.37 170.04 L 106.7 172.33 L 107.09 174.61 L 107.54 176.88 L 108.05 179.13 L 108.62 181.38 L 109.25 183.6 L 109.94 185.81 L 110.68 188.0 L 111.48 190.18 L 112.34 192.32 L 113.25 194.45 L 114.22 196.55 L 115.25 198.63 L 116.32 200.68 L 117.45 202.69 L 118.64 204.68 L 119.87 206.64 L 121.16 208.56 L 122.49 210.45 L 123.88 212.31 L 125.31 214.12 L 126.79 215.9 L 128.31 217.64 L 129.89 219.34 L 131.5 221.0 L 133.16 222.61 L 134.86 224.19 L 136.6 225.71 L 138.38 227.19 L 140.19 228.62 L 142.05 230.01 L 143.94 231.34 L 145.86 232.63 L 147.82 233.86 L 149.81 235.05 L 151.82 236.18 L 153.87 237.25 L 155.95 238.28 L 158.05 239.25 L 160.18 240.16 L 162.32 241.02 L 164.5 241.82 L 166.69 242.56 L 168.9 243.25 L 171.12 243.88 L 173.37 244.45 L 175.62 244.96 L 177.89 245.41 L 180.17 245.8 L 182.46 246.13 L 184.76 246.4 L 187.07 246.62 L 189.37 246.77 L 191.69 246.86 L 194.0 246.89 L 196.31 246.86 L 198.63 246.77 L 200.93 246.62 L 203.24 246.4 L 205.54 246.13 L 207.83 245.8 L 210.11 245.41 L 212.38 244.96 L 214.63 244.45 L 216.88 243.88 L 219.1 243.25 L 221.31 242.56 L 223.5 241.82 L 225.68 241.02 L 227.82 240.16 L 229.95 239.25 L 232.05 238.28 L 234.13 237.25 L 236.18 236.18 L 238.19 235.05 L 240.18 233.86 L 242.14 232.63 L 244.06 231.34 L 245.95 230.01 L 247.81 228.62 L 249.62 227.19 L 251.4 225.71 L 253.14 224.19 L 254.84 222.61 L 256.5 221.0 L 258.11 219.34 L 259.69 217.64 L 261.21 215.9 L 262.69 214.12 L 264.12 212.31 L 265.51 210.45 L 266.84 208.56 L 268.13 206.64 L 269.36 204.68 L 270.55 202.69 L 271.68 200.68 L 272.75 198.63 L 273.78 196.55 L 274.75 194.45 L 275.66 192.32 L 276.52 190.18 L 277.32 188.0 L 278.06 185.81 L 278.75 183.6 L 279.38 181.38 L 279.95 179.13 L 280.46 176.88 L 280.91 174.61 L 281.3 172.33 L 281.63 170.04 L 281.9 167.74 L 282.12 165.43 L 282.27 163.13 L 282.36 160.81 L 282.39 158.5 Z" fill="none" stroke="#333" stroke-width="2.2"/>
+      <text id="cl" class="fig-el" x="122.12" y="99.12" fill="#333" font-size="13" font-style="italic">C</text>
+      <g id="pA" class="fig-el"><circle cx="194.0" cy="158.5" r="2.8" fill="#333"/></g>
+      <text id="Al" class="fig-el" x="200.0" y="162.5" fill="#333" font-size="11">A(0, 3/2)</text>
+      <g id="pP" class="fig-el"><circle cx="256.5" cy="221.0" r="3.4" fill="#993C1D"/></g>
+      <g id="pQ" class="fig-el"><circle cx="131.5" cy="221.0" r="3.4" fill="#993C1D"/></g>
+      <text id="Pl" class="fig-el" x="261.5" y="234.0" fill="#993C1D" font-size="11">P(1, ½)</text>
+      <text id="Ql" class="fig-el" x="89.5" y="234.0" fill="#993C1D" font-size="11">Q(-1, ½)</text>
+      <line id="tanP" class="fig-el" x1="200.25" y1="277.25" x2="312.75" y2="164.75" stroke="#1E7F5C" stroke-width="1.8"/>
+      <text id="tl" class="fig-el" x="300.25" y="174.13" fill="#1E7F5C" font-size="10">접선(기울기 α)</text>
+      <line id="ap" class="fig-el" x1="194.0" y1="158.5" x2="256.5" y2="221.0" stroke="#BA7517" stroke-width="1.6" stroke-dasharray="5 4"/>
+      <path id="raP" class="fig-el" d="M 264.01 213.49 L 256.5 205.97 L 248.99 213.49" fill="none" stroke="#1E7F5C" stroke-width="1.4"/>
+      <line id="aq" class="fig-el" x1="194.0" y1="158.5" x2="131.5" y2="221.0" stroke="#BA7517" stroke-width="1.6" stroke-dasharray="5 4"/>
+      <path id="raA" class="fig-el" d="M 201.51 166.01 L 194.0 173.53 L 186.49 166.01" fill="none" stroke="#BA7517" stroke-width="1.4"/>
+      <text id="rlab" class="fig-el" x="222.12" y="178.5" fill="#BA7517" font-size="11">r=√2</text>
+      <text id="ang" class="fig-el" x="140.88" y="144.75" fill="#BA7517" font-size="10">∠PAQ=90°</text>
+      <polygon id="area" class="fig-el" points="131.5,221.0 132.12,221.62 132.75,222.24 133.38,222.85 134.0,223.45 134.62,224.05 135.25,224.64 135.88,225.22 136.5,225.8 137.12,226.37 137.75,226.94 138.38,227.5 139.0,228.05 139.62,228.6 140.25,229.14 140.88,229.67 141.5,230.2 142.12,230.72 142.75,231.24 143.38,231.75 144.0,232.25 144.62,232.75 145.25,233.24 145.88,233.72 146.5,234.2 147.12,234.67 147.75,235.14 148.38,235.6 149.0,236.05 149.62,236.5 150.25,236.94 150.88,237.37 151.5,237.8 152.12,238.22 152.75,238.64 153.38,239.05 154.0,239.45 154.62,239.85 155.25,240.24 155.88,240.62 156.5,241.0 157.12,241.37 157.75,241.74 158.38,242.1 159.0,242.45 159.62,242.8 160.25,243.14 160.88,243.47 161.5,243.8 162.13,244.12 162.75,244.44 163.38,244.75 164.0,245.05 164.63,245.35 165.25,245.64 165.88,245.92 166.5,246.2 167.13,246.47 167.75,246.74 168.38,247.0 169.0,247.25 169.63,247.5 170.25,247.74 170.88,247.97 171.5,248.2 172.13,248.42 172.75,248.64 173.38,248.85 174.0,249.05 174.63,249.25 175.25,249.44 175.88,249.62 176.5,249.8 177.13,249.97 177.75,250.14 178.38,250.3 179.0,250.45 179.63,250.6 180.25,250.74 180.88,250.87 181.5,251.0 182.13,251.12 182.75,251.24 183.38,251.35 184.0,251.45 184.63,251.55 185.25,251.64 185.88,251.72 186.5,251.8 187.13,251.87 187.75,251.94 188.38,252.0 189.0,252.05 189.63,252.1 190.25,252.14 190.88,252.17 191.5,252.2 192.13,252.22 192.75,252.24 193.38,252.25 194.0,252.25 194.63,252.25 195.25,252.24 195.88,252.22 196.5,252.2 197.13,252.17 197.75,252.14 198.38,252.1 199.0,252.05 199.63,252.0 200.25,251.94 200.88,251.87 201.5,251.8 202.13,251.72 202.75,251.64 203.38,251.55 204.0,251.45 204.63,251.35 205.25,251.24 205.88,251.12 206.5,251.0 207.13,250.87 207.75,250.74 208.38,250.6 209.0,250.45 209.63,250.3 210.25,250.14 210.88,249.97 211.5,249.8 212.13,249.62 212.75,249.44 213.38,249.25 214.0,249.05 214.63,248.85 215.25,248.64 215.88,248.42 216.5,248.2 217.13,247.97 217.75,247.74 218.38,247.5 219.0,247.25 219.63,247.0 220.25,246.74 220.88,246.47 221.5,246.2 222.13,245.92 222.75,245.64 223.38,245.35 224.0,245.05 224.63,244.75 225.25,244.44 225.88,244.12 226.5,243.8 227.13,243.47 227.75,243.14 228.38,242.8 229.0,242.45 229.63,242.1 230.25,241.74 230.88,241.37 231.5,241.0 232.13,240.62 232.75,240.24 233.38,239.85 234.0,239.45 234.63,239.05 235.25,238.64 235.88,238.22 236.5,237.8 237.13,237.37 237.75,236.94 238.38,236.5 239.0,236.05 239.63,235.6 240.25,235.14 240.88,234.67 241.5,234.2 242.13,233.72 242.75,233.24 243.38,232.75 244.0,232.25 244.63,231.75 245.25,231.24 245.88,230.72 246.5,230.2 247.13,229.67 247.75,229.14 248.38,228.6 249.0,228.05 249.63,227.5 250.25,226.94 250.88,226.37 251.5,225.8 252.13,225.22 252.75,224.64 253.38,224.05 254.0,223.45 254.63,222.85 255.25,222.24 255.88,221.62 256.5,221.0 256.5,221.0 255.87,221.62 255.25,222.23 254.62,222.82 254.0,223.4 253.37,223.98 252.75,224.54 252.12,225.09 251.5,225.63 250.87,226.16 250.25,226.68 249.62,227.19 249.0,227.69 248.37,228.18 247.75,228.67 247.12,229.14 246.5,229.61 245.87,230.06 245.25,230.51 244.62,230.95 244.0,231.39 243.37,231.81 242.75,232.23 242.12,232.64 241.5,233.04 240.87,233.43 240.25,233.82 239.62,234.2 239.0,234.58 238.37,234.94 237.75,235.3 237.12,235.65 236.5,236.0 235.87,236.34 235.25,236.67 234.62,237.0 234.0,237.32 233.37,237.63 232.75,237.94 232.12,238.24 231.5,238.54 230.87,238.83 230.25,239.11 229.62,239.39 229.0,239.66 228.37,239.93 227.75,240.19 227.12,240.45 226.5,240.7 225.87,240.94 225.25,241.18 224.62,241.41 224.0,241.64 223.37,241.86 222.75,242.08 222.12,242.29 221.5,242.5 220.87,242.7 220.25,242.9 219.62,243.09 219.0,243.28 218.37,243.46 217.75,243.64 217.12,243.81 216.5,243.98 215.87,244.14 215.25,244.3 214.62,244.45 214.0,244.6 213.37,244.74 212.75,244.88 212.12,245.01 211.5,245.14 210.87,245.26 210.25,245.38 209.62,245.5 209.0,245.61 208.37,245.71 207.75,245.81 207.12,245.91 206.5,246.0 205.87,246.09 205.25,246.17 204.62,246.25 204.0,246.32 203.37,246.39 202.75,246.45 202.12,246.51 201.5,246.57 200.87,246.62 200.25,246.67 199.62,246.71 199.0,246.75 198.37,246.78 197.75,246.81 197.12,246.83 196.5,246.85 195.87,246.87 195.25,246.88 194.62,246.89 194.0,246.89 193.37,246.89 192.75,246.88 192.12,246.87 191.5,246.85 190.87,246.83 190.25,246.81 189.62,246.78 189.0,246.75 188.37,246.71 187.75,246.67 187.12,246.62 186.5,246.57 185.87,246.51 185.25,246.45 184.62,246.39 184.0,246.32 183.37,246.25 182.75,246.17 182.12,246.09 181.5,246.0 180.87,245.91 180.25,245.81 179.62,245.71 179.0,245.61 178.37,245.5 177.75,245.38 177.12,245.26 176.5,245.14 175.87,245.01 175.25,244.88 174.62,244.74 174.0,244.6 173.37,244.45 172.75,244.3 172.12,244.14 171.5,243.98 170.87,243.81 170.25,243.64 169.62,243.46 169.0,243.28 168.37,243.09 167.75,242.9 167.12,242.7 166.5,242.5 165.87,242.29 165.25,242.08 164.62,241.86 164.0,241.64 163.37,241.41 162.75,241.18 162.12,240.94 161.5,240.7 160.87,240.45 160.25,240.19 159.62,239.93 159.0,239.66 158.37,239.39 157.75,239.11 157.12,238.83 156.5,238.54 155.87,238.24 155.25,237.94 154.62,237.63 154.0,237.32 153.37,237.0 152.75,236.67 152.12,236.34 151.5,236.0 150.87,235.65 150.25,235.3 149.62,234.94 149.0,234.58 148.37,234.2 147.75,233.82 147.12,233.43 146.5,233.04 145.87,232.64 145.25,232.23 144.62,231.81 144.0,231.39 143.37,230.95 142.75,230.51 142.12,230.06 141.5,229.61 140.87,229.14 140.25,228.67 139.62,228.18 139.0,227.69 138.37,227.19 137.75,226.68 137.12,226.16 136.5,225.63 135.87,225.09 135.25,224.54 134.62,223.98 134.0,223.4 133.37,222.82 132.75,222.23 132.12,221.62 131.5,221.0" fill="#993C1D" fill-opacity="0.22" stroke="none"/>
+      <text id="sl" class="fig-el" x="197.12" y="272.25" fill="#9A5A12" font-size="12">S = 5/3 − π/2</text>
+      </svg>
+    <span class="cs-taphint">탭하면 다음 ▸</span>
+  </div>
+  <div class="cs-stage" id="stage">
+    <section class="cs-panel" data-panel="0">
+      <div class="cs-prob"><span class="lead">문제</span><br>중심이 $\left(0,\tfrac32\right)$이고 반지름 $r\,\left(r\lt\tfrac32\right)$인 원 $C$가 $y=\tfrac12x^2$의 그래프와 서로 다른 두 점에서 만난다. 원 $C$와 포물선으로 둘러싸인 $\smile$ 모양의 넓이가 $a+b\pi$일 때 <b>$120(a+b)$</b>의 값을 구하시오. (단, $a,b$는 유리수)</div>
+    </section>
+    <section class="cs-panel" data-panel="1"><div class="cs-head"><span class="cs-badge">1단계</span><span class="cs-title">교점·접점을 문자로 두기</span><span class="cs-type">조건 활용</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>포물선과 원이 만나는 두 점은 $y$축 대칭이에요. 오른쪽 교점을 $\mathrm P(\alpha,\tfrac12\alpha^2)$로 두면 왼쪽은?</div><div class="cs-body" data-step="1"><div class="cs-draw"><b>이 단계로 넘어가는 이유 — </b>대칭이므로 $\mathrm Q(-\alpha,\tfrac12\alpha^2)$. 원이 곡선과 <b>접</b>하니 이 점은 단순 교점이 아니라 <b>접점</b>이라는 게 열쇠.</div><div class="cs-math">$$\mathrm P(\alpha,\tfrac12\alpha^2),\quad \mathrm Q(-\alpha,\tfrac12\alpha^2)\ (\alpha\gt0)$$</div><div class="cs-tags"><span class="cs-tag">대칭</span><span class="cs-tag">접점</span></div></div></section>
+<section class="cs-panel" data-panel="2"><div class="cs-head"><span class="cs-badge">2단계</span><span class="cs-title">접선 ⊥ 반지름 → α=1</span> <span class="cs-key">핵심</span><span class="cs-type">목표 역산</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>원과 곡선이 접하면, 그 점에서 <b>곡선의 접선</b>과 <b>반지름(중심→접점)</b>은 어떤 관계일까요? 접선 기울기는 $y'=x$로 $\alpha$.</div><div class="cs-body" data-step="2"><div class="cs-draw"><b>이 단계로 넘어가는 이유 — </b>접선 $\perp$ 반지름 $\mathrm{AP}$. $\mathrm{AP}$ 기울기 $=\dfrac{\frac12\alpha^2-\frac32}{\alpha}$이고 접선 기울기 $\alpha$와 곱이 $-1$ → $\tfrac12\alpha^2-\tfrac32=-1$ → $\alpha^2=1$.</div><div class="cs-math">$$\frac{\frac12\alpha^2-\frac32}{\alpha}=-\frac1\alpha\ \Rightarrow\ \alpha=1,\ \ \mathrm P(1,\tfrac12),\ \mathrm Q(-1,\tfrac12)$$</div><div class="cs-tags"><span class="cs-tag">접선의 기울기</span><span class="cs-tag">원의 접선⊥반지름</span></div></div></section>
+<section class="cs-panel" data-panel="3"><div class="cs-head"><span class="cs-badge">3단계</span><span class="cs-title">반지름 √2, ∠PAQ=90°</span><span class="cs-type">계산</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$\mathrm A(0,\tfrac32)$와 $\mathrm P(1,\tfrac12)$ 사이 거리가 반지름이에요. $\mathrm{AP}$와 $\mathrm{AQ}$가 이루는 각은?</div><div class="cs-body" data-step="3"><div class="cs-draw"><b>이 단계로 넘어가는 이유 — </b>$\mathrm{AP}$ 기울기 $-1$, $\mathrm{AQ}$ 기울기 $1$ → 수직, 곧 $\angle\mathrm{PAQ}=90^\circ$. 부채꼴이 사분원이 되어 넓이 계산이 깔끔.</div><div class="cs-math">$$r=|\mathrm{AP}|=\sqrt{1^2+1^2}=\sqrt2,\qquad \angle\mathrm{PAQ}=90^\circ$$</div><div class="cs-tags"><span class="cs-tag">두 점 사이 거리</span><span class="cs-tag">수직 조건</span></div></div></section>
+<section class="cs-panel" data-panel="4"><div class="cs-head"><span class="cs-badge">4단계</span><span class="cs-title">넓이 = 곡선 아래 − 원(부채꼴)</span> <span class="cs-key">핵심</span><span class="cs-type">목표 역산</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>색칠된 영역은 위로 <b>원의 아래호</b>, 아래로 <b>포물선</b>이에요. $-1$부터 $1$까지 (원 아래호)$-$(포물선)을 적분하면?</div><div class="cs-body" data-step="4"><div class="cs-draw"><b>이 단계로 넘어가는 이유 — </b>$\displaystyle\int_{-1}^{1}\!\Big[\big(\tfrac32-\sqrt{2-x^2}\big)-\tfrac12x^2\Big]dx$. 직사각형·포물선 부분은 유리수, $\sqrt{2-x^2}$ 적분이 사분원 넓이라서 $\pi$가 나온다.</div><div class="cs-math">$$S=\int_{-1}^{1}\!\Big[\tfrac32-\sqrt{2-x^2}-\tfrac12x^2\Big]dx=\tfrac53-\tfrac\pi2$$</div><div class="cs-tags"><span class="cs-tag">넓이</span><span class="cs-tag">원의 적분</span></div></div></section>
+<section class="cs-panel" data-panel="5"><div class="cs-head"><span class="cs-badge">5단계</span><span class="cs-title">a, b 와 120(a+b)</span><span class="cs-type">계산</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$S=a+b\pi$ 꼴로 보면 $a,b$는? $120(a+b)$를 계산하면?</div><div class="cs-body" data-step="5"><div class="cs-math">$$a=\tfrac53,\ b=-\tfrac12\ \Rightarrow\ 120\!\left(\tfrac53-\tfrac12\right)=120\cdot\tfrac76=140$$</div><div class="cs-tags"><span class="cs-tag">유리수 계수 비교</span></div><div class="cs-ans">정답 &nbsp; 120(a+b) = 140</div></div></section>
+  </div>
+  <nav class="cs-nav">
+    <button class="cs-prev" id="prevBtn">이전</button>
+    <div class="cs-mid"><div class="cs-dots"><span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span></div><div class="cs-prog" id="prog"></div></div>
+    <button class="cs-next" id="nextBtn">풀이 시작 ▸</button>
+  </nav>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script>
+(function(){
+  var T=5, figMap={"par": 1, "parl": 1, "cir": 1, "cl": 1, "pA": 1, "Al": 1, "pP": 2, "pQ": 2, "Pl": 2, "Ql": 2, "tanP": 2, "tl": 2, "ap": 2, "raP": 2, "aq": 3, "raA": 3, "rlab": 3, "ang": 3, "area": 4, "sl": 4};
+  // views: 0=문제, 이후 단계마다 (hint, show) 2개
+  var views=[{step:0,phase:'p'}];
+  for(var k=1;k<=T;k++){views.push({step:k,phase:'hint'});views.push({step:k,phase:'show'});}
+  var vi=0;
+  var panels={}; document.querySelectorAll('.cs-panel').forEach(function(p){panels[+p.dataset.panel]=p;});
+  function figReveal(n){
+    Object.keys(figMap).forEach(function(id){var el=document.getElementById(id);
+      if(el) el.classList.toggle('on', n>=figMap[id]);});
+  }
+  function render(){
+    var v=views[vi];
+    // 패널 표시
+    Object.keys(panels).forEach(function(k){panels[k].classList.toggle('active', (+k)===v.step);});
+    // body 공개 여부
+    var body=panels[v.step] ? panels[v.step].querySelector('.cs-body') : null;
+    if(body) body.classList.toggle('show', v.phase==='show');
+    // 도형 reveal 수
+    var rc = v.step===0 ? 0 : (v.phase==='show' ? v.step : v.step-1);
+    figReveal(rc);
+    // 버튼
+    var nb=document.getElementById('nextBtn'), pb=document.getElementById('prevBtn');
+    pb.disabled = (vi===0);
+    nb.classList.remove('reveal');
+    if(v.step===0){ nb.textContent='풀이 시작 ▸'; nb.disabled=false; }
+    else if(v.phase==='hint'){ nb.textContent='풀이 보기 ▾'; nb.classList.add('reveal'); nb.disabled=false; }
+    else if(v.step<T){ nb.textContent='다음 단계 ▸'; nb.disabled=false; }
+    else { nb.textContent='처음부터'; nb.disabled=false; }
+    // 진행도
+    var done = v.step===0?0:(v.phase==='show'?v.step:v.step-1);
+    document.querySelectorAll('.cs-dot').forEach(function(d,i){d.classList.toggle('fill', i<done);});
+    document.getElementById('prog').textContent = v.step===0 ? ('문제 · 총 '+T+'단계') : (v.step+' / '+T+'단계');
+    // 새 패널은 위로 스크롤
+    document.getElementById('stage').scrollTop=0;
+  }
+  function next(){
+    var v=views[vi];
+    if(v.step===T && v.phase==='show'){ vi=0; render(); return; }   // 처음부터
+    if(vi<views.length-1){ vi++; render(); }
+  }
+  function prev(){ if(vi>0){ vi--; render(); } }
+  document.getElementById('nextBtn').onclick=next;
+  document.getElementById('prevBtn').onclick=prev;
+  document.getElementById('figtap').onclick=next;
+  document.addEventListener('keydown',function(e){
+    if(e.metaKey||e.ctrlKey||e.altKey)return;
+    if(['ArrowLeft','ArrowUp','Backspace','PageUp'].indexOf(e.key)>=0){e.preventDefault();prev();}
+    else if([' ','ArrowRight','ArrowDown','Enter','PageDown'].indexOf(e.key)>=0){e.preventDefault();next();}
+  });
+  render();
+  (function tex(){
+    if(!window.renderMathInElement)return setTimeout(tex,60);
+    renderMathInElement(document.getElementById('app'),{delimiters:[
+      {left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+  })();
+})();
+</script>
+</body>
+</html>

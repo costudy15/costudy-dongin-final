@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>코스터디 단계별 풀이</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.47.0/tabler-icons.min.css">
+<style>
+:root{--cs-text:#222;--cs-muted:#666;--cs-faint:#999;--cs-line:#e3e3e0;--cs-surface:#f6f5f1;--cs-primary:#185FA5;--cs-info-bg:#E6F1FB;--cs-info-tx:#0C447C;--cs-warn-bg:#FAEEDA;--cs-warn-tx:#854F0B;--cs-ok-bg:#E1F5EE;--cs-ok-tx:#0F6E56;}
+*{box-sizing:border-box}
+.cs-root{max-width:720px;margin:0 auto;padding:18px;font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;color:var(--cs-text);line-height:1.7;outline:none}
+.cs-doc{font-size:13px;color:var(--cs-faint);margin-bottom:14px;border-bottom:1px solid var(--cs-line);padding-bottom:10px}
+.cs-top{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;margin-bottom:20px}
+.cs-fig{flex:0 0 330px;max-width:100%}
+@media(max-width:560px){.cs-fig{flex:1 1 100%}}
+.cs-given{flex:1;min-width:220px;font-size:14px;line-height:1.7;color:var(--cs-muted)}
+.cs-given b{color:var(--cs-text);font-weight:500}
+.fig-el{opacity:0;transition:opacity .45s ease}
+.fig-el.on{opacity:1}
+.dl{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .75s ease,opacity .25s ease}
+.dl.on{stroke-dashoffset:0}
+.cs-step{border:1px solid var(--cs-line);border-radius:12px;padding:13px 16px;margin-bottom:10px;opacity:.45;transition:opacity .3s ease}
+.cs-step.active{opacity:1;border-color:#9cc2e8}
+.cs-step.done{opacity:1}
+.cs-head{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.cs-badge{font-size:12px;font-weight:500;background:var(--cs-info-bg);color:var(--cs-info-tx);padding:3px 9px;border-radius:8px;white-space:nowrap}
+.cs-title{font-size:15px;font-weight:500;color:var(--cs-text)}
+.cs-key{font-size:11px;font-weight:500;background:#FAEEDA;color:#854F0B;padding:2px 7px;border-radius:8px}
+.cs-type{font-size:11px;color:var(--cs-faint);margin-left:auto}
+.cs-hint{font-size:13px;color:var(--cs-muted);margin-top:8px;padding:8px 11px;background:var(--cs-surface);border-radius:8px}
+.cs-body{max-height:0;overflow:hidden;opacity:0;transition:max-height .5s ease,opacity .3s ease}
+.cs-body.show{max-height:680px;opacity:1;margin-top:10px}
+.cs-draw{font-size:13px;color:var(--cs-warn-tx);background:var(--cs-warn-bg);padding:9px 12px;border-radius:8px;margin-bottom:8px;line-height:1.6}
+.cs-draw i{margin-right:6px}
+.cs-why{font-size:13.5px;color:var(--cs-muted);line-height:1.65;margin:4px 0}
+.cs-tags{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap}
+.cs-tag{font-size:11px;color:var(--cs-muted);background:var(--cs-surface);padding:2px 8px;border-radius:8px}
+.cs-ans{font-size:15px;font-weight:500;color:var(--cs-ok-tx);background:var(--cs-ok-bg);padding:8px 12px;border-radius:8px;margin-top:10px;display:inline-block}
+.cs-ctrl{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:16px}
+.cs-ctrl button{font-size:14px;font-family:inherit;background:#fff;border:1px solid var(--cs-line);border-radius:8px;padding:9px 14px;cursor:pointer;color:var(--cs-text)}
+.cs-ctrl button:hover{background:var(--cs-surface)}
+.cs-ctrl button:disabled{opacity:.5;cursor:default}
+#nextBtn{border-color:#9cc2e8;color:var(--cs-info-tx)}
+.cs-dots{display:flex;gap:6px;margin-left:auto}
+.cs-dot{width:9px;height:9px;border-radius:50%;background:#cfcfca}
+.cs-dot.fill{background:var(--cs-primary)}
+.cs-prog{font-size:12.5px;color:var(--cs-faint);margin-top:8px}
+.katex{font-size:1.02em}
+</style>
+</head>
+<body>
+<div class="cs-root" id="root" tabindex="0">
+<div class="cs-doc">7. 삼차함수와 절댓값 — |f-g|가 한 점에서만 안 꺾인다<span class="cs-doc-sub"> &middot; 고3 모의 · 단답형 7</span></div>
+<div class="cs-top">
+  <div class="cs-fig">
+      <svg viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg" role="img" style="width:100%;height:auto">
+      <title>y=f(x) 곡선과 직선 y=g(x)=9x, 극대·극소·교점</title>
+      <line x1="22.0" y1="188.3" x2="338.0" y2="188.3" stroke="#C9C7C0" stroke-width="1"/>
+      <line x1="171.7" y1="338.0" x2="171.7" y2="22.0" stroke="#C9C7C0" stroke-width="1"/>
+      <path d="M 40.7 329.8 L 41.8 324.4 L 42.9 319.0 L 44.1 313.8 L 45.2 308.6 L 46.3 303.5 L 47.4 298.4 L 48.5 293.5 L 49.7 288.6 L 50.8 283.7 L 51.9 279.0 L 53.0 274.3 L 54.1 269.7 L 55.3 265.1 L 56.4 260.6 L 57.5 256.2 L 58.6 251.9 L 59.7 247.6 L 60.9 243.4 L 62.0 239.3 L 63.1 235.2 L 64.2 231.2 L 65.3 227.2 L 66.5 223.3 L 67.6 219.5 L 68.7 215.8 L 69.8 212.1 L 70.9 208.4 L 72.1 204.9 L 73.2 201.4 L 74.3 197.9 L 75.4 194.5 L 76.5 191.2 L 77.7 187.9 L 78.8 184.7 L 79.9 181.6 L 81.0 178.5 L 82.1 175.5 L 83.2 172.5 L 84.4 169.6 L 85.5 166.7 L 86.6 163.9 L 87.7 161.1 L 88.8 158.4 L 90.0 155.8 L 91.1 153.2 L 92.2 150.7 L 93.3 148.2 L 94.4 145.8 L 95.6 143.4 L 96.7 141.0 L 97.8 138.8 L 98.9 136.5 L 100.0 134.4 L 101.2 132.2 L 102.3 130.1 L 103.4 128.1 L 104.5 126.1 L 105.6 124.2 L 106.8 122.3 L 107.9 120.5 L 109.0 118.7 L 110.1 116.9 L 111.2 115.2 L 112.4 113.5 L 113.5 111.9 L 114.6 110.3 L 115.7 108.8 L 116.8 107.3 L 118.0 105.9 L 119.1 104.4 L 120.2 103.1 L 121.3 101.8 L 122.4 100.5 L 123.5 99.2 L 124.7 98.0 L 125.8 96.8 L 126.9 95.7 L 128.0 94.6 L 129.1 93.6 L 130.3 92.5 L 131.4 91.6 L 132.5 90.6 L 133.6 89.7 L 134.7 88.8 L 135.9 88.0 L 137.0 87.2 L 138.1 86.4 L 139.2 85.6 L 140.3 84.9 L 141.5 84.2 L 142.6 83.6 L 143.7 83.0 L 144.8 82.4 L 145.9 81.8 L 147.1 81.3 L 148.2 80.8 L 149.3 80.3 L 150.4 79.9 L 151.5 79.5 L 152.7 79.1 L 153.8 78.7 L 154.9 78.4 L 156.0 78.0 L 157.1 77.8 L 158.3 77.5 L 159.4 77.3 L 160.5 77.0 L 161.6 76.8 L 162.7 76.7 L 163.8 76.5 L 165.0 76.4 L 166.1 76.3 L 167.2 76.2 L 168.3 76.1 L 169.4 76.1 L 170.6 76.1 L 171.7 76.1 L 172.8 76.1 L 173.9 76.1 L 175.0 76.1 L 176.2 76.2 L 177.3 76.3 L 178.4 76.4 L 179.5 76.5 L 180.6 76.6 L 181.8 76.7 L 182.9 76.9 L 184.0 77.0 L 185.1 77.2 L 186.2 77.4 L 187.4 77.6 L 188.5 77.8 L 189.6 78.0 L 190.7 78.3 L 191.8 78.5 L 193.0 78.8 L 194.1 79.0 L 195.2 79.3 L 196.3 79.6 L 197.4 79.8 L 198.6 80.1 L 199.7 80.4 L 200.8 80.7 L 201.9 81.0 L 203.0 81.4 L 204.1 81.7 L 205.3 82.0 L 206.4 82.3 L 207.5 82.7 L 208.6 83.0 L 209.7 83.3 L 210.9 83.6 L 212.0 84.0 L 213.1 84.3 L 214.2 84.7 L 215.3 85.0 L 216.5 85.3 L 217.6 85.7 L 218.7 86.0 L 219.8 86.3 L 220.9 86.6 L 222.1 87.0 L 223.2 87.3 L 224.3 87.6 L 225.4 87.9 L 226.5 88.2 L 227.7 88.5 L 228.8 88.8 L 229.9 89.1 L 231.0 89.4 L 232.1 89.6 L 233.3 89.9 L 234.4 90.2 L 235.5 90.4 L 236.6 90.6 L 237.7 90.9 L 238.9 91.1 L 240.0 91.3 L 241.1 91.5 L 242.2 91.6 L 243.3 91.8 L 244.4 92.0 L 245.6 92.1 L 246.7 92.2 L 247.8 92.3 L 248.9 92.4 L 250.0 92.5 L 251.2 92.6 L 252.3 92.6 L 253.4 92.7 L 254.5 92.7 L 255.6 92.7 L 256.8 92.7 L 257.9 92.6 L 259.0 92.6 L 260.1 92.5 L 261.2 92.4 L 262.4 92.3 L 263.5 92.1 L 264.6 91.9 L 265.7 91.8 L 266.8 91.5 L 268.0 91.3 L 269.1 91.1 L 270.2 90.8 L 271.3 90.5 L 272.4 90.1 L 273.6 89.8 L 274.7 89.4 L 275.8 89.0 L 276.9 88.5 L 278.0 88.1 L 279.1 87.6 L 280.3 87.1 L 281.4 86.5 L 282.5 85.9 L 283.6 85.3 L 284.7 84.7 L 285.9 84.0 L 287.0 83.3 L 288.1 82.6 L 289.2 81.8 L 290.3 81.0 L 291.5 80.2 L 292.6 79.3 L 293.7 78.4 L 294.8 77.5 L 295.9 76.5 L 297.1 75.5 L 298.2 74.4 L 299.3 73.3 L 300.4 72.2 L 301.5 71.1 L 302.7 69.9 L 303.8 68.6 L 304.9 67.4 L 306.0 66.0 L 307.1 64.7 L 308.3 63.3 L 309.4 61.8 L 310.5 60.4 L 311.6 58.8 L 312.7 57.3 L 313.9 55.7 L 315.0 54.0 L 316.1 52.3 L 317.2 50.6 L 318.3 48.8 L 319.4 47.0 L 320.6 45.1 L 321.7 43.2 L 322.8 41.2 L 323.9 39.2 L 325.0 37.1 L 326.2 35.0 L 327.3 32.8 L 328.4 30.6 L 329.5 28.3 L 330.6 26.0 L 331.8 23.7" fill="none" stroke="#185FA5" stroke-width="2.5"/>
+      <line id="line-g" class="fig-el dl" pathLength="1" x1="22.0" y1="323.0" x2="338.0" y2="38.6" stroke="#993C1D" stroke-width="2.2"/>
+      <text x="325.4" y="43.7" fill="#185FA5" font-size="13">y=f(x)</text>
+      <text id="lbl-g" class="fig-el" x="294.0" y="50.6" fill="#993C1D" font-size="12">y=g(x)=9x</text>
+      <text x="332.0" y="182.3" fill="#9b998f" font-size="13" font-style="italic">x</text>
+      <text x="177.7" y="34.0" fill="#9b998f" font-size="13" font-style="italic">y</text>
+      <g id="pt-max" class="fig-el"><circle cx="171.7" cy="76.1" r="3.2" fill="#BA7517"/><text x="179.7" y="72.1" fill="#BA7517" font-size="14" font-weight="500">극대(0, 27)</text></g>
+      <g id="pt-cross" class="fig-el"><circle cx="46.9" cy="300.6" r="3.2" fill="#993C1D"/><text x="40.9" y="318.6" fill="#993C1D" font-size="14" font-weight="500">x=-3</text></g>
+      <g id="pt-tan" class="fig-el"><circle cx="296.4" cy="76.1" r="3.2" fill="#0F6E56"/><text x="304.4" y="78.1" fill="#0F6E56" font-size="14" font-weight="500">접점 x=3 (a=3)</text></g>
+      <g id="pt-min" class="fig-el"><circle cx="254.8" cy="92.7" r="5" fill="#185FA5"/><text x="262.8" y="108.7" fill="#185FA5" font-size="14" font-weight="500">극소(2, 23)</text></g>
+      </svg>
+  </div>
+  <div class="cs-given">좌표평면에서 최고차항의 계수가 $1$인 삼차함수 $f(x)$와 원점을 지나는 직선 $y=g(x)$가 다음을 만족한다.<br>(가) $f(x)$는 $x=0$에서 극댓값 $27$을 갖는다.<br>(나) $|f(x)-g(x)|$는 $x=-3$에서만 미분가능하지 않다.<br>(다) 곡선 $y=f(x)$와 직선 $y=g(x)$는 서로 다른 두 점에서 만난다.<br>함수 $f(x)$의 극솟값을 구하시오.</div>
+</div>
+
+<div class="cs-step" data-step="1"><div class="cs-head"><span class="cs-badge">1단계</span><span class="cs-title">조건 (가) 해석</span><span class="cs-type">조건 활용</span></div><div class="cs-hint">‘$x=0$에서 극댓값 $27$’을 식 두 개로 바꾸면?</div><div class="cs-body"><div class="cs-why">극값이면 그 점에서 미분계수 $0$. 극댓‘값’이 $27$이니 함숫값도 안다.</div>$$f(0)=27,\qquad f'(0)=0$$<div class="cs-tags"><span class="cs-tag">극값과 미분계수</span></div></div></div>
+<div class="cs-step" data-step="2"><div class="cs-head"><span class="cs-badge">2단계</span><span class="cs-title">h=f-g 도입 — 절댓값이 안 꺾이는 곳</span> <span class="cs-key">핵심</span><span class="cs-type">보조선·발상</span></div><div class="cs-hint">$|f(x)-g(x)|$가 <b>$x=-3$에서만</b> 안 미분된다. 절댓값이 꺾이는 건 언제지? 그리고 (다)에서 만나는 점은 두 개.</div><div class="cs-body"><div class="cs-draw"><i class="ti ti-pencil" aria-hidden="true"></i><b>이 단계로 넘어가는 이유:</b> $h(x)=f(x)-g(x)$로 두면, $|h|$가 미분 안 되는 곳은 $h$가 <b>부호를 바꾸며 0을 지나는</b> 단순근뿐. 그게 $x=-3$ 하나라는 뜻 → $x=-3$은 단순근. 그런데 (다)에서 교점이 둘이므로 나머지 한 점은 <b>접점(중근)</b>. 그래서 $h$의 꼴이 한 번에 정해진다.</div><div class="cs-why">최고차항 계수 $1$, 단순근 $-3$, 중근 $a\,(a\neq-3)$ → $h(x)=(x+3)(x-a)^2$.</div>$$h(x)=f(x)-g(x)=(x+3)(x-a)^2\quad(a\neq-3)$$<div class="cs-tags"><span class="cs-tag">절댓값 함수의 미분가능성</span><span class="cs-tag">중근/단순근</span></div></div></div>
+<div class="cs-step" data-step="3"><div class="cs-head"><span class="cs-badge">3단계</span><span class="cs-title">h(0)으로 a 결정</span><span class="cs-type">계산</span></div><div class="cs-hint">$f(0)=27$, $g$는 원점을 지나니 $g(0)=0$. $h(0)$은?</div><div class="cs-body"><div class="cs-why">$h(0)=f(0)-g(0)=27$. $h(0)=(3)(-a)^2=3a^2$.</div>$$3a^2=27\Rightarrow a=3\ (a\neq-3)$$$$h(x)=(x+3)(x-3)^2=x^3-3x^2-9x+27$$<div class="cs-tags"><span class="cs-tag">대입</span></div></div></div>
+<div class="cs-step" data-step="4"><div class="cs-head"><span class="cs-badge">4단계</span><span class="cs-title">g와 f 복원</span><span class="cs-type">계산</span></div><div class="cs-hint">$f'(0)=0$을 $h'$와 연결하면 직선 $g$의 기울기가 나온다.</div><div class="cs-body"><div class="cs-why">$h'(x)=3x^2-6x-9$, $h'(0)=-9$. $f'(0)-g'(0)=-9$인데 $f'(0)=0$ → $g'(0)=9$. 원점 직선이라 $g(x)=9x$.</div>$$g(x)=9x\ \Rightarrow\ f(x)=h(x)+g(x)=x^3-3x^2+27$$<div class="cs-tags"><span class="cs-tag">도함수 비교</span></div></div></div>
+<div class="cs-step" data-step="5"><div class="cs-head"><span class="cs-badge">5단계</span><span class="cs-title">극솟값 계산</span><span class="cs-type">계산</span></div><div class="cs-hint">이제 $f$가 정해졌다. 극소는 어디서?</div><div class="cs-body"><div class="cs-why">$f'(x)=3x(x-2)=0\Rightarrow x=0(\text{극대}),\ x=2(\text{극소})$.</div>$$f(2)=8-12+27=23$$<div class="cs-tags"><span class="cs-tag">삼차함수 극값</span></div><span class="cs-ans">정답 &nbsp; 극솟값 = 23</span></div></div>
+
+<div class="cs-ctrl">
+  <button id="nextBtn">다음 단계 보기 (1/5)</button>
+  <button id="allBtn">전체 보기</button>
+  <button id="resetBtn">처음부터</button>
+  <div class="cs-dots"><span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span></div>
+</div>
+<div class="cs-prog" id="prog">0 / 5 단계 공개됨</div>
+<div class="cs-prog" style="margin-top:2px">키보드: 아무 키나 = 다음 단계 · 왼쪽 화살표 또는 Backspace = 이전 단계</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script>
+(function(){
+  var revealed=0, total=5;
+  var figMap={"line-g": 2, "lbl-g": 2, "pt-max": 1, "pt-cross": 2, "pt-tan": 3, "pt-min": 5};
+  function render(){
+    document.querySelectorAll('.cs-step').forEach(function(s){
+      var n=+s.dataset.step;
+      s.classList.toggle('done', n<=revealed);
+      s.classList.toggle('active', n===revealed+1);
+      s.querySelector('.cs-body').classList.toggle('show', n<=revealed);
+      var h=s.querySelector('.cs-hint');
+      if(h) h.style.display=(n===revealed+1)?'block':'none';
+    });
+    Object.keys(figMap).forEach(function(id){
+      var el=document.getElementById(id);
+      if(el) el.classList.toggle('on', revealed>=figMap[id]);
+    });
+    var btn=document.getElementById('nextBtn');
+    if(revealed>=total){btn.textContent='완료';btn.disabled=true;}
+    else{btn.textContent='다음 단계 보기 ('+(revealed+1)+'/'+total+')';btn.disabled=false;}
+    document.getElementById('prog').textContent=revealed+' / '+total+' 단계 공개됨';
+    document.querySelectorAll('.cs-dot').forEach(function(d,i){d.classList.toggle('fill', i<revealed);});
+  }
+  function nextStep(){if(revealed<total){revealed++;render();}}
+  function prevStep(){if(revealed>0){revealed--;render();}}
+  document.getElementById('nextBtn').onclick=nextStep;
+  document.getElementById('allBtn').onclick=function(){revealed=total;render();};
+  document.getElementById('resetBtn').onclick=function(){revealed=0;render();};
+  document.addEventListener('keydown',function(e){
+    if(e.metaKey||e.ctrlKey||e.altKey) return;
+    var tag=(e.target.tagName||'').toUpperCase();
+    if(tag==='INPUT'||tag==='TEXTAREA') return;
+    var backKeys=['ArrowLeft','ArrowUp','Backspace','PageUp'];
+    var blockScroll=[' ','Spacebar','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Backspace','PageUp','PageDown'];
+    if(blockScroll.indexOf(e.key)>=0) e.preventDefault();
+    if(backKeys.indexOf(e.key)>=0){prevStep();}else{nextStep();}
+  });
+  render();
+  (function tex(){
+    if(!window.renderMathInElement){return setTimeout(tex,60);}
+    renderMathInElement(document.getElementById('root'),{delimiters:[
+      {left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}
+    ],throwOnError:false});
+  })();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>코스터디 단계별 풀이</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<style>
+:root{--tx:#222;--mut:#666;--faint:#9a988f;--line:#e6e5e1;--surf:#f6f5f1;--pri:#185FA5;
+ --info:#E6F1FB;--infotx:#0C447C;--warnbg:#FAEEDA;--warntx:#854F0B;--okbg:#E1F5EE;--oktx:#0F6E56;--bd:#dcdbd6}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic","Apple SD Gothic Neo",sans-serif;color:var(--tx);background:#fff}
+.cs-app{display:flex;flex-direction:column;height:100vh;height:100dvh;max-width:680px;margin:0 auto;border-left:1px solid var(--line);border-right:1px solid var(--line)}
+/* 헤더 */
+.cs-doc{flex:0 0 auto;font-size:12px;color:var(--faint);padding:9px 14px;border-bottom:1px solid var(--line);
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cs-doc b{color:var(--mut);font-weight:600}
+/* 도형: 상단 고정 */
+.cs-figwrap{flex:0 0 auto;height:38vh;min-height:200px;padding:8px;display:flex;align-items:center;justify-content:center;
+ background:#fff;border-bottom:1px solid var(--line);position:relative;cursor:pointer}
+.cs-figwrap svg{width:100%;height:100%}
+.cs-taphint{position:absolute;right:10px;bottom:8px;font-size:11px;color:var(--faint);background:#fff;
+ padding:2px 8px;border-radius:10px;border:1px solid var(--line);opacity:.85}
+.fig-el{opacity:0;transition:opacity .4s ease}
+.fig-el.on{opacity:1}
+.dl{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .7s ease,opacity .25s ease}
+.dl.on{stroke-dashoffset:0}
+/* 본문(스크롤 영역) */
+.cs-stage{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 16px 18px}
+.cs-panel{display:none;animation:fade .25s ease}
+.cs-panel.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* 문제 패널 */
+.cs-prob{font-size:15.5px;line-height:1.75;color:#333}
+.cs-prob .lead{display:inline-block;font-size:12px;font-weight:600;color:var(--infotx);background:var(--info);
+ padding:3px 10px;border-radius:9px;margin-bottom:10px}
+/* 단계 패널 */
+.cs-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.cs-badge{font-size:12px;font-weight:600;background:var(--info);color:var(--infotx);padding:3px 10px;border-radius:9px}
+.cs-title{font-size:16px;font-weight:600}
+.cs-key{font-size:11px;font-weight:600;background:#FAEEDA;color:#854F0B;padding:2px 8px;border-radius:9px}
+.cs-type{font-size:11px;color:var(--faint);margin-left:auto}
+.cs-hint{font-size:14.5px;color:#4a4a44;background:var(--surf);border-radius:11px;padding:12px 14px;line-height:1.65}
+.cs-hint-tag{display:block;font-size:12px;font-weight:600;color:var(--warntx);margin-bottom:5px}
+.cs-body{display:none;margin-top:12px}
+.cs-body.show{display:block;animation:fade .25s ease}
+.cs-draw{font-size:14px;color:var(--warntx);background:var(--warnbg);padding:11px 13px;border-radius:11px;margin-bottom:10px;line-height:1.65}
+.cs-why{font-size:14px;color:var(--mut);line-height:1.65;margin:6px 0}
+.cs-math{margin:8px 0;font-size:1.02em;overflow-x:auto}
+.cs-tags{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
+.cs-tag{font-size:11px;color:var(--mut);background:var(--surf);padding:3px 9px;border-radius:9px}
+.cs-ans{font-size:16px;font-weight:600;color:var(--oktx);background:var(--okbg);padding:11px 14px;border-radius:11px;margin-top:12px;text-align:center}
+/* 하단 고정 내비 */
+.cs-nav{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:10px 14px;
+ border-top:1px solid var(--bd);background:#fff;box-shadow:0 -2px 10px rgba(0,0,0,.04)}
+.cs-prev{flex:0 0 auto;font-size:14px;font-family:inherit;background:#fff;border:1px solid var(--bd);border-radius:10px;
+ padding:11px 14px;color:var(--mut);cursor:pointer}
+.cs-prev:disabled{opacity:.4}
+.cs-mid{flex:1 1 auto;text-align:center}
+.cs-dots{display:flex;gap:5px;justify-content:center;margin-bottom:3px}
+.cs-dot{width:7px;height:7px;border-radius:50%;background:#d6d5cf}
+.cs-dot.fill{background:var(--pri)}
+.cs-prog{font-size:11px;color:var(--faint)}
+.cs-next{flex:0 0 auto;font-size:15px;font-weight:600;font-family:inherit;background:var(--pri);border:none;border-radius:10px;
+ padding:12px 18px;color:#fff;cursor:pointer;min-width:120px}
+.cs-next.reveal{background:#fff;color:var(--infotx);border:1px solid #9cc2e8}
+.cs-next:disabled{background:#cfd8e2;color:#fff}
+.katex{font-size:1.0em}
+.katex-display{margin:.5em 0}
+</style>
+</head>
+<body>
+<div class="cs-app" id="app">
+  <div class="cs-doc"><b>12. 절댓값 삼차함수 — 3실근을 만드는 자연수 k의 합</b> &middot; COSTUDY 수II · 절댓값·삼차함수·실근</div>
+  <div class="cs-figwrap" id="figtap">
+    <svg viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet">
+      <title>f(x)=(x+1)(x-4)^2 와 포물선 y=(x-k)^2 의 교점</title>
+      <line x1="44.0" y1="286.5" x2="344.0" y2="286.5" stroke="#888780" stroke-width="1.6"/>
+      <line x1="107.0" y1="322.0" x2="107.0" y2="20.0" stroke="#888780" stroke-width="1.6"/>
+      <text x="338.0" y="302.5" fill="#888780" font-size="13" font-style="italic">x</text>
+      <text x="65.9" y="302.5" fill="#9A988F" font-size="11">-1</text>
+      <text x="251.1" y="302.5" fill="#9A988F" font-size="11">4</text>
+      <path id="fc" class="fig-el" d="M 64.6 320.6 L 65.1 316.9 L 65.7 313.2 L 66.2 309.6 L 66.8 306.0 L 67.3 302.5 L 67.9 299.0 L 68.4 295.5 L 69.0 292.1 L 69.6 288.7 L 70.1 285.4 L 70.7 282.1 L 71.2 278.8 L 71.8 275.6 L 72.3 272.4 L 72.9 269.3 L 73.4 266.2 L 74.0 263.1 L 74.6 260.1 L 75.1 257.1 L 75.7 254.2 L 76.2 251.2 L 76.8 248.4 L 77.3 245.5 L 77.9 242.7 L 78.4 240.0 L 79.0 237.3 L 79.6 234.6 L 80.1 231.9 L 80.7 229.3 L 81.2 226.8 L 81.8 224.2 L 82.3 221.7 L 82.9 219.3 L 83.4 216.8 L 84.0 214.4 L 84.6 212.1 L 85.1 209.7 L 85.7 207.5 L 86.2 205.2 L 86.8 203.0 L 87.3 200.8 L 87.9 198.7 L 88.4 196.5 L 89.0 194.5 L 89.6 192.4 L 90.1 190.4 L 90.7 188.4 L 91.2 186.5 L 91.8 184.6 L 92.3 182.7 L 92.9 180.8 L 93.4 179.0 L 94.0 177.2 L 94.6 175.5 L 95.1 173.7 L 95.7 172.1 L 96.2 170.4 L 96.8 168.8 L 97.3 167.2 L 97.9 165.6 L 98.4 164.1 L 99.0 162.6 L 99.6 161.1 L 100.1 159.7 L 100.7 158.3 L 101.2 156.9 L 101.8 155.5 L 102.3 154.2 L 102.9 152.9 L 103.4 151.7 L 104.0 150.4 L 104.6 149.2 L 105.1 148.1 L 105.7 146.9 L 106.2 145.8 L 106.8 144.7 L 107.3 143.6 L 107.9 142.6 L 108.4 141.6 L 109.0 140.6 L 109.6 139.7 L 110.1 138.8 L 110.7 137.9 L 111.2 137.0 L 111.8 136.1 L 112.3 135.3 L 112.9 134.5 L 113.4 133.8 L 114.0 133.0 L 114.6 132.3 L 115.1 131.6 L 115.7 131.0 L 116.2 130.3 L 116.8 129.7 L 117.3 129.1 L 117.9 128.6 L 118.4 128.0 L 119.0 127.5 L 119.6 127.0 L 120.1 126.6 L 120.7 126.1 L 121.2 125.7 L 121.8 125.3 L 122.3 124.9 L 122.9 124.6 L 123.4 124.3 L 124.0 124.0 L 124.6 123.7 L 125.1 123.4 L 125.7 123.2 L 126.2 123.0 L 126.8 122.8 L 127.3 122.6 L 127.9 122.5 L 128.4 122.3 L 129.0 122.2 L 129.6 122.1 L 130.1 122.1 L 130.7 122.0 L 131.2 122.0 L 131.8 122.0 L 132.3 122.0 L 132.9 122.0 L 133.4 122.1 L 134.0 122.2 L 134.6 122.3 L 135.1 122.4 L 135.7 122.5 L 136.2 122.6 L 136.8 122.8 L 137.3 123.0 L 137.9 123.2 L 138.4 123.4 L 139.0 123.7 L 139.6 123.9 L 140.1 124.2 L 140.7 124.5 L 141.2 124.8 L 141.8 125.1 L 142.3 125.5 L 142.9 125.8 L 143.4 126.2 L 144.0 126.6 L 144.6 127.0 L 145.1 127.4 L 145.7 127.9 L 146.2 128.3 L 146.8 128.8 L 147.3 129.3 L 147.9 129.8 L 148.4 130.3 L 149.0 130.8 L 149.6 131.4 L 150.1 131.9 L 150.7 132.5 L 151.2 133.1 L 151.8 133.7 L 152.3 134.3 L 152.9 134.9 L 153.4 135.5 L 154.0 136.2 L 154.6 136.9 L 155.1 137.5 L 155.7 138.2 L 156.2 138.9 L 156.8 139.6 L 157.3 140.4 L 157.9 141.1 L 158.4 141.9 L 159.0 142.6 L 159.6 143.4 L 160.1 144.2 L 160.7 145.0 L 161.2 145.8 L 161.8 146.6 L 162.3 147.4 L 162.9 148.2 L 163.4 149.1 L 164.0 149.9 L 164.6 150.8 L 165.1 151.7 L 165.7 152.6 L 166.2 153.4 L 166.8 154.3 L 167.3 155.3 L 167.9 156.2 L 168.4 157.1 L 169.0 158.0 L 169.6 159.0 L 170.1 159.9 L 170.7 160.9 L 171.2 161.8 L 171.8 162.8 L 172.3 163.8 L 172.9 164.8 L 173.4 165.8 L 174.0 166.8 L 174.6 167.8 L 175.1 168.8 L 175.7 169.8 L 176.2 170.8 L 176.8 171.8 L 177.3 172.9 L 177.9 173.9 L 178.4 175.0 L 179.0 176.0 L 179.6 177.1 L 180.1 178.1 L 180.7 179.2 L 181.2 180.2 L 181.8 181.3 L 182.3 182.4 L 182.9 183.5 L 183.4 184.5 L 184.0 185.6 L 184.6 186.7 L 185.1 187.8 L 185.7 188.9 L 186.2 190.0 L 186.8 191.1 L 187.3 192.2 L 187.9 193.3 L 188.4 194.4 L 189.0 195.5 L 189.6 196.6 L 190.1 197.7 L 190.7 198.8 L 191.2 199.9 L 191.8 201.0 L 192.3 202.1 L 192.9 203.2 L 193.4 204.3 L 194.0 205.5 L 194.6 206.6 L 195.1 207.7 L 195.7 208.8 L 196.2 209.9 L 196.8 211.0 L 197.3 212.1 L 197.9 213.2 L 198.4 214.3 L 199.0 215.4 L 199.6 216.5 L 200.1 217.6 L 200.7 218.7 L 201.2 219.8 L 201.8 220.9 L 202.3 222.0 L 202.9 223.1 L 203.4 224.2 L 204.0 225.2 L 204.6 226.3 L 205.1 227.4 L 205.7 228.5 L 206.2 229.5 L 206.8 230.6 L 207.3 231.6 L 207.9 232.7 L 208.4 233.7 L 209.0 234.8 L 209.6 235.8 L 210.1 236.8 L 210.7 237.9 L 211.2 238.9 L 211.8 239.9 L 212.3 240.9 L 212.9 241.9 L 213.4 242.9 L 214.0 243.9 L 214.6 244.9 L 215.1 245.9 L 215.7 246.8 L 216.2 247.8 L 216.8 248.7 L 217.3 249.7 L 217.9 250.6 L 218.4 251.6 L 219.0 252.5 L 219.6 253.4 L 220.1 254.3 L 220.7 255.2 L 221.2 256.1 L 221.8 257.0 L 222.3 257.8 L 222.9 258.7 L 223.4 259.6 L 224.0 260.4 L 224.6 261.2 L 225.1 262.1 L 225.7 262.9 L 226.2 263.7 L 226.8 264.5 L 227.3 265.2 L 227.9 266.0 L 228.4 266.8 L 229.0 267.5 L 229.6 268.2 L 230.1 269.0 L 230.7 269.7 L 231.2 270.4 L 231.8 271.1 L 232.3 271.7 L 232.9 272.4 L 233.4 273.1 L 234.0 273.7 L 234.6 274.3 L 235.1 274.9 L 235.7 275.5 L 236.2 276.1 L 236.8 276.7 L 237.3 277.2 L 237.9 277.8 L 238.4 278.3 L 239.0 278.8 L 239.6 279.3 L 240.1 279.8 L 240.7 280.2 L 241.2 280.7 L 241.8 281.1 L 242.3 281.5 L 242.9 282.0 L 243.4 282.3 L 244.0 282.7 L 244.6 283.1 L 245.1 283.4 L 245.7 283.7 L 246.2 284.0 L 246.8 284.3 L 247.3 284.6 L 247.9 284.8 L 248.4 285.1 L 249.0 285.3 L 249.6 285.5 L 250.1 285.7 L 250.7 285.8 L 251.2 286.0 L 251.8 286.1 L 252.3 286.2 L 252.9 286.3 L 253.4 286.4 L 254.0 286.4 L 254.6 286.5 L 255.1 286.5 L 255.7 286.5 L 256.2 286.4 L 256.8 286.4 L 257.3 286.3 L 257.9 286.2 L 258.4 286.1 L 259.0 286.0 L 259.6 285.8 L 260.1 285.6 L 260.7 285.4 L 261.2 285.2 L 261.8 285.0 L 262.3 284.7 L 262.9 284.4 L 263.4 284.1 L 264.0 283.8 L 264.6 283.4 L 265.1 283.1 L 265.7 282.7 L 266.2 282.2 L 266.8 281.8 L 267.3 281.3 L 267.9 280.8 L 268.4 280.3 L 269.0 279.8 L 269.6 279.2 L 270.1 278.6 L 270.7 278.0 L 271.2 277.3 L 271.8 276.7 L 272.3 276.0 L 272.9 275.3 L 273.4 274.5 L 274.0 273.7 L 274.6 272.9 L 275.1 272.1 L 275.7 271.3 L 276.2 270.4 L 276.8 269.5 L 277.3 268.6 L 277.9 267.6 L 278.4 266.6 L 279.0 265.6 L 279.6 264.6 L 280.1 263.5 L 280.7 262.4 L 281.2 261.3 L 281.8 260.1 L 282.3 259.0 L 282.9 257.7 L 283.4 256.5 L 284.0 255.2 L 284.6 253.9 L 285.1 252.6 L 285.7 251.3 L 286.2 249.9 L 286.8 248.5 L 287.3 247.0 L 287.9 245.5 L 288.4 244.0 L 289.0 242.5 L 289.6 240.9 L 290.1 239.3 L 290.7 237.7 L 291.2 236.0 L 291.8 234.3 L 292.3 232.6 L 292.9 230.8 L 293.4 229.0 L 294.0 227.2 L 294.6 225.4 L 295.1 223.5 L 295.7 221.6 L 296.2 219.6 L 296.8 217.6 L 297.3 215.6 L 297.9 213.5 L 298.4 211.4 L 299.0 209.3 L 299.6 207.2 L 300.1 205.0 L 300.7 202.8 L 301.2 200.5 L 301.8 198.2 L 302.3 195.9 L 302.9 193.5 L 303.4 191.1 L 304.0 188.7 L 304.6 186.2 L 305.1 183.7 L 305.7 181.1 L 306.2 178.5 L 306.8 175.9 L 307.3 173.3 L 307.9 170.6 L 308.4 167.9 L 309.0 165.1 L 309.6 162.3 L 310.1 159.4 L 310.7 156.6 L 311.2 153.6 L 311.8 150.7 L 312.3 147.7 L 312.9 144.7 L 313.4 141.6 L 314.0 138.5 L 314.6 135.3 L 315.1 132.2 L 315.7 128.9 L 316.2 125.7 L 316.8 122.4 L 317.3 119.0 L 317.9 115.6 L 318.4 112.2 L 319.0 108.7 L 319.6 105.2 L 320.1 101.7 L 320.7 98.1 L 321.2 94.4 L 321.8 90.8 L 322.3 87.1 L 322.9 83.3 L 323.4 79.5 L 324.0 75.7 L 324.6 71.8 L 325.1 67.9 L 325.7 63.9 L 326.2 59.9 L 326.8 55.8 L 327.3 51.7 L 327.9 47.6 L 328.4 43.4 L 329.0 39.2 L 329.6 34.9 L 330.1 30.6 L 330.7 26.2 L 331.2 21.8" fill="none" stroke="#185FA5" stroke-width="3"/>
+      <text id="fclab" class="fig-el" x="166.2" y="37.8" fill="#185FA5" font-size="12" font-style="italic">f(x)=(x+1)(x-4)²</text>
+      <g id="r1" class="fig-el"><circle cx="69.9" cy="286.5" r="3.4" fill="#993C1D"/></g>
+      <g id="r4" class="fig-el"><circle cx="255.1" cy="286.5" r="3.2" fill="#185FA5"/></g>
+      <text id="alab" class="fig-el" x="47.7" y="280.5" fill="#993C1D" font-size="11">a=-1 (부호 바뀜)</text>
+      <path id="pc" class="fig-el" d="M 62.5 195.5 L 63.1 196.4 L 63.6 197.2 L 64.2 198.1 L 64.7 198.9 L 65.3 199.7 L 65.9 200.6 L 66.4 201.4 L 67.0 202.2 L 67.5 203.0 L 68.1 203.8 L 68.6 204.7 L 69.2 205.5 L 69.7 206.3 L 70.3 207.1 L 70.9 207.9 L 71.4 208.6 L 72.0 209.4 L 72.5 210.2 L 73.1 211.0 L 73.6 211.8 L 74.2 212.5 L 74.7 213.3 L 75.3 214.1 L 75.9 214.8 L 76.4 215.6 L 77.0 216.3 L 77.5 217.1 L 78.1 217.8 L 78.6 218.6 L 79.2 219.3 L 79.7 220.0 L 80.3 220.8 L 80.9 221.5 L 81.4 222.2 L 82.0 222.9 L 82.5 223.6 L 83.1 224.3 L 83.6 225.0 L 84.2 225.7 L 84.7 226.4 L 85.3 227.1 L 85.9 227.8 L 86.4 228.5 L 87.0 229.2 L 87.5 229.8 L 88.1 230.5 L 88.6 231.2 L 89.2 231.8 L 89.7 232.5 L 90.3 233.2 L 90.9 233.8 L 91.4 234.5 L 92.0 235.1 L 92.5 235.7 L 93.1 236.4 L 93.6 237.0 L 94.2 237.6 L 94.7 238.2 L 95.3 238.9 L 95.9 239.5 L 96.4 240.1 L 97.0 240.7 L 97.5 241.3 L 98.1 241.9 L 98.6 242.5 L 99.2 243.1 L 99.7 243.7 L 100.3 244.3 L 100.9 244.8 L 101.4 245.4 L 102.0 246.0 L 102.5 246.5 L 103.1 247.1 L 103.6 247.7 L 104.2 248.2 L 104.7 248.8 L 105.3 249.3 L 105.9 249.9 L 106.4 250.4 L 107.0 250.9 L 107.5 251.5 L 108.1 252.0 L 108.6 252.5 L 109.2 253.0 L 109.7 253.6 L 110.3 254.1 L 110.9 254.6 L 111.4 255.1 L 112.0 255.6 L 112.5 256.1 L 113.1 256.6 L 113.6 257.0 L 114.2 257.5 L 114.7 258.0 L 115.3 258.5 L 115.9 259.0 L 116.4 259.4 L 117.0 259.9 L 117.5 260.3 L 118.1 260.8 L 118.6 261.3 L 119.2 261.7 L 119.7 262.1 L 120.3 262.6 L 120.9 263.0 L 121.4 263.4 L 122.0 263.9 L 122.5 264.3 L 123.1 264.7 L 123.6 265.1 L 124.2 265.5 L 124.7 265.9 L 125.3 266.4 L 125.9 266.8 L 126.4 267.1 L 127.0 267.5 L 127.5 267.9 L 128.1 268.3 L 128.6 268.7 L 129.2 269.1 L 129.7 269.4 L 130.3 269.8 L 130.9 270.2 L 131.4 270.5 L 132.0 270.9 L 132.5 271.2 L 133.1 271.6 L 133.6 271.9 L 134.2 272.3 L 134.7 272.6 L 135.3 272.9 L 135.9 273.3 L 136.4 273.6 L 137.0 273.9 L 137.5 274.2 L 138.1 274.5 L 138.6 274.8 L 139.2 275.1 L 139.7 275.4 L 140.3 275.7 L 140.9 276.0 L 141.4 276.3 L 142.0 276.6 L 142.5 276.9 L 143.1 277.1 L 143.6 277.4 L 144.2 277.7 L 144.7 277.9 L 145.3 278.2 L 145.9 278.5 L 146.4 278.7 L 147.0 279.0 L 147.5 279.2 L 148.1 279.4 L 148.6 279.7 L 149.2 279.9 L 149.7 280.1 L 150.3 280.4 L 150.9 280.6 L 151.4 280.8 L 152.0 281.0 L 152.5 281.2 L 153.1 281.4 L 153.6 281.6 L 154.2 281.8 L 154.7 282.0 L 155.3 282.2 L 155.9 282.4 L 156.4 282.5 L 157.0 282.7 L 157.5 282.9 L 158.1 283.1 L 158.6 283.2 L 159.2 283.4 L 159.7 283.5 L 160.3 283.7 L 160.9 283.8 L 161.4 284.0 L 162.0 284.1 L 162.5 284.2 L 163.1 284.4 L 163.6 284.5 L 164.2 284.6 L 164.7 284.8 L 165.3 284.9 L 165.9 285.0 L 166.4 285.1 L 167.0 285.2 L 167.5 285.3 L 168.1 285.4 L 168.6 285.5 L 169.2 285.6 L 169.7 285.6 L 170.3 285.7 L 170.9 285.8 L 171.4 285.9 L 172.0 285.9 L 172.5 286.0 L 173.1 286.1 L 173.6 286.1 L 174.2 286.2 L 174.7 286.2 L 175.3 286.3 L 175.9 286.3 L 176.4 286.3 L 177.0 286.4 L 177.5 286.4 L 178.1 286.4 L 178.6 286.4 L 179.2 286.4 L 179.7 286.5 L 180.3 286.5 L 180.9 286.5 L 181.4 286.5 L 182.0 286.5 L 182.5 286.5 L 183.1 286.4 L 183.6 286.4 L 184.2 286.4 L 184.7 286.4 L 185.3 286.4 L 185.9 286.3 L 186.4 286.3 L 187.0 286.2 L 187.5 286.2 L 188.1 286.1 L 188.6 286.1 L 189.2 286.0 L 189.7 286.0 L 190.3 285.9 L 190.9 285.8 L 191.4 285.8 L 192.0 285.7 L 192.5 285.6 L 193.1 285.5 L 193.6 285.4 L 194.2 285.4 L 194.7 285.3 L 195.3 285.2 L 195.9 285.0 L 196.4 284.9 L 197.0 284.8 L 197.5 284.7 L 198.1 284.6 L 198.6 284.5 L 199.2 284.3 L 199.7 284.2 L 200.3 284.1 L 200.9 283.9 L 201.4 283.8 L 202.0 283.6 L 202.5 283.5 L 203.1 283.3 L 203.6 283.2 L 204.2 283.0 L 204.7 282.8 L 205.3 282.7 L 205.9 282.5 L 206.4 282.3 L 207.0 282.1 L 207.5 281.9 L 208.1 281.7 L 208.6 281.5 L 209.2 281.3 L 209.7 281.1 L 210.3 280.9 L 210.9 280.7 L 211.4 280.5 L 212.0 280.3 L 212.5 280.1 L 213.1 279.8 L 213.6 279.6 L 214.2 279.4 L 214.7 279.1 L 215.3 278.9 L 215.9 278.6 L 216.4 278.4 L 217.0 278.1 L 217.5 277.9 L 218.1 277.6 L 218.6 277.3 L 219.2 277.0 L 219.7 276.8 L 220.3 276.5 L 220.9 276.2 L 221.4 275.9 L 222.0 275.6 L 222.5 275.3 L 223.1 275.0 L 223.6 274.7 L 224.2 274.4 L 224.7 274.1 L 225.3 273.8 L 225.9 273.5 L 226.4 273.1 L 227.0 272.8 L 227.5 272.5 L 228.1 272.1 L 228.6 271.8 L 229.2 271.5 L 229.7 271.1 L 230.3 270.8 L 230.9 270.4 L 231.4 270.0 L 232.0 269.7 L 232.5 269.3 L 233.1 268.9 L 233.6 268.6 L 234.2 268.2 L 234.7 267.8 L 235.3 267.4 L 235.9 267.0 L 236.4 266.6 L 237.0 266.2 L 237.5 265.8 L 238.1 265.4 L 238.6 265.0 L 239.2 264.6 L 239.7 264.2 L 240.3 263.7 L 240.9 263.3 L 241.4 262.9 L 242.0 262.4 L 242.5 262.0 L 243.1 261.6 L 243.6 261.1 L 244.2 260.6 L 244.7 260.2 L 245.3 259.7 L 245.9 259.3 L 246.4 258.8 L 247.0 258.3 L 247.5 257.9 L 248.1 257.4 L 248.6 256.9 L 249.2 256.4 L 249.7 255.9 L 250.3 255.4 L 250.9 254.9 L 251.4 254.4 L 252.0 253.9 L 252.5 253.4 L 253.1 252.9 L 253.6 252.3 L 254.2 251.8 L 254.7 251.3 L 255.3 250.8 L 255.9 250.2 L 256.4 249.7 L 257.0 249.1 L 257.5 248.6 L 258.1 248.0 L 258.6 247.5 L 259.2 246.9 L 259.7 246.4 L 260.3 245.8 L 260.9 245.2 L 261.4 244.6 L 262.0 244.1 L 262.5 243.5 L 263.1 242.9 L 263.6 242.3 L 264.2 241.7 L 264.7 241.1 L 265.3 240.5 L 265.9 239.9 L 266.4 239.3 L 267.0 238.7 L 267.5 238.0 L 268.1 237.4 L 268.6 236.8 L 269.2 236.2 L 269.7 235.5 L 270.3 234.9 L 270.9 234.2 L 271.4 233.6 L 272.0 232.9 L 272.5 232.3 L 273.1 231.6 L 273.6 231.0 L 274.2 230.3 L 274.7 229.6 L 275.3 228.9 L 275.9 228.3 L 276.4 227.6 L 277.0 226.9 L 277.5 226.2 L 278.1 225.5 L 278.6 224.8 L 279.2 224.1 L 279.7 223.4 L 280.3 222.7 L 280.9 222.0 L 281.4 221.2 L 282.0 220.5 L 282.5 219.8 L 283.1 219.1 L 283.6 218.3 L 284.2 217.6 L 284.7 216.8 L 285.3 216.1 L 285.9 215.3 L 286.4 214.6 L 287.0 213.8 L 287.5 213.1 L 288.1 212.3 L 288.6 211.5 L 289.2 210.7 L 289.7 210.0 L 290.3 209.2 L 290.9 208.4 L 291.4 207.6 L 292.0 206.8 L 292.5 206.0 L 293.1 205.2 L 293.6 204.4 L 294.2 203.6 L 294.7 202.8 L 295.3 201.9 L 295.9 201.1 L 296.4 200.3 L 297.0 199.5 L 297.5 198.6 L 298.1 197.8 L 298.6 196.9 L 299.2 196.1 L 299.7 195.2 L 300.3 194.4 L 300.9 193.5 L 301.4 192.7 L 302.0 191.8 L 302.5 190.9 L 303.1 190.0 L 303.6 189.2 L 304.2 188.3 L 304.7 187.4 L 305.3 186.5 L 305.9 185.6 L 306.4 184.7 L 307.0 183.8 L 307.5 182.9 L 308.1 182.0 L 308.6 181.1 L 309.2 180.1 L 309.7 179.2 L 310.3 178.3 L 310.9 177.4 L 311.4 176.4 L 312.0 175.5 L 312.5 174.5 L 313.1 173.6 L 313.6 172.6 L 314.2 171.7 L 314.7 170.7 L 315.3 169.8 L 315.9 168.8 L 316.4 167.8 L 317.0 166.8 L 317.5 165.9 L 318.1 164.9 L 318.6 163.9 L 319.2 162.9 L 319.7 161.9 L 320.3 160.9 L 320.9 159.9 L 321.4 158.9 L 322.0 157.9 L 322.5 156.9 L 323.1 155.8 L 323.6 154.8 L 324.2 153.8 L 324.7 152.8 L 325.3 151.7 L 325.9 150.7 L 326.4 149.6 L 327.0 148.6 L 327.5 147.5 L 328.1 146.5 L 328.6 145.4 L 329.2 144.4 L 329.7 143.3 L 330.3 142.2 L 330.9 141.1 L 331.4 140.1 L 332.0 139.0 L 332.5 137.9" fill="none" stroke="#BA7517" stroke-width="2.4"/>
+      <text id="pclab" class="fig-el" x="184.7" y="219.9" fill="#BA7517" font-size="12" font-style="italic">y=(x-k)²</text>
+      <g id="ix0" class="fig-el"><circle cx="82.0" cy="223.0" r="3.6" fill="#1E7F5C"/></g>
+      <g id="ix1" class="fig-el"><circle cx="231.1" cy="270.2" r="3.6" fill="#1E7F5C"/></g>
+      <g id="ix2" class="fig-el"><circle cx="304.0" cy="188.5" r="3.6" fill="#1E7F5C"/></g>
+      <text id="ixlab" class="fig-el" x="47.7" y="73.3" fill="#1E7F5C" font-size="11">교점 3개 → 3실근 (예 k=2)</text>
+      </svg>
+    <span class="cs-taphint">탭하면 다음 ▸</span>
+  </div>
+  <div class="cs-stage" id="stage">
+    <section class="cs-panel" data-panel="0">
+      <div class="cs-prob"><span class="lead">문제</span><br>최고차항의 계수의 부호가 서로 다른 두 삼차다항식 $f(x),\ g(x)$가 $|f(x)|=\begin{cases}g(x)-4x-26 & (x\le a)\\ g(x)+2x^3-14x^2+12x+6 & (x\gt a)\end{cases}$ 를 만족시킬 때, 방정식 $f(x)+a(x-k)^2=0$이 서로 다른 세 실근을 갖도록 하는 <b>모든 자연수 $k$의 값의 합</b>을 구하시오. (단, $a$는 상수)</div>
+    </section>
+    <section class="cs-panel" data-panel="1"><div class="cs-head"><span class="cs-badge">1단계</span><span class="cs-title">|f|의 두 조각 → g 결정</span> <span class="cs-key">핵심</span><span class="cs-type">조건 활용</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$|f(x)|$는 한 함수인데 구간마다 다른 식 $P_1,\ P_2$로 주어졌어요. $|f|\ge0$이고 경계에서 이어지려면 두 식의 관계는?</div><div class="cs-body" data-step="1"><div class="cs-draw"><b>이 단계로 넘어가는 이유 — </b>$|f|$는 $f$ 또는 $-f$. 두 조각이 부호만 반대여야 하므로 $P_1=-P_2$. 여기서 $g(x)=-x^3+7x^2-4x+10$이 나온다.</div><div class="cs-math">$$P_1=-P_2\ \Rightarrow\ g(x)=-x^3+7x^2-4x+10$$</div><div class="cs-tags"><span class="cs-tag">절댓값 함수</span><span class="cs-tag">다항식 항등</span></div></div></section>
+<section class="cs-panel" data-panel="2"><div class="cs-head"><span class="cs-badge">2단계</span><span class="cs-title">f와 a 확정</span> <span class="cs-key">핵심</span><span class="cs-type">조건 활용</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$|f(x)|=\pm(x^3-7x^2+8x+16)$. $g$의 최고차 계수가 음수이니 $f$의 최고차 계수는? 그리고 부호가 갈리는 $x$가 $a$.</div><div class="cs-body" data-step="2"><div class="cs-draw"><b>이 단계로 넘어가는 이유 — </b>최고차 부호가 $g$와 반대이므로 $f$는 <b>양수 최고차</b> → $f(x)=x^3-7x^2+8x+16=(x+1)(x-4)^2$. 부호가 바뀌는 $x=-1$이 $a$.</div><div class="cs-math">$$f(x)=(x+1)(x-4)^2,\qquad a=-1$$</div><div class="cs-tags"><span class="cs-tag">최고차항 부호</span><span class="cs-tag">인수분해</span></div></div></section>
+<section class="cs-panel" data-panel="3"><div class="cs-head"><span class="cs-badge">3단계</span><span class="cs-title">방정식 정리 + 극값 조건</span><span class="cs-type">계산</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$a=-1$이니 방정식은 $f(x)-(x-k)^2=0$. $h(x)=f(x)-(x-k)^2$가 3실근을 가지려면 우선 극값이 있어야 해요.</div><div class="cs-body" data-step="3"><div class="cs-why">$h'(x)=3x^2-16x+(8+2k)=0$의 판별식 $D/4=64-3(8+2k)\gt0$.</div><div class="cs-math">$$k\lt\tfrac{20}{3}\ \Rightarrow\ k\ \text{는 6 이하의 자연수}$$</div><div class="cs-tags"><span class="cs-tag">삼차함수의 극값</span><span class="cs-tag">판별식</span></div></div></section>
+<section class="cs-panel" data-panel="4"><div class="cs-head"><span class="cs-badge">4단계</span><span class="cs-title">부호조사로 3실근 k 가려내기</span> <span class="cs-key">핵심</span><span class="cs-type">목표 역산</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$h(x)=0$이 서로 다른 세 실근 ⇔ 그래프가 $x$축을 세 번 가로지름. 특정 점에서 부호가 $-,+,-,+$로 번갈아야 해요.</div><div class="cs-body" data-step="4"><div class="cs-draw"><b>이 단계로 넘어가는 이유 — </b>$h(-1)=-(k+1)^2\lt0$ 항상. $h(1)=18-(1-k)^2\gt0$, $h(4)=-(4-k)^2\lt0$, $h(6)=28-(6-k)^2\gt0$이면 $(-1,1),(1,4),(4,6)$에 근 하나씩. 단 $k=4$는 $h(4)=0$(중근, 2실근), $k=6$은 극대 $h(2)=-4\lt0$(1실근)이라 제외.</div><div class="cs-math">$$k=1,2,3,5\ (\,k=4,\,6\ \text{제외}\,)$$</div><div class="cs-tags"><span class="cs-tag">사이값 정리</span><span class="cs-tag">실근의 개수</span></div></div></section>
+<section class="cs-panel" data-panel="5"><div class="cs-head"><span class="cs-badge">5단계</span><span class="cs-title">자연수 k의 합</span><span class="cs-type">계산</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>조건을 만족하는 자연수 $k$를 모두 더하면?</div><div class="cs-body" data-step="5"><div class="cs-math">$$1+2+3+5=11$$</div><div class="cs-tags"><span class="cs-tag">합 계산</span></div><div class="cs-ans">정답 &nbsp; 모든 자연수 k의 합 = 11</div></div></section>
+  </div>
+  <nav class="cs-nav">
+    <button class="cs-prev" id="prevBtn">이전</button>
+    <div class="cs-mid"><div class="cs-dots"><span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span></div><div class="cs-prog" id="prog"></div></div>
+    <button class="cs-next" id="nextBtn">풀이 시작 ▸</button>
+  </nav>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script>
+(function(){
+  var T=5, figMap={"fc": 2, "fclab": 2, "r1": 2, "r4": 2, "alab": 2, "pc": 3, "pclab": 3, "ix0": 4, "ix1": 4, "ix2": 4, "ixlab": 4};
+  // views: 0=문제, 이후 단계마다 (hint, show) 2개
+  var views=[{step:0,phase:'p'}];
+  for(var k=1;k<=T;k++){views.push({step:k,phase:'hint'});views.push({step:k,phase:'show'});}
+  var vi=0;
+  var panels={}; document.querySelectorAll('.cs-panel').forEach(function(p){panels[+p.dataset.panel]=p;});
+  function figReveal(n){
+    Object.keys(figMap).forEach(function(id){var el=document.getElementById(id);
+      if(el) el.classList.toggle('on', n>=figMap[id]);});
+  }
+  function render(){
+    var v=views[vi];
+    // 패널 표시
+    Object.keys(panels).forEach(function(k){panels[k].classList.toggle('active', (+k)===v.step);});
+    // body 공개 여부
+    var body=panels[v.step] ? panels[v.step].querySelector('.cs-body') : null;
+    if(body) body.classList.toggle('show', v.phase==='show');
+    // 도형 reveal 수
+    var rc = v.step===0 ? 0 : (v.phase==='show' ? v.step : v.step-1);
+    figReveal(rc);
+    // 버튼
+    var nb=document.getElementById('nextBtn'), pb=document.getElementById('prevBtn');
+    pb.disabled = (vi===0);
+    nb.classList.remove('reveal');
+    if(v.step===0){ nb.textContent='풀이 시작 ▸'; nb.disabled=false; }
+    else if(v.phase==='hint'){ nb.textContent='풀이 보기 ▾'; nb.classList.add('reveal'); nb.disabled=false; }
+    else if(v.step<T){ nb.textContent='다음 단계 ▸'; nb.disabled=false; }
+    else { nb.textContent='처음부터'; nb.disabled=false; }
+    // 진행도
+    var done = v.step===0?0:(v.phase==='show'?v.step:v.step-1);
+    document.querySelectorAll('.cs-dot').forEach(function(d,i){d.classList.toggle('fill', i<done);});
+    document.getElementById('prog').textContent = v.step===0 ? ('문제 · 총 '+T+'단계') : (v.step+' / '+T+'단계');
+    // 새 패널은 위로 스크롤
+    document.getElementById('stage').scrollTop=0;
+  }
+  function next(){
+    var v=views[vi];
+    if(v.step===T && v.phase==='show'){ vi=0; render(); return; }   // 처음부터
+    if(vi<views.length-1){ vi++; render(); }
+  }
+  function prev(){ if(vi>0){ vi--; render(); } }
+  document.getElementById('nextBtn').onclick=next;
+  document.getElementById('prevBtn').onclick=prev;
+  document.getElementById('figtap').onclick=next;
+  document.addEventListener('keydown',function(e){
+    if(e.metaKey||e.ctrlKey||e.altKey)return;
+    if(['ArrowLeft','ArrowUp','Backspace','PageUp'].indexOf(e.key)>=0){e.preventDefault();prev();}
+    else if([' ','ArrowRight','ArrowDown','Enter','PageDown'].indexOf(e.key)>=0){e.preventDefault();next();}
+  });
+  render();
+  (function tex(){
+    if(!window.renderMathInElement)return setTimeout(tex,60);
+    renderMathInElement(document.getElementById('app'),{delimiters:[
+      {left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+  })();
+})();
+</script>
+</body>
+</html>

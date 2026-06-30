@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>코스터디 단계별 풀이</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<style>
+:root{--tx:#222;--mut:#666;--faint:#9a988f;--line:#e6e5e1;--surf:#f6f5f1;--pri:#185FA5;
+ --info:#E6F1FB;--infotx:#0C447C;--warnbg:#FAEEDA;--warntx:#854F0B;--okbg:#E1F5EE;--oktx:#0F6E56;--bd:#dcdbd6}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic","Apple SD Gothic Neo",sans-serif;color:var(--tx);background:#fff}
+.cs-app{display:flex;flex-direction:column;height:100vh;height:100dvh;max-width:680px;margin:0 auto;border-left:1px solid var(--line);border-right:1px solid var(--line)}
+/* 헤더 */
+.cs-doc{flex:0 0 auto;font-size:12px;color:var(--faint);padding:9px 14px;border-bottom:1px solid var(--line);
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cs-doc b{color:var(--mut);font-weight:600}
+/* 도형: 상단 고정 */
+.cs-figwrap{flex:0 0 auto;height:38vh;min-height:200px;padding:8px;display:flex;align-items:center;justify-content:center;
+ background:#fff;border-bottom:1px solid var(--line);position:relative;cursor:pointer}
+.cs-figwrap svg{width:100%;height:100%}
+.cs-taphint{position:absolute;right:10px;bottom:8px;font-size:11px;color:var(--faint);background:#fff;
+ padding:2px 8px;border-radius:10px;border:1px solid var(--line);opacity:.85}
+.fig-el{opacity:0;transition:opacity .4s ease}
+.fig-el.on{opacity:1}
+.dl{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .7s ease,opacity .25s ease}
+.dl.on{stroke-dashoffset:0}
+/* 본문(스크롤 영역) */
+.cs-stage{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 16px 18px}
+.cs-panel{display:none;animation:fade .25s ease}
+.cs-panel.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* 문제 패널 */
+.cs-prob{font-size:15.5px;line-height:1.75;color:#333}
+.cs-prob .lead{display:inline-block;font-size:12px;font-weight:600;color:var(--infotx);background:var(--info);
+ padding:3px 10px;border-radius:9px;margin-bottom:10px}
+/* 단계 패널 */
+.cs-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.cs-badge{font-size:12px;font-weight:600;background:var(--info);color:var(--infotx);padding:3px 10px;border-radius:9px}
+.cs-title{font-size:16px;font-weight:600}
+.cs-key{font-size:11px;font-weight:600;background:#FAEEDA;color:#854F0B;padding:2px 8px;border-radius:9px}
+.cs-type{font-size:11px;color:var(--faint);margin-left:auto}
+.cs-hint{font-size:14.5px;color:#4a4a44;background:var(--surf);border-radius:11px;padding:12px 14px;line-height:1.65}
+.cs-hint-tag{display:block;font-size:12px;font-weight:600;color:var(--warntx);margin-bottom:5px}
+.cs-body{display:none;margin-top:12px}
+.cs-body.show{display:block;animation:fade .25s ease}
+.cs-draw{font-size:14px;color:var(--warntx);background:var(--warnbg);padding:11px 13px;border-radius:11px;margin-bottom:10px;line-height:1.65}
+.cs-why{font-size:14px;color:var(--mut);line-height:1.65;margin:6px 0}
+.cs-math{margin:8px 0;font-size:1.02em;overflow-x:auto}
+.cs-tags{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
+.cs-tag{font-size:11px;color:var(--mut);background:var(--surf);padding:3px 9px;border-radius:9px}
+.cs-ans{font-size:16px;font-weight:600;color:var(--oktx);background:var(--okbg);padding:11px 14px;border-radius:11px;margin-top:12px;text-align:center}
+/* 하단 고정 내비 */
+.cs-nav{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:10px 14px;
+ border-top:1px solid var(--bd);background:#fff;box-shadow:0 -2px 10px rgba(0,0,0,.04)}
+.cs-prev{flex:0 0 auto;font-size:14px;font-family:inherit;background:#fff;border:1px solid var(--bd);border-radius:10px;
+ padding:11px 14px;color:var(--mut);cursor:pointer}
+.cs-prev:disabled{opacity:.4}
+.cs-mid{flex:1 1 auto;text-align:center}
+.cs-dots{display:flex;gap:5px;justify-content:center;margin-bottom:3px}
+.cs-dot{width:7px;height:7px;border-radius:50%;background:#d6d5cf}
+.cs-dot.fill{background:var(--pri)}
+.cs-prog{font-size:11px;color:var(--faint)}
+.cs-next{flex:0 0 auto;font-size:15px;font-weight:600;font-family:inherit;background:var(--pri);border:none;border-radius:10px;
+ padding:12px 18px;color:#fff;cursor:pointer;min-width:120px}
+.cs-next.reveal{background:#fff;color:var(--infotx);border:1px solid #9cc2e8}
+.cs-next:disabled{background:#cfd8e2;color:#fff}
+.katex{font-size:1.0em}
+.katex-display{margin:.5em 0}
+</style>
+</head>
+<body>
+<div class="cs-app" id="app">
+  <div class="cs-doc"><b>13. 분모의 극과 곱함수의 미분가능 — f(0) 구하기</b> &middot; COSTUDY 수II · 미분가능성</div>
+  <div class="cs-figwrap" id="figtap">
+    <svg viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet">
+      <title>f(x)=(x-4)^2(x+2) 의 개형 (극대 f(0)=32)</title>
+      <line x1="44.0" y1="261.6" x2="344.0" y2="261.6" stroke="#888780" stroke-width="1.6"/>
+      <line x1="151.1" y1="322.0" x2="151.1" y2="20.0" stroke="#888780" stroke-width="1.6"/>
+      <text x="338.0" y="277.6" fill="#888780" font-size="13" font-style="italic">x</text>
+      <text x="75.7" y="277.6" fill="#9A988F" font-size="11">-2</text>
+      <text x="290.0" y="277.6" fill="#9A988F" font-size="11">4</text>
+      <line id="asym" class="fig-el" x1="294.0" y1="322.0" x2="294.0" y2="20.0" stroke="#993C1D" stroke-width="1.4" stroke-dasharray="5 4"/>
+      <g id="p4" class="fig-el"><circle cx="294.0" cy="261.6" r="3.6" fill="#993C1D"/></g>
+      <text id="p4lab" class="fig-el" x="290.0" y="291.6" fill="#993C1D" font-size="11">g는 x=4에서 발산</text>
+      <text id="f4lab" class="fig-el" x="300.0" y="253.60000000000002" fill="#993C1D" font-size="11">→ f(4)=0</text>
+      <text id="dbl" class="fig-el" x="47.6" y="181.1" fill="#BA7517" font-size="11">연속 → x=4 중근 → (x-4)²</text>
+      <path id="fc" class="fig-el" d="M 71.5 321.5 L 72.0 317.3 L 72.6 313.2 L 73.1 309.1 L 73.6 305.0 L 74.2 301.0 L 74.7 297.0 L 75.3 293.1 L 75.8 289.2 L 76.3 285.3 L 76.9 281.4 L 77.4 277.6 L 77.9 273.9 L 78.5 270.2 L 79.0 266.5 L 79.5 262.8 L 80.1 259.2 L 80.6 255.6 L 81.1 252.1 L 81.7 248.6 L 82.2 245.1 L 82.8 241.6 L 83.3 238.2 L 83.8 234.9 L 84.4 231.5 L 84.9 228.2 L 85.4 225.0 L 86.0 221.8 L 86.5 218.6 L 87.0 215.4 L 87.6 212.3 L 88.1 209.2 L 88.6 206.1 L 89.2 203.1 L 89.7 200.1 L 90.3 197.2 L 90.8 194.2 L 91.3 191.4 L 91.9 188.5 L 92.4 185.7 L 92.9 182.9 L 93.5 180.1 L 94.0 177.4 L 94.5 174.7 L 95.1 172.1 L 95.6 169.4 L 96.1 166.9 L 96.7 164.3 L 97.2 161.8 L 97.7 159.3 L 98.3 156.8 L 98.8 154.4 L 99.4 152.0 L 99.9 149.6 L 100.4 147.3 L 101.0 144.9 L 101.5 142.7 L 102.0 140.4 L 102.6 138.2 L 103.1 136.0 L 103.6 133.9 L 104.2 131.7 L 104.7 129.6 L 105.2 127.6 L 105.8 125.5 L 106.3 123.5 L 106.9 121.6 L 107.4 119.6 L 107.9 117.7 L 108.5 115.8 L 109.0 113.9 L 109.5 112.1 L 110.1 110.3 L 110.6 108.5 L 111.1 106.8 L 111.7 105.1 L 112.2 103.4 L 112.7 101.7 L 113.3 100.1 L 113.8 98.5 L 114.4 96.9 L 114.9 95.3 L 115.4 93.8 L 116.0 92.3 L 116.5 90.9 L 117.0 89.4 L 117.6 88.0 L 118.1 86.6 L 118.6 85.2 L 119.2 83.9 L 119.7 82.6 L 120.2 81.3 L 120.8 80.1 L 121.3 78.8 L 121.9 77.6 L 122.4 76.4 L 122.9 75.3 L 123.5 74.2 L 124.0 73.0 L 124.5 72.0 L 125.1 70.9 L 125.6 69.9 L 126.1 68.9 L 126.7 67.9 L 127.2 66.9 L 127.7 66.0 L 128.3 65.1 L 128.8 64.2 L 129.4 63.4 L 129.9 62.5 L 130.4 61.7 L 131.0 60.9 L 131.5 60.1 L 132.0 59.4 L 132.6 58.7 L 133.1 58.0 L 133.6 57.3 L 134.2 56.6 L 134.7 56.0 L 135.2 55.4 L 135.8 54.8 L 136.3 54.3 L 136.9 53.7 L 137.4 53.2 L 137.9 52.7 L 138.5 52.2 L 139.0 51.8 L 139.5 51.3 L 140.1 50.9 L 140.6 50.5 L 141.1 50.1 L 141.7 49.8 L 142.2 49.5 L 142.7 49.2 L 143.3 48.9 L 143.8 48.6 L 144.4 48.3 L 144.9 48.1 L 145.4 47.9 L 146.0 47.7 L 146.5 47.5 L 147.0 47.4 L 147.6 47.3 L 148.1 47.1 L 148.6 47.0 L 149.2 47.0 L 149.7 46.9 L 150.2 46.9 L 150.8 46.8 L 151.3 46.8 L 151.9 46.9 L 152.4 46.9 L 152.9 46.9 L 153.5 47.0 L 154.0 47.1 L 154.5 47.2 L 155.1 47.3 L 155.6 47.5 L 156.1 47.6 L 156.7 47.8 L 157.2 48.0 L 157.7 48.2 L 158.3 48.4 L 158.8 48.6 L 159.4 48.9 L 159.9 49.2 L 160.4 49.4 L 161.0 49.8 L 161.5 50.1 L 162.0 50.4 L 162.6 50.7 L 163.1 51.1 L 163.6 51.5 L 164.2 51.9 L 164.7 52.3 L 165.2 52.7 L 165.8 53.2 L 166.3 53.6 L 166.9 54.1 L 167.4 54.5 L 167.9 55.0 L 168.5 55.6 L 169.0 56.1 L 169.5 56.6 L 170.1 57.2 L 170.6 57.7 L 171.1 58.3 L 171.7 58.9 L 172.2 59.5 L 172.7 60.1 L 173.3 60.7 L 173.8 61.4 L 174.4 62.0 L 174.9 62.7 L 175.4 63.4 L 176.0 64.0 L 176.5 64.7 L 177.0 65.5 L 177.6 66.2 L 178.1 66.9 L 178.6 67.7 L 179.2 68.4 L 179.7 69.2 L 180.2 70.0 L 180.8 70.7 L 181.3 71.5 L 181.9 72.4 L 182.4 73.2 L 182.9 74.0 L 183.5 74.8 L 184.0 75.7 L 184.5 76.6 L 185.1 77.4 L 185.6 78.3 L 186.1 79.2 L 186.7 80.1 L 187.2 81.0 L 187.7 81.9 L 188.3 82.8 L 188.8 83.8 L 189.4 84.7 L 189.9 85.7 L 190.4 86.6 L 191.0 87.6 L 191.5 88.6 L 192.0 89.6 L 192.6 90.6 L 193.1 91.6 L 193.6 92.6 L 194.2 93.6 L 194.7 94.6 L 195.2 95.6 L 195.8 96.7 L 196.3 97.7 L 196.9 98.7 L 197.4 99.8 L 197.9 100.9 L 198.5 101.9 L 199.0 103.0 L 199.5 104.1 L 200.1 105.2 L 200.6 106.3 L 201.1 107.4 L 201.7 108.5 L 202.2 109.6 L 202.7 110.7 L 203.3 111.8 L 203.8 112.9 L 204.4 114.0 L 204.9 115.2 L 205.4 116.3 L 206.0 117.4 L 206.5 118.6 L 207.0 119.7 L 207.6 120.9 L 208.1 122.1 L 208.6 123.2 L 209.2 124.4 L 209.7 125.5 L 210.2 126.7 L 210.8 127.9 L 211.3 129.1 L 211.9 130.2 L 212.4 131.4 L 212.9 132.6 L 213.5 133.8 L 214.0 135.0 L 214.5 136.2 L 215.1 137.4 L 215.6 138.6 L 216.1 139.8 L 216.7 141.0 L 217.2 142.2 L 217.7 143.4 L 218.3 144.6 L 218.8 145.8 L 219.4 147.0 L 219.9 148.2 L 220.4 149.4 L 221.0 150.6 L 221.5 151.8 L 222.0 153.0 L 222.6 154.2 L 223.1 155.4 L 223.6 156.6 L 224.2 157.8 L 224.7 159.1 L 225.2 160.3 L 225.8 161.5 L 226.3 162.7 L 226.9 163.9 L 227.4 165.1 L 227.9 166.3 L 228.5 167.5 L 229.0 168.7 L 229.5 169.9 L 230.1 171.1 L 230.6 172.3 L 231.1 173.5 L 231.7 174.6 L 232.2 175.8 L 232.7 177.0 L 233.3 178.2 L 233.8 179.4 L 234.4 180.6 L 234.9 181.7 L 235.4 182.9 L 236.0 184.1 L 236.5 185.2 L 237.0 186.4 L 237.6 187.5 L 238.1 188.7 L 238.6 189.9 L 239.2 191.0 L 239.7 192.1 L 240.2 193.3 L 240.8 194.4 L 241.3 195.5 L 241.9 196.7 L 242.4 197.8 L 242.9 198.9 L 243.5 200.0 L 244.0 201.1 L 244.5 202.2 L 245.1 203.3 L 245.6 204.4 L 246.1 205.4 L 246.7 206.5 L 247.2 207.6 L 247.7 208.6 L 248.3 209.7 L 248.8 210.7 L 249.4 211.8 L 249.9 212.8 L 250.4 213.9 L 251.0 214.9 L 251.5 215.9 L 252.0 216.9 L 252.6 217.9 L 253.1 218.9 L 253.6 219.9 L 254.2 220.8 L 254.7 221.8 L 255.2 222.8 L 255.8 223.7 L 256.3 224.7 L 256.9 225.6 L 257.4 226.5 L 257.9 227.4 L 258.5 228.3 L 259.0 229.2 L 259.5 230.1 L 260.1 231.0 L 260.6 231.9 L 261.1 232.7 L 261.7 233.6 L 262.2 234.4 L 262.8 235.3 L 263.3 236.1 L 263.8 236.9 L 264.4 237.7 L 264.9 238.5 L 265.4 239.3 L 266.0 240.0 L 266.5 240.8 L 267.0 241.5 L 267.6 242.3 L 268.1 243.0 L 268.6 243.7 L 269.2 244.4 L 269.7 245.1 L 270.3 245.8 L 270.8 246.4 L 271.3 247.1 L 271.9 247.7 L 272.4 248.3 L 272.9 249.0 L 273.5 249.6 L 274.0 250.2 L 274.5 250.7 L 275.1 251.3 L 275.6 251.8 L 276.1 252.4 L 276.7 252.9 L 277.2 253.4 L 277.8 253.9 L 278.3 254.4 L 278.8 254.8 L 279.4 255.3 L 279.9 255.7 L 280.4 256.2 L 281.0 256.6 L 281.5 257.0 L 282.0 257.3 L 282.6 257.7 L 283.1 258.0 L 283.6 258.4 L 284.2 258.7 L 284.7 259.0 L 285.3 259.3 L 285.8 259.6 L 286.3 259.8 L 286.9 260.0 L 287.4 260.3 L 287.9 260.5 L 288.5 260.7 L 289.0 260.8 L 289.5 261.0 L 290.1 261.1 L 290.6 261.2 L 291.1 261.3 L 291.7 261.4 L 292.2 261.5 L 292.8 261.6 L 293.3 261.6 L 293.8 261.6 L 294.4 261.6 L 294.9 261.6 L 295.4 261.5 L 296.0 261.5 L 296.5 261.4 L 297.0 261.3 L 297.6 261.2 L 298.1 261.1 L 298.6 260.9 L 299.2 260.7 L 299.7 260.5 L 300.3 260.3 L 300.8 260.1 L 301.3 259.8 L 301.9 259.6 L 302.4 259.3 L 302.9 259.0 L 303.5 258.6 L 304.0 258.3 L 304.5 257.9 L 305.1 257.5 L 305.6 257.1 L 306.1 256.7 L 306.7 256.2 L 307.2 255.7 L 307.8 255.2 L 308.3 254.7 L 308.8 254.2 L 309.4 253.6 L 309.9 253.0 L 310.4 252.4 L 311.0 251.8 L 311.5 251.1 L 312.0 250.5 L 312.6 249.8 L 313.1 249.0 L 313.6 248.3 L 314.2 247.5 L 314.7 246.7 L 315.2 245.9 L 315.8 245.1 L 316.3 244.2 L 316.9 243.3 L 317.4 242.4 L 317.9 241.5 L 318.5 240.5 L 319.0 239.6 L 319.5 238.6 L 320.1 237.5 L 320.6 236.5 L 321.1 235.4 L 321.7 234.3 L 322.2 233.2 L 322.7 232.0 L 323.3 230.8 L 323.8 229.6 L 324.4 228.4 L 324.9 227.1 L 325.4 225.8 L 326.0 224.5 L 326.5 223.2 L 327.0 221.8 L 327.6 220.4 L 328.1 219.0 L 328.6 217.6 L 329.2 216.1 L 329.7 214.6 L 330.2 213.1 L 330.8 211.5 L 331.3 210.0 L 331.9 208.4 L 332.4 206.7 L 332.9 205.1" fill="none" stroke="#185FA5" stroke-width="3"/>
+      <text id="fclab" class="fig-el" x="204.7" y="127.4" fill="#185FA5" font-size="12" font-style="italic">f(x)=(x-4)²(x+2)</text>
+      <g id="pmax" class="fig-el"><circle cx="151.1" cy="46.8" r="3.8" fill="#1E7F5C"/></g>
+      <g id="pm2" class="fig-el"><circle cx="79.7" cy="261.6" r="3.2" fill="#185FA5"/></g>
+      <text id="f0lab" class="fig-el" x="157.1" y="42.8" fill="#1E7F5C" font-size="12">f(0)=32 (극대)</text>
+      </svg>
+    <span class="cs-taphint">탭하면 다음 ▸</span>
+  </div>
+  <div class="cs-stage" id="stage">
+    <section class="cs-panel" data-panel="0">
+      <div class="cs-prob"><span class="lead">문제</span><br>최고차항의 계수가 $1$인 삼차함수 $f(x)$와 $g(x)=\begin{cases}\dfrac{1}{x-4} & (x\ne4)\\ 2 & (x=4)\end{cases}$ 에 대하여 $h(x)=f(x)g(x)$라 하자. $h(x)$는 실수 전체에서 미분가능하고 $h'(4)=6$이다. <b>$f(0)$</b>의 값을 구하시오.</div>
+    </section>
+    <section class="cs-panel" data-panel="1"><div class="cs-head"><span class="cs-badge">1단계</span><span class="cs-title">미분가능 → f(4)=0 (극 상쇄)</span> <span class="cs-key">핵심</span><span class="cs-type">조건 활용</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$g$는 $x=4$에서 $\dfrac{1}{x-4}$이라 발산해요. 곱 $h=f\,g$가 $x=4$에서 미분가능(연속)하려면 $f$가 그 발산을 어떻게 눌러야 할까요?</div><div class="cs-body" data-step="1"><div class="cs-draw"><b>이 단계로 넘어가는 이유 — </b>$x=4$에서 $g$의 극 $\dfrac{1}{x-4}$을 상쇄하려면 $f(4)=0$이어야 한다. 그래서 $f(x)=(x-4)(x^2+ax+b)$.</div><div class="cs-math">$$f(4)=0,\qquad f(x)=(x-4)(x^2+ax+b)$$</div><div class="cs-tags"><span class="cs-tag">곱함수의 미분가능</span><span class="cs-tag">극(분모 0) 상쇄</span></div></div></section>
+<section class="cs-panel" data-panel="2"><div class="cs-head"><span class="cs-badge">2단계</span><span class="cs-title">연속 조건 → x=4 도 중근</span> <span class="cs-key">핵심</span><span class="cs-type">계산</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$f=(x-4)(x^2+ax+b)$면 $x\ne4$에서 $h(x)=x^2+ax+b$. 그런데 $h(4)=f(4)g(4)=0$이에요. 연속이려면?</div><div class="cs-body" data-step="2"><div class="cs-why">$\displaystyle\lim_{x\to4}h=16+4a+b$ 가 $h(4)=0$과 같아야 한다.</div><div class="cs-math">$$16+4a+b=0\ \Rightarrow\ b=-4a-16$$</div><div class="cs-math">$$(\,x=4\,\text{도}\ x^2+ax+b\,\text{의 근} \Rightarrow f\,\text{는}\ (x-4)^2\,\text{인수}\,)$$</div><div class="cs-tags"><span class="cs-tag">함수의 연속</span></div></div></section>
+<section class="cs-panel" data-panel="3"><div class="cs-head"><span class="cs-badge">3단계</span><span class="cs-title">h&#x27;(4)=6 으로 a, b 결정</span><span class="cs-type">계산</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>이제 $h(x)=x^2+ax+b$는 매끄러운 이차식이에요. $h'(4)=6$을 쓰면?</div><div class="cs-body" data-step="3"><div class="cs-math">$$h'(x)=2x+a,\quad h'(4)=8+a=6\ \Rightarrow\ a=-2,\ b=-8$$</div><div class="cs-tags"><span class="cs-tag">이차함수의 미분</span></div></div></section>
+<section class="cs-panel" data-panel="4"><div class="cs-head"><span class="cs-badge">4단계</span><span class="cs-title">f(0) 계산</span><span class="cs-type">계산</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$f$가 완전히 정해졌어요. $f(x)$를 인수분해하고 $f(0)$을 구하면?</div><div class="cs-body" data-step="4"><div class="cs-math">$$f(x)=(x-4)(x^2-2x-8)=(x-4)^2(x+2)$$</div><div class="cs-math">$$f(0)=(-4)^2\cdot2=32$$</div><div class="cs-tags"><span class="cs-tag">인수분해</span><span class="cs-tag">함수값</span></div><div class="cs-ans">정답 &nbsp; f(0) = 32</div></div></section>
+  </div>
+  <nav class="cs-nav">
+    <button class="cs-prev" id="prevBtn">이전</button>
+    <div class="cs-mid"><div class="cs-dots"><span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span></div><div class="cs-prog" id="prog"></div></div>
+    <button class="cs-next" id="nextBtn">풀이 시작 ▸</button>
+  </nav>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script>
+(function(){
+  var T=4, figMap={"asym": 1, "p4": 1, "p4lab": 1, "f4lab": 1, "dbl": 2, "fc": 4, "fclab": 4, "pmax": 4, "pm2": 4, "f0lab": 4};
+  // views: 0=문제, 이후 단계마다 (hint, show) 2개
+  var views=[{step:0,phase:'p'}];
+  for(var k=1;k<=T;k++){views.push({step:k,phase:'hint'});views.push({step:k,phase:'show'});}
+  var vi=0;
+  var panels={}; document.querySelectorAll('.cs-panel').forEach(function(p){panels[+p.dataset.panel]=p;});
+  function figReveal(n){
+    Object.keys(figMap).forEach(function(id){var el=document.getElementById(id);
+      if(el) el.classList.toggle('on', n>=figMap[id]);});
+  }
+  function render(){
+    var v=views[vi];
+    // 패널 표시
+    Object.keys(panels).forEach(function(k){panels[k].classList.toggle('active', (+k)===v.step);});
+    // body 공개 여부
+    var body=panels[v.step] ? panels[v.step].querySelector('.cs-body') : null;
+    if(body) body.classList.toggle('show', v.phase==='show');
+    // 도형 reveal 수
+    var rc = v.step===0 ? 0 : (v.phase==='show' ? v.step : v.step-1);
+    figReveal(rc);
+    // 버튼
+    var nb=document.getElementById('nextBtn'), pb=document.getElementById('prevBtn');
+    pb.disabled = (vi===0);
+    nb.classList.remove('reveal');
+    if(v.step===0){ nb.textContent='풀이 시작 ▸'; nb.disabled=false; }
+    else if(v.phase==='hint'){ nb.textContent='풀이 보기 ▾'; nb.classList.add('reveal'); nb.disabled=false; }
+    else if(v.step<T){ nb.textContent='다음 단계 ▸'; nb.disabled=false; }
+    else { nb.textContent='처음부터'; nb.disabled=false; }
+    // 진행도
+    var done = v.step===0?0:(v.phase==='show'?v.step:v.step-1);
+    document.querySelectorAll('.cs-dot').forEach(function(d,i){d.classList.toggle('fill', i<done);});
+    document.getElementById('prog').textContent = v.step===0 ? ('문제 · 총 '+T+'단계') : (v.step+' / '+T+'단계');
+    // 새 패널은 위로 스크롤
+    document.getElementById('stage').scrollTop=0;
+  }
+  function next(){
+    var v=views[vi];
+    if(v.step===T && v.phase==='show'){ vi=0; render(); return; }   // 처음부터
+    if(vi<views.length-1){ vi++; render(); }
+  }
+  function prev(){ if(vi>0){ vi--; render(); } }
+  document.getElementById('nextBtn').onclick=next;
+  document.getElementById('prevBtn').onclick=prev;
+  document.getElementById('figtap').onclick=next;
+  document.addEventListener('keydown',function(e){
+    if(e.metaKey||e.ctrlKey||e.altKey)return;
+    if(['ArrowLeft','ArrowUp','Backspace','PageUp'].indexOf(e.key)>=0){e.preventDefault();prev();}
+    else if([' ','ArrowRight','ArrowDown','Enter','PageDown'].indexOf(e.key)>=0){e.preventDefault();next();}
+  });
+  render();
+  (function tex(){
+    if(!window.renderMathInElement)return setTimeout(tex,60);
+    renderMathInElement(document.getElementById('app'),{delimiters:[
+      {left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+  })();
+})();
+</script>
+</body>
+</html>

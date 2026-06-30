@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>코스터디 단계별 풀이</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<style>
+:root{--tx:#222;--mut:#666;--faint:#9a988f;--line:#e6e5e1;--surf:#f6f5f1;--pri:#185FA5;
+ --info:#E6F1FB;--infotx:#0C447C;--warnbg:#FAEEDA;--warntx:#854F0B;--okbg:#E1F5EE;--oktx:#0F6E56;--bd:#dcdbd6}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic","Apple SD Gothic Neo",sans-serif;color:var(--tx);background:#fff}
+.cs-app{display:flex;flex-direction:column;height:100vh;height:100dvh;max-width:680px;margin:0 auto;border-left:1px solid var(--line);border-right:1px solid var(--line)}
+/* 헤더 */
+.cs-doc{flex:0 0 auto;font-size:12px;color:var(--faint);padding:9px 14px;border-bottom:1px solid var(--line);
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cs-doc b{color:var(--mut);font-weight:600}
+/* 도형: 상단 고정 */
+.cs-figwrap{flex:0 0 auto;height:38vh;min-height:200px;padding:8px;display:flex;align-items:center;justify-content:center;
+ background:#fff;border-bottom:1px solid var(--line);position:relative;cursor:pointer}
+.cs-figwrap svg{width:100%;height:100%}
+.cs-taphint{position:absolute;right:10px;bottom:8px;font-size:11px;color:var(--faint);background:#fff;
+ padding:2px 8px;border-radius:10px;border:1px solid var(--line);opacity:.85}
+.fig-el{opacity:0;transition:opacity .4s ease}
+.fig-el.on{opacity:1}
+.dl{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .7s ease,opacity .25s ease}
+.dl.on{stroke-dashoffset:0}
+/* 본문(스크롤 영역) */
+.cs-stage{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 16px 18px}
+.cs-panel{display:none;animation:fade .25s ease}
+.cs-panel.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* 문제 패널 */
+.cs-prob{font-size:15.5px;line-height:1.75;color:#333}
+.cs-prob .lead{display:inline-block;font-size:12px;font-weight:600;color:var(--infotx);background:var(--info);
+ padding:3px 10px;border-radius:9px;margin-bottom:10px}
+/* 단계 패널 */
+.cs-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.cs-badge{font-size:12px;font-weight:600;background:var(--info);color:var(--infotx);padding:3px 10px;border-radius:9px}
+.cs-title{font-size:16px;font-weight:600}
+.cs-key{font-size:11px;font-weight:600;background:#FAEEDA;color:#854F0B;padding:2px 8px;border-radius:9px}
+.cs-type{font-size:11px;color:var(--faint);margin-left:auto}
+.cs-hint{font-size:14.5px;color:#4a4a44;background:var(--surf);border-radius:11px;padding:12px 14px;line-height:1.65}
+.cs-hint-tag{display:block;font-size:12px;font-weight:600;color:var(--warntx);margin-bottom:5px}
+.cs-body{display:none;margin-top:12px}
+.cs-body.show{display:block;animation:fade .25s ease}
+.cs-draw{font-size:14px;color:var(--warntx);background:var(--warnbg);padding:11px 13px;border-radius:11px;margin-bottom:10px;line-height:1.65}
+.cs-why{font-size:14px;color:var(--mut);line-height:1.65;margin:6px 0}
+.cs-math{margin:8px 0;font-size:1.02em;overflow-x:auto}
+.cs-tags{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
+.cs-tag{font-size:11px;color:var(--mut);background:var(--surf);padding:3px 9px;border-radius:9px}
+.cs-ans{font-size:16px;font-weight:600;color:var(--oktx);background:var(--okbg);padding:11px 14px;border-radius:11px;margin-top:12px;text-align:center}
+/* 하단 고정 내비 */
+.cs-nav{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:10px 14px;
+ border-top:1px solid var(--bd);background:#fff;box-shadow:0 -2px 10px rgba(0,0,0,.04)}
+.cs-prev{flex:0 0 auto;font-size:14px;font-family:inherit;background:#fff;border:1px solid var(--bd);border-radius:10px;
+ padding:11px 14px;color:var(--mut);cursor:pointer}
+.cs-prev:disabled{opacity:.4}
+.cs-mid{flex:1 1 auto;text-align:center}
+.cs-dots{display:flex;gap:5px;justify-content:center;margin-bottom:3px}
+.cs-dot{width:7px;height:7px;border-radius:50%;background:#d6d5cf}
+.cs-dot.fill{background:var(--pri)}
+.cs-prog{font-size:11px;color:var(--faint)}
+.cs-next{flex:0 0 auto;font-size:15px;font-weight:600;font-family:inherit;background:var(--pri);border:none;border-radius:10px;
+ padding:12px 18px;color:#fff;cursor:pointer;min-width:120px}
+.cs-next.reveal{background:#fff;color:var(--infotx);border:1px solid #9cc2e8}
+.cs-next:disabled{background:#cfd8e2;color:#fff}
+.katex{font-size:1.0em}
+.katex-display{margin:.5em 0}
+</style>
+</head>
+<body>
+<div class="cs-app" id="app">
+  <div class="cs-doc"><b>8. 폭 2 적분 조건과 다항식 — 4∫₁¹⁰f</b> &middot; 2018 교육청 고2 9월 28번 · 어려움</div>
+  <div class="cs-figwrap" id="figtap">
+    <svg viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet">
+      <title>[0,10]=5칸×4=20, [0,1] cubic 넓이 9/4 → ∫₁¹⁰=71/4</title>
+      <line x1="40.0" y1="150" x2="354.0" y2="150" stroke="#888780" stroke-width="1.6"/>
+      <text x="37.0" y="165" fill="#9A988F" font-size="10">0</text>
+      <text x="98.2" y="165" fill="#9A988F" font-size="10">2</text>
+      <text x="159.4" y="165" fill="#9A988F" font-size="10">4</text>
+      <text x="220.6" y="165" fill="#9A988F" font-size="10">6</text>
+      <text x="281.8" y="165" fill="#9A988F" font-size="10">8</text>
+      <text x="343.0" y="165" fill="#9A988F" font-size="10">10</text>
+      <line class="fig-el" x1="70.6" y1="92" x2="70.6" y2="154" stroke="#993C1D" stroke-width="1.4" stroke-dasharray="5 4"/>
+      <text class="fig-el" x="67.6" y="177" fill="#993C1D" font-size="10">1</text>
+      <line class="fig-el" x1="70.6" y1="183" x2="346.0" y2="183" stroke="#993C1D" stroke-width="1.4"/>
+      <text class="fig-el" x="153.0" y="196" fill="#993C1D" font-size="12">∫[1→10] = ∫[0→10] − ∫[0→1]</text>
+      <polygon class="fig-el" points="40.0,96 101.2,96 101.2,150 40.0,150" fill="#185FA5" fill-opacity="0.13" stroke="none"/>
+      <polygon class="fig-el" points="101.2,96 162.4,96 162.4,150 101.2,150" fill="#185FA5" fill-opacity="0.13" stroke="none"/>
+      <polygon class="fig-el" points="162.4,96 223.6,96 223.6,150 162.4,150" fill="#185FA5" fill-opacity="0.13" stroke="none"/>
+      <polygon class="fig-el" points="223.6,96 284.8,96 284.8,150 223.6,150" fill="#185FA5" fill-opacity="0.13" stroke="none"/>
+      <polygon class="fig-el" points="284.8,96 346.0,96 346.0,150 284.8,150" fill="#185FA5" fill-opacity="0.13" stroke="none"/>
+      <line class="fig-el" x1="40.0" y1="96" x2="346.0" y2="96" stroke="#185FA5" stroke-width="1.2"/>
+      <line class="fig-el" x1="40.0" y1="96" x2="40.0" y2="150" stroke="#185FA5" stroke-width="1.0"/>
+      <line class="fig-el" x1="101.2" y1="96" x2="101.2" y2="150" stroke="#185FA5" stroke-width="1.0"/>
+      <line class="fig-el" x1="162.4" y1="96" x2="162.4" y2="150" stroke="#185FA5" stroke-width="1.0"/>
+      <line class="fig-el" x1="223.6" y1="96" x2="223.6" y2="150" stroke="#185FA5" stroke-width="1.0"/>
+      <line class="fig-el" x1="284.8" y1="96" x2="284.8" y2="150" stroke="#185FA5" stroke-width="1.0"/>
+      <line class="fig-el" x1="346.0" y1="96" x2="346.0" y2="150" stroke="#185FA5" stroke-width="1.0"/>
+      <text class="fig-el" x="66.6" y="127" fill="#185FA5" font-size="13">4</text>
+      <text class="fig-el" x="127.80000000000001" y="127" fill="#185FA5" font-size="13">4</text>
+      <text class="fig-el" x="189.0" y="127" fill="#185FA5" font-size="13">4</text>
+      <text class="fig-el" x="250.2" y="127" fill="#185FA5" font-size="13">4</text>
+      <text class="fig-el" x="311.4" y="127" fill="#185FA5" font-size="13">4</text>
+      <text class="fig-el" x="40.0" y="86" fill="#185FA5" font-size="13">∫[0→10] f = 5×4 = 20</text>
+      <line class="fig-el" x1="58.0" y1="310.6" x2="196.0" y2="310.6" stroke="#888780" stroke-width="1.3"/>
+      <line class="fig-el" x1="58.0" y1="322.0" x2="58.0" y2="214.0" stroke="#888780" stroke-width="1.3"/>
+      <polygon class="fig-el" points="58.0,310.6 58.0,310.6 58.6,308.4 59.3,306.2 59.9,304.0 60.6,301.8 61.2,299.7 61.9,297.6 62.5,295.5 63.1,293.5 63.8,291.5 64.4,289.6 65.1,287.6 65.7,285.8 66.3,283.9 67.0,282.1 67.6,280.3 68.3,278.5 68.9,276.8 69.6,275.1 70.2,273.4 70.8,271.8 71.5,270.1 72.1,268.6 72.8,267.0 73.4,265.5 74.0,264.0 74.7,262.5 75.3,261.1 76.0,259.7 76.6,258.3 77.3,257.0 77.9,255.7 78.5,254.4 79.2,253.1 79.8,251.9 80.5,250.7 81.1,249.6 81.7,248.4 82.4,247.3 83.0,246.2 83.7,245.1 84.3,244.1 85.0,243.1 85.6,242.1 86.2,241.2 86.9,240.3 87.5,239.4 88.2,238.5 88.8,237.6 89.5,236.8 90.1,236.0 90.7,235.3 91.4,234.5 92.0,233.8 92.7,233.1 93.3,232.4 93.9,231.8 94.6,231.2 95.2,230.6 95.9,230.0 96.5,229.5 97.2,228.9 97.8,228.4 98.4,228.0 99.1,227.5 99.7,227.1 100.4,226.7 101.0,226.3 101.6,225.9 102.3,225.6 102.9,225.3 103.6,225.0 104.2,224.7 104.9,224.5 105.5,224.2 106.1,224.0 106.8,223.9 107.4,223.7 108.1,223.5 108.7,223.4 109.3,223.3 110.0,223.2 110.6,223.2 111.3,223.1 111.9,223.1 112.6,223.1 113.2,223.1 113.8,223.2 114.5,223.2 115.1,223.3 115.8,223.4 116.4,223.5 117.1,223.7 117.7,223.8 118.3,224.0 119.0,224.2 119.6,224.4 120.3,224.6 120.9,224.8 121.5,225.1 122.2,225.4 122.2,310.6" fill="#1E7F5C" fill-opacity="0.22" stroke="none"/>
+      <path class="fig-el" d="M 58.0 310.6 L 58.6 308.4 L 59.3 306.2 L 59.9 304.0 L 60.6 301.8 L 61.2 299.7 L 61.9 297.6 L 62.5 295.5 L 63.1 293.5 L 63.8 291.5 L 64.4 289.6 L 65.1 287.6 L 65.7 285.8 L 66.3 283.9 L 67.0 282.1 L 67.6 280.3 L 68.3 278.5 L 68.9 276.8 L 69.6 275.1 L 70.2 273.4 L 70.8 271.8 L 71.5 270.1 L 72.1 268.6 L 72.8 267.0 L 73.4 265.5 L 74.0 264.0 L 74.7 262.5 L 75.3 261.1 L 76.0 259.7 L 76.6 258.3 L 77.3 257.0 L 77.9 255.7 L 78.5 254.4 L 79.2 253.1 L 79.8 251.9 L 80.5 250.7 L 81.1 249.6 L 81.7 248.4 L 82.4 247.3 L 83.0 246.2 L 83.7 245.1 L 84.3 244.1 L 85.0 243.1 L 85.6 242.1 L 86.2 241.2 L 86.9 240.3 L 87.5 239.4 L 88.2 238.5 L 88.8 237.6 L 89.5 236.8 L 90.1 236.0 L 90.7 235.3 L 91.4 234.5 L 92.0 233.8 L 92.7 233.1 L 93.3 232.4 L 93.9 231.8 L 94.6 231.2 L 95.2 230.6 L 95.9 230.0 L 96.5 229.5 L 97.2 228.9 L 97.8 228.4 L 98.4 228.0 L 99.1 227.5 L 99.7 227.1 L 100.4 226.7 L 101.0 226.3 L 101.6 225.9 L 102.3 225.6 L 102.9 225.3 L 103.6 225.0 L 104.2 224.7 L 104.9 224.5 L 105.5 224.2 L 106.1 224.0 L 106.8 223.9 L 107.4 223.7 L 108.1 223.5 L 108.7 223.4 L 109.3 223.3 L 110.0 223.2 L 110.6 223.2 L 111.3 223.1 L 111.9 223.1 L 112.6 223.1 L 113.2 223.1 L 113.8 223.2 L 114.5 223.2 L 115.1 223.3 L 115.8 223.4 L 116.4 223.5 L 117.1 223.7 L 117.7 223.8 L 118.3 224.0 L 119.0 224.2 L 119.6 224.4 L 120.3 224.6 L 120.9 224.8 L 121.5 225.1 L 122.2 225.4 L 122.8 225.7 L 123.5 226.0 L 124.1 226.3 L 124.8 226.6 L 125.4 227.0 L 126.0 227.4 L 126.7 227.8 L 127.3 228.2 L 128.0 228.6 L 128.6 229.0 L 129.2 229.5 L 129.9 230.0 L 130.5 230.4 L 131.2 230.9 L 131.8 231.5 L 132.5 232.0 L 133.1 232.5 L 133.7 233.1 L 134.4 233.7 L 135.0 234.2 L 135.7 234.8 L 136.3 235.4 L 136.9 236.1 L 137.6 236.7 L 138.2 237.4 L 138.9 238.0 L 139.5 238.7 L 140.2 239.4 L 140.8 240.1 L 141.4 240.8 L 142.1 241.5 L 142.7 242.3 L 143.4 243.0 L 144.0 243.8 L 144.7 244.5 L 145.3 245.3 L 145.9 246.1 L 146.6 246.9 L 147.2 247.7 L 147.9 248.6 L 148.5 249.4 L 149.1 250.2 L 149.8 251.1 L 150.4 252.0 L 151.1 252.8 L 151.7 253.7 L 152.4 254.6 L 153.0 255.5 L 153.6 256.4 L 154.3 257.3 L 154.9 258.3 L 155.6 259.2 L 156.2 260.2 L 156.8 261.1 L 157.5 262.1 L 158.1 263.0 L 158.8 264.0 L 159.4 265.0 L 160.1 266.0 L 160.7 267.0 L 161.3 268.0 L 162.0 269.0 L 162.6 270.0 L 163.3 271.0 L 163.9 272.1 L 164.5 273.1 L 165.2 274.1 L 165.8 275.2 L 166.5 276.2 L 167.1 277.3 L 167.8 278.4 L 168.4 279.4 L 169.0 280.5 L 169.7 281.6 L 170.3 282.7 L 171.0 283.7 L 171.6 284.8 L 172.3 285.9 L 172.9 287.0 L 173.5 288.1 L 174.2 289.2 L 174.8 290.3 L 175.5 291.4 L 176.1 292.6 L 176.7 293.7 L 177.4 294.8 L 178.0 295.9 L 178.7 297.0 L 179.3 298.2 L 180.0 299.3 L 180.6 300.4 L 181.2 301.6 L 181.9 302.7 L 182.5 303.8 L 183.2 305.0 L 183.8 306.1 L 184.4 307.2 L 185.1 308.4 L 185.7 309.5 L 186.4 310.6 L 187.0 311.8 L 187.7 312.9 L 188.3 314.0 L 188.9 315.2 L 189.6 316.3 L 190.2 317.4 L 190.9 318.6 L 191.5 319.7 L 192.1 320.8 L 192.8 322.0 L 193.4 323.1 L 194.1 324.2" fill="none" stroke="#1E7F5C" stroke-width="2.6"/>
+      <text class="fig-el" x="102.9" y="212.0" fill="#1E7F5C" font-size="10" font-style="italic">f=x³-6x²+8x</text>
+      <text class="fig-el" x="182.4" y="323.6" fill="#9A988F" font-size="9">2</text>
+      <text class="fig-el" x="119.2" y="323.6" fill="#9A988F" font-size="9">1</text>
+      <text class="fig-el" x="69.6" y="290.7" fill="#1E7F5C" font-size="12">9/4</text>
+      <text class="fig-el" x="50" y="206" fill="#1E7F5C" font-size="12">∫[0→1] f = 9/4</text>
+      <text class="fig-el" x="214" y="250" fill="#444" font-size="14">∫[1→10] f</text>
+      <text class="fig-el" x="214" y="274" fill="#444" font-size="15">= 20 − 9/4</text>
+      <text class="fig-el" x="214" y="298" fill="#993C1D" font-size="17">= 71/4</text>
+      <polygon class="fig-el" points="208,308 332,308 332,340 208,340" fill="#FCE9E4" fill-opacity="0.95" stroke="none"/>
+      <path class="fig-el" d="M 208 308 L 332 308 L 332 340 L 208 340 Z" fill="none" stroke="#993C1D" stroke-width="1.6"/>
+      <text class="fig-el" x="218" y="329" fill="#B23A1B" font-size="16">4·∫[1→10] f = 71</text>
+      </svg>
+    <span class="cs-taphint">탭하면 다음 ▸</span>
+  </div>
+  <div class="cs-stage" id="stage">
+    <section class="cs-panel" data-panel="0">
+      <div class="cs-prob"><span class="lead">문제</span><br>실수 전체에서 연속인 함수 $f(x)$가 다음을 만족한다.<br>(가) 모든 정수 $m$에 대하여 $\displaystyle\int_m^{m+2}f(x)\,dx=4$ 이다.<br>(나) $0\le x\le2$에서 $f(x)=x^3-6x^2+8x$ 이다.<br><b>$4\displaystyle\int_1^{10}f(x)\,dx$</b>의 값을 구하시오.</div>
+    </section>
+    <section class="cs-panel" data-panel="1"><div class="cs-head"><span class="cs-badge">1단계</span><span class="cs-title">정수 기준으로 끊기 위해 0부터</span> <span class="cs-key">핵심</span><span class="cs-type">목표 역산</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>조건 (가)는 <b>정수</b> $m$에서 폭 $2$ 적분이 $4$. 그런데 우리가 원하는 건 $\int_1^{10}$. 어떤 기준점에서 끊어야 (가)를 쓸 수 있을까요?</div><div class="cs-body" data-step="1"><div class="cs-draw"><b>이 단계로 넘어가는 이유 — </b>$1$은 (가)의 폭-$2$ 칸에 안 맞는다. 그래서 $\int_1^{10}=\int_0^{10}-\int_0^{1}$로 <b>$0$부터</b> 다시 쓰면 두 조각 모두 깔끔히 계산된다.</div><div class="cs-math">$$\int_1^{10}f=\int_0^{10}f-\int_0^{1}f$$</div><div class="cs-tags"><span class="cs-tag">정적분의 성질</span><span class="cs-tag">구간 분할</span></div></div></section>
+<section class="cs-panel" data-panel="2"><div class="cs-head"><span class="cs-badge">2단계</span><span class="cs-title">(가) → ∫₀¹⁰ = 5×4 = 20</span> <span class="cs-key">핵심</span><span class="cs-type">조건 활용</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$[0,10]$을 폭 $2$짜리로 끊으면 $[0,2],[2,4],[4,6],[6,8],[8,10]$. 각 칸은 (가)에서 시작점이 정수이니 적분이 모두?</div><div class="cs-body" data-step="2"><div class="cs-draw"><b>이 단계로 넘어가는 이유 — </b>다섯 칸 모두 $\int_m^{m+2}f=4$ → 합 $5\times4=20$.</div><div class="cs-math">$$\int_0^{10}f=\underbrace{4+4+4+4+4}_{5\text{칸}}=20$$</div><div class="cs-tags"><span class="cs-tag">조건의 반복 적용</span></div></div></section>
+<section class="cs-panel" data-panel="3"><div class="cs-head"><span class="cs-badge">3단계</span><span class="cs-title">(나) → ∫₀¹ = 9/4</span><span class="cs-type">계산</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$[0,1]\subset[0,2]$이라 (나)의 식 $f=x^3-6x^2+8x$를 그대로 써요. $\int_0^1$을 계산하면?</div><div class="cs-body" data-step="3"><div class="cs-math">$$\int_0^1(x^3-6x^2+8x)\,dx=\Big[\tfrac{x^4}{4}-2x^3+4x^2\Big]_0^1=\tfrac94$$</div><div class="cs-tags"><span class="cs-tag">다항함수 적분</span></div></div></section>
+<section class="cs-panel" data-panel="4"><div class="cs-head"><span class="cs-badge">4단계</span><span class="cs-title">∫₁¹⁰ 정리</span><span class="cs-type">계산</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$\int_0^{10}-\int_0^1=20-\tfrac94$는?</div><div class="cs-body" data-step="4"><div class="cs-math">$$\int_1^{10}f=20-\tfrac94=\tfrac{71}{4}$$</div><div class="cs-tags"><span class="cs-tag">분수 계산</span></div></div></section>
+<section class="cs-panel" data-panel="5"><div class="cs-head"><span class="cs-badge">5단계</span><span class="cs-title">4배</span><span class="cs-type">계산</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$4\int_1^{10}f$의 값은?</div><div class="cs-body" data-step="5"><div class="cs-math">$$4\int_1^{10}f=4\cdot\tfrac{71}{4}=71$$</div><div class="cs-tags"><span class="cs-tag">함수값</span></div><div class="cs-ans">정답 &nbsp; 4∫₁¹⁰ f = 71</div></div></section>
+  </div>
+  <nav class="cs-nav">
+    <button class="cs-prev" id="prevBtn">이전</button>
+    <div class="cs-mid"><div class="cs-dots"><span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span></div><div class="cs-prog" id="prog"></div></div>
+    <button class="cs-next" id="nextBtn">풀이 시작 ▸</button>
+  </nav>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script>
+(function(){
+  var T=5, figMap={};
+  // views: 0=문제, 이후 단계마다 (hint, show) 2개
+  var views=[{step:0,phase:'p'}];
+  for(var k=1;k<=T;k++){views.push({step:k,phase:'hint'});views.push({step:k,phase:'show'});}
+  var vi=0;
+  var panels={}; document.querySelectorAll('.cs-panel').forEach(function(p){panels[+p.dataset.panel]=p;});
+  function figReveal(n){
+    Object.keys(figMap).forEach(function(id){var el=document.getElementById(id);
+      if(el) el.classList.toggle('on', n>=figMap[id]);});
+  }
+  function render(){
+    var v=views[vi];
+    // 패널 표시
+    Object.keys(panels).forEach(function(k){panels[k].classList.toggle('active', (+k)===v.step);});
+    // body 공개 여부
+    var body=panels[v.step] ? panels[v.step].querySelector('.cs-body') : null;
+    if(body) body.classList.toggle('show', v.phase==='show');
+    // 도형 reveal 수
+    var rc = v.step===0 ? 0 : (v.phase==='show' ? v.step : v.step-1);
+    figReveal(rc);
+    // 버튼
+    var nb=document.getElementById('nextBtn'), pb=document.getElementById('prevBtn');
+    pb.disabled = (vi===0);
+    nb.classList.remove('reveal');
+    if(v.step===0){ nb.textContent='풀이 시작 ▸'; nb.disabled=false; }
+    else if(v.phase==='hint'){ nb.textContent='풀이 보기 ▾'; nb.classList.add('reveal'); nb.disabled=false; }
+    else if(v.step<T){ nb.textContent='다음 단계 ▸'; nb.disabled=false; }
+    else { nb.textContent='처음부터'; nb.disabled=false; }
+    // 진행도
+    var done = v.step===0?0:(v.phase==='show'?v.step:v.step-1);
+    document.querySelectorAll('.cs-dot').forEach(function(d,i){d.classList.toggle('fill', i<done);});
+    document.getElementById('prog').textContent = v.step===0 ? ('문제 · 총 '+T+'단계') : (v.step+' / '+T+'단계');
+    // 새 패널은 위로 스크롤
+    document.getElementById('stage').scrollTop=0;
+  }
+  function next(){
+    var v=views[vi];
+    if(v.step===T && v.phase==='show'){ vi=0; render(); return; }   // 처음부터
+    if(vi<views.length-1){ vi++; render(); }
+  }
+  function prev(){ if(vi>0){ vi--; render(); } }
+  document.getElementById('nextBtn').onclick=next;
+  document.getElementById('prevBtn').onclick=prev;
+  document.getElementById('figtap').onclick=next;
+  document.addEventListener('keydown',function(e){
+    if(e.metaKey||e.ctrlKey||e.altKey)return;
+    if(['ArrowLeft','ArrowUp','Backspace','PageUp'].indexOf(e.key)>=0){e.preventDefault();prev();}
+    else if([' ','ArrowRight','ArrowDown','Enter','PageDown'].indexOf(e.key)>=0){e.preventDefault();next();}
+  });
+  render();
+  (function tex(){
+    if(!window.renderMathInElement)return setTimeout(tex,60);
+    renderMathInElement(document.getElementById('app'),{delimiters:[
+      {left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+  })();
+})();
+</script>
+</body>
+</html>

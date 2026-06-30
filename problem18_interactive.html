@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>코스터디 단계별 풀이</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<style>
+:root{--tx:#222;--mut:#666;--faint:#9a988f;--line:#e6e5e1;--surf:#f6f5f1;--pri:#185FA5;
+ --info:#E6F1FB;--infotx:#0C447C;--warnbg:#FAEEDA;--warntx:#854F0B;--okbg:#E1F5EE;--oktx:#0F6E56;--bd:#dcdbd6}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic","Apple SD Gothic Neo",sans-serif;color:var(--tx);background:#fff}
+.cs-app{display:flex;flex-direction:column;height:100vh;height:100dvh;max-width:680px;margin:0 auto;border-left:1px solid var(--line);border-right:1px solid var(--line)}
+/* 헤더 */
+.cs-doc{flex:0 0 auto;font-size:12px;color:var(--faint);padding:9px 14px;border-bottom:1px solid var(--line);
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cs-doc b{color:var(--mut);font-weight:600}
+/* 도형: 상단 고정 */
+.cs-figwrap{flex:0 0 auto;height:38vh;min-height:200px;padding:8px;display:flex;align-items:center;justify-content:center;
+ background:#fff;border-bottom:1px solid var(--line);position:relative;cursor:pointer}
+.cs-figwrap svg{width:100%;height:100%}
+.cs-taphint{position:absolute;right:10px;bottom:8px;font-size:11px;color:var(--faint);background:#fff;
+ padding:2px 8px;border-radius:10px;border:1px solid var(--line);opacity:.85}
+.fig-el{opacity:0;transition:opacity .4s ease}
+.fig-el.on{opacity:1}
+.dl{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .7s ease,opacity .25s ease}
+.dl.on{stroke-dashoffset:0}
+/* 본문(스크롤 영역) */
+.cs-stage{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 16px 18px}
+.cs-panel{display:none;animation:fade .25s ease}
+.cs-panel.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* 문제 패널 */
+.cs-prob{font-size:15.5px;line-height:1.75;color:#333}
+.cs-prob .lead{display:inline-block;font-size:12px;font-weight:600;color:var(--infotx);background:var(--info);
+ padding:3px 10px;border-radius:9px;margin-bottom:10px}
+/* 단계 패널 */
+.cs-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.cs-badge{font-size:12px;font-weight:600;background:var(--info);color:var(--infotx);padding:3px 10px;border-radius:9px}
+.cs-title{font-size:16px;font-weight:600}
+.cs-key{font-size:11px;font-weight:600;background:#FAEEDA;color:#854F0B;padding:2px 8px;border-radius:9px}
+.cs-type{font-size:11px;color:var(--faint);margin-left:auto}
+.cs-hint{font-size:14.5px;color:#4a4a44;background:var(--surf);border-radius:11px;padding:12px 14px;line-height:1.65}
+.cs-hint-tag{display:block;font-size:12px;font-weight:600;color:var(--warntx);margin-bottom:5px}
+.cs-body{display:none;margin-top:12px}
+.cs-body.show{display:block;animation:fade .25s ease}
+.cs-draw{font-size:14px;color:var(--warntx);background:var(--warnbg);padding:11px 13px;border-radius:11px;margin-bottom:10px;line-height:1.65}
+.cs-why{font-size:14px;color:var(--mut);line-height:1.65;margin:6px 0}
+.cs-math{margin:8px 0;font-size:1.02em;overflow-x:auto}
+.cs-tags{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
+.cs-tag{font-size:11px;color:var(--mut);background:var(--surf);padding:3px 9px;border-radius:9px}
+.cs-ans{font-size:16px;font-weight:600;color:var(--oktx);background:var(--okbg);padding:11px 14px;border-radius:11px;margin-top:12px;text-align:center}
+/* 하단 고정 내비 */
+.cs-nav{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:10px 14px;
+ border-top:1px solid var(--bd);background:#fff;box-shadow:0 -2px 10px rgba(0,0,0,.04)}
+.cs-prev{flex:0 0 auto;font-size:14px;font-family:inherit;background:#fff;border:1px solid var(--bd);border-radius:10px;
+ padding:11px 14px;color:var(--mut);cursor:pointer}
+.cs-prev:disabled{opacity:.4}
+.cs-mid{flex:1 1 auto;text-align:center}
+.cs-dots{display:flex;gap:5px;justify-content:center;margin-bottom:3px}
+.cs-dot{width:7px;height:7px;border-radius:50%;background:#d6d5cf}
+.cs-dot.fill{background:var(--pri)}
+.cs-prog{font-size:11px;color:var(--faint)}
+.cs-next{flex:0 0 auto;font-size:15px;font-weight:600;font-family:inherit;background:var(--pri);border:none;border-radius:10px;
+ padding:12px 18px;color:#fff;cursor:pointer;min-width:120px}
+.cs-next.reveal{background:#fff;color:var(--infotx);border:1px solid #9cc2e8}
+.cs-next:disabled{background:#cfd8e2;color:#fff}
+.katex{font-size:1.0em}
+.katex-display{margin:.5em 0}
+</style>
+</head>
+<body>
+<div class="cs-app" id="app">
+  <div class="cs-doc"><b>18. 사차함수의 도함수 근과 구간 최대·최소 — f(p)</b> &middot; COSTUDY 수II · 사차함수·최대최소</div>
+  <div class="cs-figwrap" id="figtap">
+    <svg viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet">
+      <title>f(x)=x^2(x^2+4/3 x-4) 의 개형 (p=1, f(1)=-5/3)</title>
+      <line x1="44.0" y1="126.1" x2="344.0" y2="126.1" stroke="#888780" stroke-width="1.6"/>
+      <line x1="224.0" y1="322.0" x2="224.0" y2="20.0" stroke="#888780" stroke-width="1.6"/>
+      <text x="338.0" y="142.1" fill="#888780" font-size="13" font-style="italic">x</text>
+      <text x="100.0" y="142.1" fill="#9A988F" font-size="11">-2</text>
+      <text x="280.0" y="142.1" fill="#9A988F" font-size="11">1</text>
+      <path id="fc" class="fig-el" d="M 52.4 77.2 L 53.1 84.6 L 53.8 91.8 L 54.6 98.8 L 55.3 105.7 L 56.0 112.5 L 56.7 119.1 L 57.4 125.5 L 58.2 131.8 L 58.9 138.0 L 59.6 144.0 L 60.3 149.8 L 61.0 155.6 L 61.8 161.2 L 62.5 166.6 L 63.2 171.9 L 63.9 177.1 L 64.6 182.2 L 65.4 187.1 L 66.1 191.9 L 66.8 196.6 L 67.5 201.1 L 68.2 205.6 L 69.0 209.8 L 69.7 214.0 L 70.4 218.1 L 71.1 222.0 L 71.8 225.8 L 72.6 229.6 L 73.3 233.2 L 74.0 236.6 L 74.7 240.0 L 75.4 243.3 L 76.2 246.4 L 76.9 249.5 L 77.6 252.4 L 78.3 255.3 L 79.0 258.0 L 79.8 260.7 L 80.5 263.2 L 81.2 265.6 L 81.9 268.0 L 82.6 270.2 L 83.4 272.4 L 84.1 274.5 L 84.8 276.4 L 85.5 278.3 L 86.2 280.1 L 87.0 281.8 L 87.7 283.5 L 88.4 285.0 L 89.1 286.5 L 89.8 287.8 L 90.6 289.1 L 91.3 290.4 L 92.0 291.5 L 92.7 292.6 L 93.4 293.6 L 94.2 294.5 L 94.9 295.3 L 95.6 296.1 L 96.3 296.8 L 97.0 297.4 L 97.8 298.0 L 98.5 298.5 L 99.2 298.9 L 99.9 299.3 L 100.6 299.6 L 101.4 299.8 L 102.1 300.0 L 102.8 300.2 L 103.5 300.2 L 104.2 300.2 L 105.0 300.2 L 105.7 300.1 L 106.4 299.9 L 107.1 299.7 L 107.8 299.5 L 108.6 299.1 L 109.3 298.8 L 110.0 298.4 L 110.7 297.9 L 111.4 297.4 L 112.2 296.9 L 112.9 296.3 L 113.6 295.7 L 114.3 295.0 L 115.0 294.3 L 115.8 293.5 L 116.5 292.7 L 117.2 291.9 L 117.9 291.0 L 118.6 290.1 L 119.4 289.2 L 120.1 288.2 L 120.8 287.2 L 121.5 286.1 L 122.2 285.0 L 123.0 283.9 L 123.7 282.8 L 124.4 281.6 L 125.1 280.5 L 125.8 279.2 L 126.6 278.0 L 127.3 276.7 L 128.0 275.4 L 128.7 274.1 L 129.4 272.8 L 130.2 271.4 L 130.9 270.0 L 131.6 268.6 L 132.3 267.2 L 133.0 265.8 L 133.8 264.3 L 134.5 262.9 L 135.2 261.4 L 135.9 259.9 L 136.6 258.4 L 137.4 256.8 L 138.1 255.3 L 138.8 253.7 L 139.5 252.2 L 140.2 250.6 L 141.0 249.0 L 141.7 247.4 L 142.4 245.8 L 143.1 244.2 L 143.8 242.6 L 144.6 240.9 L 145.3 239.3 L 146.0 237.7 L 146.7 236.0 L 147.4 234.4 L 148.2 232.7 L 148.9 231.1 L 149.6 229.4 L 150.3 227.8 L 151.0 226.1 L 151.8 224.4 L 152.5 222.8 L 153.2 221.1 L 153.9 219.5 L 154.6 217.8 L 155.4 216.2 L 156.1 214.5 L 156.8 212.9 L 157.5 211.3 L 158.2 209.6 L 159.0 208.0 L 159.7 206.4 L 160.4 204.8 L 161.1 203.2 L 161.8 201.6 L 162.6 200.0 L 163.3 198.4 L 164.0 196.8 L 164.7 195.3 L 165.4 193.7 L 166.2 192.2 L 166.9 190.7 L 167.6 189.1 L 168.3 187.6 L 169.0 186.1 L 169.8 184.6 L 170.5 183.2 L 171.2 181.7 L 171.9 180.3 L 172.6 178.8 L 173.4 177.4 L 174.1 176.0 L 174.8 174.6 L 175.5 173.3 L 176.2 171.9 L 177.0 170.6 L 177.7 169.2 L 178.4 167.9 L 179.1 166.6 L 179.8 165.4 L 180.6 164.1 L 181.3 162.9 L 182.0 161.6 L 182.7 160.4 L 183.4 159.3 L 184.2 158.1 L 184.9 156.9 L 185.6 155.8 L 186.3 154.7 L 187.0 153.6 L 187.8 152.6 L 188.5 151.5 L 189.2 150.5 L 189.9 149.5 L 190.6 148.5 L 191.4 147.5 L 192.1 146.6 L 192.8 145.6 L 193.5 144.7 L 194.2 143.8 L 195.0 143.0 L 195.7 142.1 L 196.4 141.3 L 197.1 140.5 L 197.8 139.7 L 198.6 139.0 L 199.3 138.2 L 200.0 137.5 L 200.7 136.8 L 201.4 136.2 L 202.2 135.5 L 202.9 134.9 L 203.6 134.3 L 204.3 133.7 L 205.0 133.2 L 205.8 132.6 L 206.5 132.1 L 207.2 131.6 L 207.9 131.1 L 208.6 130.7 L 209.4 130.3 L 210.1 129.8 L 210.8 129.5 L 211.5 129.1 L 212.2 128.8 L 213.0 128.4 L 213.7 128.1 L 214.4 127.9 L 215.1 127.6 L 215.8 127.4 L 216.6 127.1 L 217.3 127.0 L 218.0 126.8 L 218.7 126.6 L 219.4 126.5 L 220.2 126.4 L 220.9 126.3 L 221.6 126.2 L 222.3 126.2 L 223.0 126.1 L 223.8 126.1 L 224.5 126.1 L 225.2 126.1 L 225.9 126.2 L 226.6 126.2 L 227.4 126.3 L 228.1 126.4 L 228.8 126.5 L 229.5 126.6 L 230.2 126.8 L 231.0 126.9 L 231.7 127.1 L 232.4 127.3 L 233.1 127.5 L 233.8 127.8 L 234.6 128.0 L 235.3 128.3 L 236.0 128.5 L 236.7 128.8 L 237.4 129.1 L 238.2 129.4 L 238.9 129.7 L 239.6 130.1 L 240.3 130.4 L 241.0 130.8 L 241.8 131.1 L 242.5 131.5 L 243.2 131.9 L 243.9 132.3 L 244.6 132.7 L 245.4 133.1 L 246.1 133.6 L 246.8 134.0 L 247.5 134.4 L 248.2 134.9 L 249.0 135.4 L 249.7 135.8 L 250.4 136.3 L 251.1 136.8 L 251.8 137.2 L 252.6 137.7 L 253.3 138.2 L 254.0 138.7 L 254.7 139.2 L 255.4 139.7 L 256.2 140.2 L 256.9 140.7 L 257.6 141.2 L 258.3 141.7 L 259.0 142.1 L 259.8 142.6 L 260.5 143.1 L 261.2 143.6 L 261.9 144.1 L 262.6 144.6 L 263.4 145.0 L 264.1 145.5 L 264.8 146.0 L 265.5 146.4 L 266.2 146.9 L 267.0 147.3 L 267.7 147.7 L 268.4 148.1 L 269.1 148.6 L 269.8 149.0 L 270.6 149.3 L 271.3 149.7 L 272.0 150.1 L 272.7 150.4 L 273.4 150.7 L 274.2 151.1 L 274.9 151.3 L 275.6 151.6 L 276.3 151.9 L 277.0 152.1 L 277.8 152.4 L 278.5 152.6 L 279.2 152.7 L 279.9 152.9 L 280.6 153.0 L 281.4 153.1 L 282.1 153.2 L 282.8 153.3 L 283.5 153.3 L 284.2 153.3 L 285.0 153.3 L 285.7 153.2 L 286.4 153.2 L 287.1 153.0 L 287.8 152.9 L 288.6 152.7 L 289.3 152.5 L 290.0 152.2 L 290.7 152.0 L 291.4 151.6 L 292.2 151.3 L 292.9 150.9 L 293.6 150.4 L 294.3 150.0 L 295.0 149.4 L 295.8 148.9 L 296.5 148.3 L 297.2 147.6 L 297.9 146.9 L 298.6 146.2 L 299.4 145.4 L 300.1 144.5 L 300.8 143.6 L 301.5 142.7 L 302.2 141.7 L 303.0 140.6 L 303.7 139.5 L 304.4 138.4 L 305.1 137.1 L 305.8 135.9 L 306.6 134.5 L 307.3 133.1 L 308.0 131.7 L 308.7 130.1 L 309.4 128.5 L 310.2 126.9 L 310.9 125.2 L 311.6 123.4 L 312.3 121.5 L 313.0 119.6 L 313.8 117.6 L 314.5 115.5 L 315.2 113.4 L 315.9 111.2 L 316.6 108.9 L 317.4 106.5 L 318.1 104.1 L 318.8 101.5 L 319.5 98.9 L 320.2 96.2 L 321.0 93.4 L 321.7 90.6 L 322.4 87.6 L 323.1 84.6" fill="none" stroke="#185FA5" stroke-width="3"/>
+      <text id="fclab" class="fig-el" x="50.0" y="31.4" fill="#185FA5" font-size="11" font-style="italic">f(x)=x²(x²+4/3·x-4)  (p=1)</text>
+      <g id="min2" class="fig-el"><circle cx="104.0" cy="300.2" r="3.4" fill="#1E7F5C"/></g>
+      <g id="max0" class="fig-el"><circle cx="224.0" cy="126.1" r="3.4" fill="#BA7517"/></g>
+      <text id="fdash" class="fig-el" x="96.0" y="314.2" fill="#1E7F5C" font-size="10">극소(x=-2)</text>
+      <text id="maxl" class="fig-el" x="228.0" y="120.1" fill="#BA7517" font-size="10">극대(x=0)</text>
+      <line id="v1" class="fig-el" x1="284.0" y1="126.1" x2="284.0" y2="153.3" stroke="#993C1D" stroke-width="1.2" stroke-dasharray="5 4"/>
+      <g id="pmin" class="fig-el"><circle cx="284.0" cy="153.3" r="4" fill="#993C1D"/></g>
+      <text id="ansl" class="fig-el" x="214.0" y="169.3" fill="#993C1D" font-size="12">f(1)=-5/3</text>
+      </svg>
+    <span class="cs-taphint">탭하면 다음 ▸</span>
+  </div>
+  <div class="cs-stage" id="stage">
+    <section class="cs-panel" data-panel="0">
+      <div class="cs-prob"><span class="lead">문제</span><br>최고차항 계수가 $1$인 사차함수 $f(x)$가 다음을 만족한다.<br>(가) $f'(-2)=f'(0)=f(0)=0$<br>(나) 양수 $t$에 대하여 $[t,t+2]$에서 $f$의 최댓값·최솟값을 $M(t),m(t)$라 할 때 $M(1)+m(2)\gt0$.<br>$f'(p)=0$인 자연수 $p$가 존재할 때 <b>$f(p)$</b>의 값은?</div>
+    </section>
+    <section class="cs-panel" data-panel="1"><div class="cs-head"><span class="cs-badge">1단계</span><span class="cs-title">(가) → f=x²(x²+ax+b), b=3a−8</span><span class="cs-type">계산</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$f(0)=0,\ f'(0)=0$이면 $f$는 $x^2$을 인수로 가져요. 거기에 $f'(-2)=0$을 더하면?</div><div class="cs-body" data-step="1"><div class="cs-why">$f(x)=x^2(x^2+ax+b)$, $f'(x)=x(4x^2+3ax+2b)$. $f'(-2)=0\Rightarrow b=3a-8$.</div><div class="cs-math">$$f(x)=x^2(x^2+ax+b),\qquad b=3a-8$$</div><div class="cs-tags"><span class="cs-tag">중근과 인수</span><span class="cs-tag">도함수</span></div></div></section>
+<section class="cs-panel" data-panel="2"><div class="cs-head"><span class="cs-badge">2단계</span><span class="cs-title">f′의 세 근 → p=(8−3a)/4</span> <span class="cs-key">핵심</span><span class="cs-type">계산</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$f'(x)$를 인수분해하면 근이 셋이에요. $x=-2,\ 0$ 말고 나머지 하나가 $p$ 후보입니다.</div><div class="cs-body" data-step="2"><div class="cs-math">$$f'(x)=4x(x+2)\!\left(x-\tfrac{8-3a}{4}\right)$$</div><div class="cs-math">$$f'(p)=0,\ p\ \text{자연수}\ \Rightarrow\ p=\tfrac{8-3a}{4}$$</div><div class="cs-tags"><span class="cs-tag">사차함수의 도함수</span><span class="cs-tag">인수분해</span></div></div></section>
+<section class="cs-panel" data-panel="3"><div class="cs-head"><span class="cs-badge">3단계</span><span class="cs-title">자연수 p 후보</span><span class="cs-type">조건 활용</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$p=\tfrac{8-3a}{4}$가 자연수 $1,2,3,\dots$이려면 $a$는 각각 얼마일까요?</div><div class="cs-body" data-step="3"><div class="cs-math">$$p=1\!:\,a=\tfrac43,\quad p=2\!:\,a=0,\quad p=3\!:\,a=-\tfrac43,\ \dots$$</div><div class="cs-tags"><span class="cs-tag">자연수 조건</span></div></div></section>
+<section class="cs-panel" data-panel="4"><div class="cs-head"><span class="cs-badge">4단계</span><span class="cs-title">(나) M(1)+m(2)&gt;0 으로 가려내기</span> <span class="cs-key">핵심</span><span class="cs-type">목표 역산</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>각 경우의 그래프 개형으로 $[1,3],[2,4]$에서의 최대·최소를 보고 $M(1)+m(2)$의 부호를 확인해요.</div><div class="cs-body" data-step="4"><div class="cs-draw"><b>이 단계로 넘어가는 이유 — </b>$p=2$는 $M(1)+m(2)=f(3)+f(2)=9-16=-7\lt0$, $p=3$도 음수, $p\ge4$는 구간에서 $f\le0$ → 모두 탈락. $p=1$만 $M(1)+m(2)=\tfrac{275}{3}\gt0$.</div><div class="cs-math">$$\therefore\ p=1,\quad a=\tfrac43,\quad f(x)=x^2\!\left(x^2+\tfrac43 x-4\right)$$</div><div class="cs-tags"><span class="cs-tag">구간 최대·최소</span><span class="cs-tag">그래프 개형</span></div></div></section>
+<section class="cs-panel" data-panel="5"><div class="cs-head"><span class="cs-badge">5단계</span><span class="cs-title">f(p)=f(1)</span><span class="cs-type">계산</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$p=1$이니 $f(1)$을 계산하면?</div><div class="cs-body" data-step="5"><div class="cs-math">$$f(1)=1\cdot\!\left(1+\tfrac43-4\right)=-\tfrac53$$</div><div class="cs-tags"><span class="cs-tag">함수값</span></div><div class="cs-ans">정답 &nbsp; f(p) = −5/3</div></div></section>
+  </div>
+  <nav class="cs-nav">
+    <button class="cs-prev" id="prevBtn">이전</button>
+    <div class="cs-mid"><div class="cs-dots"><span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span></div><div class="cs-prog" id="prog"></div></div>
+    <button class="cs-next" id="nextBtn">풀이 시작 ▸</button>
+  </nav>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script>
+(function(){
+  var T=5, figMap={"fc": 4, "fclab": 4, "min2": 4, "max0": 4, "fdash": 4, "maxl": 4, "v1": 5, "pmin": 5, "ansl": 5};
+  // views: 0=문제, 이후 단계마다 (hint, show) 2개
+  var views=[{step:0,phase:'p'}];
+  for(var k=1;k<=T;k++){views.push({step:k,phase:'hint'});views.push({step:k,phase:'show'});}
+  var vi=0;
+  var panels={}; document.querySelectorAll('.cs-panel').forEach(function(p){panels[+p.dataset.panel]=p;});
+  function figReveal(n){
+    Object.keys(figMap).forEach(function(id){var el=document.getElementById(id);
+      if(el) el.classList.toggle('on', n>=figMap[id]);});
+  }
+  function render(){
+    var v=views[vi];
+    // 패널 표시
+    Object.keys(panels).forEach(function(k){panels[k].classList.toggle('active', (+k)===v.step);});
+    // body 공개 여부
+    var body=panels[v.step] ? panels[v.step].querySelector('.cs-body') : null;
+    if(body) body.classList.toggle('show', v.phase==='show');
+    // 도형 reveal 수
+    var rc = v.step===0 ? 0 : (v.phase==='show' ? v.step : v.step-1);
+    figReveal(rc);
+    // 버튼
+    var nb=document.getElementById('nextBtn'), pb=document.getElementById('prevBtn');
+    pb.disabled = (vi===0);
+    nb.classList.remove('reveal');
+    if(v.step===0){ nb.textContent='풀이 시작 ▸'; nb.disabled=false; }
+    else if(v.phase==='hint'){ nb.textContent='풀이 보기 ▾'; nb.classList.add('reveal'); nb.disabled=false; }
+    else if(v.step<T){ nb.textContent='다음 단계 ▸'; nb.disabled=false; }
+    else { nb.textContent='처음부터'; nb.disabled=false; }
+    // 진행도
+    var done = v.step===0?0:(v.phase==='show'?v.step:v.step-1);
+    document.querySelectorAll('.cs-dot').forEach(function(d,i){d.classList.toggle('fill', i<done);});
+    document.getElementById('prog').textContent = v.step===0 ? ('문제 · 총 '+T+'단계') : (v.step+' / '+T+'단계');
+    // 새 패널은 위로 스크롤
+    document.getElementById('stage').scrollTop=0;
+  }
+  function next(){
+    var v=views[vi];
+    if(v.step===T && v.phase==='show'){ vi=0; render(); return; }   // 처음부터
+    if(vi<views.length-1){ vi++; render(); }
+  }
+  function prev(){ if(vi>0){ vi--; render(); } }
+  document.getElementById('nextBtn').onclick=next;
+  document.getElementById('prevBtn').onclick=prev;
+  document.getElementById('figtap').onclick=next;
+  document.addEventListener('keydown',function(e){
+    if(e.metaKey||e.ctrlKey||e.altKey)return;
+    if(['ArrowLeft','ArrowUp','Backspace','PageUp'].indexOf(e.key)>=0){e.preventDefault();prev();}
+    else if([' ','ArrowRight','ArrowDown','Enter','PageDown'].indexOf(e.key)>=0){e.preventDefault();next();}
+  });
+  render();
+  (function tex(){
+    if(!window.renderMathInElement)return setTimeout(tex,60);
+    renderMathInElement(document.getElementById('app'),{delimiters:[
+      {left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+  })();
+})();
+</script>
+</body>
+</html>

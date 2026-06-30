@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>코스터디 단계별 풀이</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<style>
+:root{--tx:#222;--mut:#666;--faint:#9a988f;--line:#e6e5e1;--surf:#f6f5f1;--pri:#185FA5;
+ --info:#E6F1FB;--infotx:#0C447C;--warnbg:#FAEEDA;--warntx:#854F0B;--okbg:#E1F5EE;--oktx:#0F6E56;--bd:#dcdbd6}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic","Apple SD Gothic Neo",sans-serif;color:var(--tx);background:#fff}
+.cs-app{display:flex;flex-direction:column;height:100vh;height:100dvh;max-width:680px;margin:0 auto;border-left:1px solid var(--line);border-right:1px solid var(--line)}
+/* 헤더 */
+.cs-doc{flex:0 0 auto;font-size:12px;color:var(--faint);padding:9px 14px;border-bottom:1px solid var(--line);
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cs-doc b{color:var(--mut);font-weight:600}
+/* 도형: 상단 고정 */
+.cs-figwrap{flex:0 0 auto;height:38vh;min-height:200px;padding:8px;display:flex;align-items:center;justify-content:center;
+ background:#fff;border-bottom:1px solid var(--line);position:relative;cursor:pointer}
+.cs-figwrap svg{width:100%;height:100%}
+.cs-taphint{position:absolute;right:10px;bottom:8px;font-size:11px;color:var(--faint);background:#fff;
+ padding:2px 8px;border-radius:10px;border:1px solid var(--line);opacity:.85}
+.fig-el{opacity:0;transition:opacity .4s ease}
+.fig-el.on{opacity:1}
+.dl{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .7s ease,opacity .25s ease}
+.dl.on{stroke-dashoffset:0}
+/* 본문(스크롤 영역) */
+.cs-stage{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 16px 18px}
+.cs-panel{display:none;animation:fade .25s ease}
+.cs-panel.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* 문제 패널 */
+.cs-prob{font-size:15.5px;line-height:1.75;color:#333}
+.cs-prob .lead{display:inline-block;font-size:12px;font-weight:600;color:var(--infotx);background:var(--info);
+ padding:3px 10px;border-radius:9px;margin-bottom:10px}
+/* 단계 패널 */
+.cs-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.cs-badge{font-size:12px;font-weight:600;background:var(--info);color:var(--infotx);padding:3px 10px;border-radius:9px}
+.cs-title{font-size:16px;font-weight:600}
+.cs-key{font-size:11px;font-weight:600;background:#FAEEDA;color:#854F0B;padding:2px 8px;border-radius:9px}
+.cs-type{font-size:11px;color:var(--faint);margin-left:auto}
+.cs-hint{font-size:14.5px;color:#4a4a44;background:var(--surf);border-radius:11px;padding:12px 14px;line-height:1.65}
+.cs-hint-tag{display:block;font-size:12px;font-weight:600;color:var(--warntx);margin-bottom:5px}
+.cs-body{display:none;margin-top:12px}
+.cs-body.show{display:block;animation:fade .25s ease}
+.cs-draw{font-size:14px;color:var(--warntx);background:var(--warnbg);padding:11px 13px;border-radius:11px;margin-bottom:10px;line-height:1.65}
+.cs-why{font-size:14px;color:var(--mut);line-height:1.65;margin:6px 0}
+.cs-math{margin:8px 0;font-size:1.02em;overflow-x:auto}
+.cs-tags{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
+.cs-tag{font-size:11px;color:var(--mut);background:var(--surf);padding:3px 9px;border-radius:9px}
+.cs-ans{font-size:16px;font-weight:600;color:var(--oktx);background:var(--okbg);padding:11px 14px;border-radius:11px;margin-top:12px;text-align:center}
+/* 하단 고정 내비 */
+.cs-nav{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:10px 14px;
+ border-top:1px solid var(--bd);background:#fff;box-shadow:0 -2px 10px rgba(0,0,0,.04)}
+.cs-prev{flex:0 0 auto;font-size:14px;font-family:inherit;background:#fff;border:1px solid var(--bd);border-radius:10px;
+ padding:11px 14px;color:var(--mut);cursor:pointer}
+.cs-prev:disabled{opacity:.4}
+.cs-mid{flex:1 1 auto;text-align:center}
+.cs-dots{display:flex;gap:5px;justify-content:center;margin-bottom:3px}
+.cs-dot{width:7px;height:7px;border-radius:50%;background:#d6d5cf}
+.cs-dot.fill{background:var(--pri)}
+.cs-prog{font-size:11px;color:var(--faint)}
+.cs-next{flex:0 0 auto;font-size:15px;font-weight:600;font-family:inherit;background:var(--pri);border:none;border-radius:10px;
+ padding:12px 18px;color:#fff;cursor:pointer;min-width:120px}
+.cs-next.reveal{background:#fff;color:var(--infotx);border:1px solid #9cc2e8}
+.cs-next:disabled{background:#cfd8e2;color:#fff}
+.katex{font-size:1.0em}
+.katex-display{margin:.5em 0}
+</style>
+</head>
+<body>
+<div class="cs-app" id="app">
+  <div class="cs-doc"><b>12. h′=g−f 의 부호 변화와 극값 1개 — k+h(3)</b> &middot; 2026 수능 15번 · 매우 어려움</div>
+  <div class="cs-figwrap" id="figtap">
+    <svg viewBox="0 0 360 320" xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet">
+      <title>a=k=4 의 h&#x27;=g-f (닿기점 -2,0,1 부호유지, x=4서만 +→-), [0,3] 넓이=h(3)=7/2</title>
+      <line x1="44.0" y1="176.8" x2="344.0" y2="176.8" stroke="#888780" stroke-width="1.4"/>
+      <text x="338.0" y="190.8" fill="#888780" font-size="13" font-style="italic">x</text>
+      <text x="86.6" y="190.8" fill="#9A988F" font-size="10">-2</text>
+      <text x="124.5" y="190.8" fill="#9A988F" font-size="10">-1</text>
+      <text x="162.5" y="190.8" fill="#9A988F" font-size="10">0</text>
+      <text x="200.5" y="190.8" fill="#9A988F" font-size="10">1</text>
+      <text x="314.4" y="190.8" fill="#9A988F" font-size="10">4</text>
+      <path id="hp" class="fig-el" d="M 45.9 111.6 L 46.3 112.7 L 46.7 113.9 L 47.0 115.0 L 47.4 116.1 L 47.8 117.1 L 48.2 118.2 L 48.6 119.3 L 48.9 120.4 L 49.3 121.4 L 49.7 122.4 L 50.1 123.5 L 50.5 124.5 L 50.8 125.5 L 51.2 126.5 L 51.6 127.5 L 52.0 128.5 L 52.4 129.5 L 52.7 130.4 L 53.1 131.4 L 53.5 132.3 L 53.9 133.2 L 54.3 134.2 L 54.6 135.1 L 55.0 136.0 L 55.4 136.9 L 55.8 137.7 L 56.2 138.6 L 56.5 139.5 L 56.9 140.3 L 57.3 141.2 L 57.7 142.0 L 58.1 142.8 L 58.4 143.6 L 58.8 144.4 L 59.2 145.2 L 59.6 146.0 L 59.9 146.8 L 60.3 147.6 L 60.7 148.3 L 61.1 149.1 L 61.5 149.8 L 61.8 150.5 L 62.2 151.2 L 62.6 151.9 L 63.0 152.6 L 63.4 153.3 L 63.7 154.0 L 64.1 154.7 L 64.5 155.3 L 64.9 156.0 L 65.3 156.6 L 65.6 157.2 L 66.0 157.8 L 66.4 158.4 L 66.8 159.0 L 67.2 159.6 L 67.5 160.2 L 67.9 160.8 L 68.3 161.3 L 68.7 161.9 L 69.1 162.4 L 69.4 162.9 L 69.8 163.5 L 70.2 164.0 L 70.6 164.5 L 71.0 165.0 L 71.3 165.4 L 71.7 165.9 L 72.1 166.4 L 72.5 166.8 L 72.9 167.2 L 73.2 167.7 L 73.6 168.1 L 74.0 168.5 L 74.4 168.9 L 74.8 169.3 L 75.1 169.7 L 75.5 170.0 L 75.9 170.4 L 76.3 170.7 L 76.7 171.1 L 77.0 171.4 L 77.4 171.7 L 77.8 172.0 L 78.2 172.3 L 78.6 172.6 L 78.9 172.9 L 79.3 173.2 L 79.7 173.5 L 80.1 173.7 L 80.5 173.9 L 80.8 174.2 L 81.2 174.4 L 81.6 174.6 L 82.0 174.8 L 82.4 175.0 L 82.7 175.2 L 83.1 175.4 L 83.5 175.5 L 83.9 175.7 L 84.3 175.8 L 84.6 176.0 L 85.0 176.1 L 85.4 176.2 L 85.8 176.3 L 86.2 176.4 L 86.5 176.5 L 86.9 176.5 L 87.3 176.6 L 87.7 176.7 L 88.1 176.7 L 88.4 176.7 L 88.8 176.8 L 89.2 176.8 L 89.6 176.8 L 89.9 176.8 L 90.3 176.8 L 90.7 176.7 L 91.1 176.7 L 91.5 176.7 L 91.8 176.6 L 92.2 176.5 L 92.6 176.5 L 93.0 176.4 L 93.4 176.3 L 93.7 176.2 L 94.1 176.1 L 94.5 176.0 L 94.9 175.8 L 95.3 175.7 L 95.6 175.5 L 96.0 175.4 L 96.4 175.2 L 96.8 175.0 L 97.2 174.8 L 97.5 174.6 L 97.9 174.4 L 98.3 174.2 L 98.7 173.9 L 99.1 173.7 L 99.4 173.5 L 99.8 173.2 L 100.2 172.9 L 100.6 172.6 L 101.0 172.4 L 101.3 172.0 L 101.7 171.7 L 102.1 171.4 L 102.5 171.1 L 102.9 170.7 L 103.2 170.4 L 103.6 170.0 L 104.0 169.7 L 104.4 169.3 L 104.8 168.9 L 105.1 168.5 L 105.5 168.1 L 105.9 167.7 L 106.3 167.2 L 106.7 166.8 L 107.0 166.4 L 107.4 165.9 L 107.8 165.4 L 108.2 165.0 L 108.6 164.5 L 108.9 164.0 L 109.3 163.5 L 109.7 162.9 L 110.1 162.4 L 110.5 161.9 L 110.8 161.3 L 111.2 160.8 L 111.6 160.2 L 112.0 159.6 L 112.4 159.0 L 112.7 158.4 L 113.1 157.8 L 113.5 157.2 L 113.9 156.6 L 114.3 156.0 L 114.6 155.3 L 115.0 154.7 L 115.4 154.0 L 115.8 153.3 L 116.2 152.6 L 116.5 151.9 L 116.9 151.2 L 117.3 150.5 L 117.7 149.8 L 118.1 149.1 L 118.4 148.3 L 118.8 147.6 L 119.2 146.8 L 119.6 146.0 L 119.9 145.2 L 120.3 144.4 L 120.7 143.6 L 121.1 142.8 L 121.5 142.0 L 121.8 141.2 L 122.2 140.3 L 122.6 139.5 L 123.0 138.6 L 123.4 137.7 L 123.7 136.9 L 124.1 136.0 L 124.5 135.1 L 124.9 134.2 L 125.3 133.2 L 125.6 132.3 L 126.0 131.4 L 126.4 130.4 L 126.8 129.5 L 127.2 128.5 L 127.5 127.5 L 127.9 128.5 L 128.3 129.5 L 128.7 130.4 L 129.1 131.4 L 129.4 132.3 L 129.8 133.2 L 130.2 134.2 L 130.6 135.1 L 131.0 136.0 L 131.3 136.9 L 131.7 137.7 L 132.1 138.6 L 132.5 139.5 L 132.9 140.3 L 133.2 141.2 L 133.6 142.0 L 134.0 142.8 L 134.4 143.6 L 134.8 144.4 L 135.1 145.2 L 135.5 146.0 L 135.9 146.8 L 136.3 147.6 L 136.7 148.3 L 137.0 149.1 L 137.4 149.8 L 137.8 150.5 L 138.2 151.2 L 138.6 151.9 L 138.9 152.6 L 139.3 153.3 L 139.7 154.0 L 140.1 154.7 L 140.5 155.3 L 140.8 156.0 L 141.2 156.6 L 141.6 157.2 L 142.0 157.8 L 142.4 158.4 L 142.7 159.0 L 143.1 159.6 L 143.5 160.2 L 143.9 160.8 L 144.3 161.3 L 144.6 161.9 L 145.0 162.4 L 145.4 162.9 L 145.8 163.5 L 146.2 164.0 L 146.5 164.5 L 146.9 165.0 L 147.3 165.4 L 147.7 165.9 L 148.1 166.4 L 148.4 166.8 L 148.8 167.2 L 149.2 167.7 L 149.6 168.1 L 149.9 168.5 L 150.3 168.9 L 150.7 169.3 L 151.1 169.7 L 151.5 170.0 L 151.8 170.4 L 152.2 170.7 L 152.6 171.1 L 153.0 171.4 L 153.4 171.7 L 153.7 172.0 L 154.1 172.3 L 154.5 172.6 L 154.9 172.9 L 155.3 173.2 L 155.6 173.5 L 156.0 173.7 L 156.4 173.9 L 156.8 174.2 L 157.2 174.4 L 157.5 174.6 L 157.9 174.8 L 158.3 175.0 L 158.7 175.2 L 159.1 175.4 L 159.4 175.5 L 159.8 175.7 L 160.2 175.8 L 160.6 176.0 L 161.0 176.1 L 161.3 176.2 L 161.7 176.3 L 162.1 176.4 L 162.5 176.5 L 162.9 176.5 L 163.2 176.6 L 163.6 176.7 L 164.0 176.7 L 164.4 176.7 L 164.8 176.8 L 165.1 176.8 L 165.5 176.8 L 165.9 176.3 L 166.3 175.8 L 166.7 175.4 L 167.0 174.9 L 167.4 174.4 L 167.8 174.0 L 168.2 173.6 L 168.6 173.2 L 168.9 172.7 L 169.3 172.4 L 169.7 172.0 L 170.1 171.6 L 170.5 171.2 L 170.8 170.9 L 171.2 170.5 L 171.6 170.2 L 172.0 169.8 L 172.4 169.5 L 172.7 169.2 L 173.1 168.9 L 173.5 168.6 L 173.9 168.3 L 174.3 168.1 L 174.6 167.8 L 175.0 167.5 L 175.4 167.3 L 175.8 167.1 L 176.2 166.8 L 176.5 166.6 L 176.9 166.4 L 177.3 166.2 L 177.7 166.1 L 178.1 165.9 L 178.4 165.7 L 178.8 165.6 L 179.2 165.4 L 179.6 165.3 L 179.9 165.2 L 180.3 165.1 L 180.7 165.0 L 181.1 164.9 L 181.5 164.8 L 181.8 164.7 L 182.2 164.6 L 182.6 164.6 L 183.0 164.5 L 183.4 164.5 L 183.7 164.5 L 184.1 164.5 L 184.5 164.5 L 184.9 164.5 L 185.3 164.5 L 185.6 164.5 L 186.0 164.5 L 186.4 164.6 L 186.8 164.6 L 187.2 164.7 L 187.5 164.8 L 187.9 164.9 L 188.3 165.0 L 188.7 165.1 L 189.1 165.2 L 189.4 165.3 L 189.8 165.4 L 190.2 165.6 L 190.6 165.7 L 191.0 165.9 L 191.3 166.1 L 191.7 166.2 L 192.1 166.4 L 192.5 166.6 L 192.9 166.8 L 193.2 167.1 L 193.6 167.3 L 194.0 167.5 L 194.4 167.8 L 194.8 168.1 L 195.1 168.3 L 195.5 168.6 L 195.9 168.9 L 196.3 169.2 L 196.7 169.5 L 197.0 169.8 L 197.4 170.2 L 197.8 170.5 L 198.2 170.9 L 198.6 171.2 L 198.9 171.6 L 199.3 172.0 L 199.7 172.3 L 200.1 172.7 L 200.5 173.2 L 200.8 173.6 L 201.2 174.0 L 201.6 174.4 L 202.0 174.9 L 202.4 175.4 L 202.7 175.8 L 203.1 176.3 L 203.5 176.8 L 203.9 175.3 L 204.3 173.8 L 204.6 172.4 L 205.0 171.0 L 205.4 169.5 L 205.8 168.1 L 206.2 166.7 L 206.5 165.3 L 206.9 163.9 L 207.3 162.5 L 207.7 161.1 L 208.1 159.8 L 208.4 158.4 L 208.8 157.1 L 209.2 155.7 L 209.6 154.4 L 209.9 153.1 L 210.3 151.8 L 210.7 150.5 L 211.1 149.2 L 211.5 147.9 L 211.8 146.6 L 212.2 145.4 L 212.6 144.1 L 213.0 142.9 L 213.4 141.7 L 213.7 140.5 L 214.1 139.2 L 214.5 138.1 L 214.9 136.9 L 215.3 135.7 L 215.6 134.5 L 216.0 133.4 L 216.4 132.2 L 216.8 131.1 L 217.2 129.9 L 217.5 128.8 L 217.9 127.7 L 218.3 126.6 L 218.7 125.5 L 219.1 124.4 L 219.4 123.4 L 219.8 122.3 L 220.2 121.3 L 220.6 120.2 L 221.0 119.2 L 221.3 118.2 L 221.7 117.2 L 222.1 116.2 L 222.5 115.2 L 222.9 114.2 L 223.2 113.2 L 223.6 112.3 L 224.0 111.3 L 224.4 110.4 L 224.8 109.4 L 225.1 108.5 L 225.5 107.6 L 225.9 106.7 L 226.3 105.8 L 226.7 104.9 L 227.0 104.1 L 227.4 103.2 L 227.8 102.3 L 228.2 101.5 L 228.6 100.7 L 228.9 99.8 L 229.3 99.0 L 229.7 98.2 L 230.1 97.4 L 230.5 96.7 L 230.8 95.9 L 231.2 95.1 L 231.6 94.4 L 232.0 93.6 L 232.4 92.9 L 232.7 92.2 L 233.1 91.4 L 233.5 90.7 L 233.9 90.0 L 234.3 89.4 L 234.6 88.7 L 235.0 88.0 L 235.4 87.4 L 235.8 86.7 L 236.2 86.1 L 236.5 85.5 L 236.9 84.8 L 237.3 84.2 L 237.7 83.6 L 238.1 83.0 L 238.4 82.5 L 238.8 81.9 L 239.2 81.3 L 239.6 80.8 L 239.9 80.3 L 240.3 79.7 L 240.7 79.2 L 241.1 78.7 L 241.5 78.2 L 241.8 77.7 L 242.2 77.2 L 242.6 76.8 L 243.0 76.3 L 243.4 75.9 L 243.7 75.4 L 244.1 75.0 L 244.5 74.6 L 244.9 74.2 L 245.3 73.8 L 245.6 73.4 L 246.0 73.0 L 246.4 72.6 L 246.8 72.3 L 247.2 71.9 L 247.5 71.6 L 247.9 71.3 L 248.3 70.9 L 248.7 70.6 L 249.1 70.3 L 249.4 70.0 L 249.8 69.8 L 250.2 69.5 L 250.6 69.2 L 251.0 69.0 L 251.3 68.7 L 251.7 68.5 L 252.1 68.3 L 252.5 68.1 L 252.9 67.9 L 253.2 67.7 L 253.6 67.5 L 254.0 67.3 L 254.4 67.2 L 254.8 67.0 L 255.1 66.9 L 255.5 66.7 L 255.9 66.6 L 256.3 66.5 L 256.7 66.4 L 257.0 66.3 L 257.4 66.2 L 257.8 66.1 L 258.2 66.1 L 258.6 66.0 L 258.9 66.0 L 259.3 65.9 L 259.7 65.9 L 260.1 65.9 L 260.5 65.9 L 260.8 65.9 L 261.2 65.9 L 261.6 65.9 L 262.0 66.0 L 262.4 66.0 L 262.7 66.1 L 263.1 66.1 L 263.5 66.2 L 263.9 66.3 L 264.3 66.4 L 264.6 66.5 L 265.0 66.6 L 265.4 66.7 L 265.8 66.9 L 266.2 67.0 L 266.5 67.2 L 266.9 67.3 L 267.3 67.5 L 267.7 67.7 L 268.1 67.9 L 268.4 68.1 L 268.8 68.3 L 269.2 68.5 L 269.6 68.7 L 269.9 69.0 L 270.3 69.2 L 270.7 69.5 L 271.1 69.8 L 271.5 70.0 L 271.8 70.3 L 272.2 70.6 L 272.6 70.9 L 273.0 71.3 L 273.4 71.6 L 273.7 71.9 L 274.1 72.3 L 274.5 72.6 L 274.9 73.0 L 275.3 73.4 L 275.6 73.8 L 276.0 74.2 L 276.4 74.6 L 276.8 75.0 L 277.2 75.4 L 277.5 75.9 L 277.9 76.3 L 278.3 76.8 L 278.7 77.2 L 279.1 77.7 L 279.4 78.2 L 279.8 78.7 L 280.2 79.2 L 280.6 79.7 L 281.0 80.3 L 281.3 80.8 L 281.7 81.3 L 282.1 81.9 L 282.5 82.5 L 282.9 83.0 L 283.2 83.6 L 283.6 84.2 L 284.0 84.8 L 284.4 85.5 L 284.8 86.1 L 285.1 86.7 L 285.5 87.4 L 285.9 88.0 L 286.3 88.7 L 286.7 89.4 L 287.0 90.0 L 287.4 90.7 L 287.8 91.4 L 288.2 92.2 L 288.6 92.9 L 288.9 93.6 L 289.3 94.4 L 289.7 95.1 L 290.1 95.9 L 290.5 96.7 L 290.8 97.4 L 291.2 98.2 L 291.6 99.0 L 292.0 99.8 L 292.4 100.7 L 292.7 101.5 L 293.1 102.3 L 293.5 103.2 L 293.9 104.1 L 294.3 104.9 L 294.6 105.8 L 295.0 106.7 L 295.4 107.6 L 295.8 108.5 L 296.2 109.4 L 296.5 110.4 L 296.9 111.3 L 297.3 112.3 L 297.7 113.2 L 298.1 114.2 L 298.4 115.2 L 298.8 116.2 L 299.2 117.2 L 299.6 118.2 L 299.9 119.2 L 300.3 120.2 L 300.7 121.3 L 301.1 122.3 L 301.5 123.4 L 301.8 124.4 L 302.2 125.5 L 302.6 126.6 L 303.0 127.7 L 303.4 128.8 L 303.7 129.9 L 304.1 131.1 L 304.5 132.2 L 304.9 133.4 L 305.3 134.5 L 305.6 135.7 L 306.0 136.9 L 306.4 138.1 L 306.8 139.2 L 307.2 140.5 L 307.5 141.7 L 307.9 142.9 L 308.3 144.1 L 308.7 145.4 L 309.1 146.6 L 309.4 147.9 L 309.8 149.2 L 310.2 150.5 L 310.6 151.8 L 311.0 153.1 L 311.3 154.4 L 311.7 155.7 L 312.1 157.1 L 312.5 158.4 L 312.9 159.8 L 313.2 161.1 L 313.6 162.5 L 314.0 163.9 L 314.4 165.3 L 314.8 166.7 L 315.1 168.1 L 315.5 169.5 L 315.9 171.0 L 316.3 172.4 L 316.7 173.8 L 317.0 175.3 L 317.4 176.8 L 317.8 178.3 L 318.2 179.8 L 318.6 181.3 L 318.9 182.8 L 319.3 184.3 L 319.7 185.8 L 320.1 187.4 L 320.5 188.9 L 320.8 190.5 L 321.2 192.1 L 321.6 193.6 L 322.0 195.2 L 322.4 196.8 L 322.7 198.5 L 323.1 200.1 L 323.5 201.7 L 323.9 203.3 L 324.3 205.0 L 324.6 206.7 L 325.0 208.3 L 325.4 210.0 L 325.8 211.7 L 326.2 213.4 L 326.5 215.1 L 326.9 216.8 L 327.3 218.6 L 327.7 220.3 L 328.1 222.0 L 328.4 223.8 L 328.8 225.6 L 329.2 227.4 L 329.6 229.1 L 329.9 230.9 L 330.3 232.8 L 330.7 234.6 L 331.1 236.4 L 331.5 238.2 L 331.8 240.1 L 332.2 241.9 L 332.6 243.8 L 333.0 245.7 L 333.4 247.6 L 333.7 249.5 L 334.1 251.4 L 334.5 253.3 L 334.9 255.2 L 335.3 257.2 L 335.6 259.1 L 336.0 261.1 L 336.4 263.0 L 336.8 265.0 L 337.2 267.0 L 337.5 269.0 L 337.9 271.0 L 338.3 273.0 L 338.7 275.0 L 339.1 277.1 L 339.4 279.1 L 339.8 281.2 L 340.2 283.2 L 340.6 285.3 L 341.0 287.4" fill="none" stroke="#185FA5" stroke-width="3"/>
+      <text id="hpl" class="fig-el" x="47.8" y="43.7" fill="#185FA5" font-size="11" font-style="italic">y=g−f=h′ (a=k=4)</text>
+      <g class="fig-el"><circle cx="89.6" cy="176.8" r="3" fill="#1E7F5C"/></g>
+      <g class="fig-el"><circle cx="165.5" cy="176.8" r="3" fill="#1E7F5C"/></g>
+      <g class="fig-el"><circle cx="203.5" cy="176.8" r="3" fill="#1E7F5C"/></g>
+      <text id="touch" class="fig-el" x="63.0" y="100.4" fill="#1E7F5C" font-size="10">닿기만 함 → 부호 유지</text>
+      <g id="cr" class="fig-el"><circle cx="317.4" cy="176.8" r="3.8" fill="#993C1D"/></g>
+      <text id="crl" class="fig-el" x="260.5" y="68.4" fill="#993C1D" font-size="10">x=4서만 +→− (극값 1개)</text>
+      <polygon id="ar" class="fig-el" points="165.5,176.8 165.5,176.8 165.9,176.3 166.3,175.8 166.7,175.4 167.0,174.9 167.4,174.4 167.8,174.0 168.2,173.6 168.6,173.2 168.9,172.7 169.3,172.3 169.7,172.0 170.1,171.6 170.5,171.2 170.8,170.9 171.2,170.5 171.6,170.2 172.0,169.8 172.4,169.5 172.7,169.2 173.1,168.9 173.5,168.6 173.9,168.3 174.3,168.1 174.6,167.8 175.0,167.5 175.4,167.3 175.8,167.1 176.2,166.8 176.5,166.6 176.9,166.4 177.3,166.2 177.7,166.1 178.1,165.9 178.4,165.7 178.8,165.6 179.2,165.4 179.6,165.3 179.9,165.2 180.3,165.1 180.7,165.0 181.1,164.9 181.5,164.8 181.8,164.7 182.2,164.6 182.6,164.6 183.0,164.5 183.4,164.5 183.7,164.5 184.1,164.5 184.5,164.5 184.9,164.5 185.3,164.5 185.6,164.5 186.0,164.5 186.4,164.6 186.8,164.6 187.2,164.7 187.5,164.8 187.9,164.9 188.3,165.0 188.7,165.1 189.1,165.2 189.4,165.3 189.8,165.4 190.2,165.6 190.6,165.7 191.0,165.9 191.3,166.1 191.7,166.2 192.1,166.4 192.5,166.6 192.9,166.8 193.2,167.1 193.6,167.3 194.0,167.5 194.4,167.8 194.8,168.1 195.1,168.3 195.5,168.6 195.9,168.9 196.3,169.2 196.7,169.5 197.0,169.8 197.4,170.2 197.8,170.5 198.2,170.9 198.6,171.2 198.9,171.6 199.3,172.0 199.7,172.4 200.1,172.7 200.5,173.2 200.8,173.6 201.2,174.0 201.6,174.4 202.0,174.9 202.4,175.4 202.7,175.8 203.1,176.3 203.5,176.8 203.9,175.3 204.3,173.8 204.6,172.4 205.0,171.0 205.4,169.5 205.8,168.1 206.2,166.7 206.5,165.3 206.9,163.9 207.3,162.5 207.7,161.1 208.1,159.8 208.4,158.4 208.8,157.1 209.2,155.7 209.6,154.4 209.9,153.1 210.3,151.8 210.7,150.5 211.1,149.2 211.5,147.9 211.8,146.6 212.2,145.4 212.6,144.1 213.0,142.9 213.4,141.7 213.7,140.5 214.1,139.2 214.5,138.1 214.9,136.9 215.3,135.7 215.6,134.5 216.0,133.4 216.4,132.2 216.8,131.1 217.2,129.9 217.5,128.8 217.9,127.7 218.3,126.6 218.7,125.5 219.1,124.4 219.4,123.4 219.8,122.3 220.2,121.3 220.6,120.2 221.0,119.2 221.3,118.2 221.7,117.2 222.1,116.2 222.5,115.2 222.9,114.2 223.2,113.2 223.6,112.3 224.0,111.3 224.4,110.4 224.8,109.4 225.1,108.5 225.5,107.6 225.9,106.7 226.3,105.8 226.7,104.9 227.0,104.1 227.4,103.2 227.8,102.3 228.2,101.5 228.6,100.7 228.9,99.8 229.3,99.0 229.7,98.2 230.1,97.4 230.5,96.7 230.8,95.9 231.2,95.1 231.6,94.4 232.0,93.6 232.4,92.9 232.7,92.2 233.1,91.4 233.5,90.7 233.9,90.0 234.3,89.4 234.6,88.7 235.0,88.0 235.4,87.4 235.8,86.7 236.2,86.1 236.5,85.5 236.9,84.8 237.3,84.2 237.7,83.6 238.1,83.0 238.4,82.5 238.8,81.9 239.2,81.3 239.6,80.8 239.9,80.3 240.3,79.7 240.7,79.2 241.1,78.7 241.5,78.2 241.8,77.7 242.2,77.2 242.6,76.8 243.0,76.3 243.4,75.9 243.7,75.4 244.1,75.0 244.5,74.6 244.9,74.2 245.3,73.8 245.6,73.4 246.0,73.0 246.4,72.6 246.8,72.3 247.2,71.9 247.5,71.6 247.9,71.3 248.3,70.9 248.7,70.6 249.1,70.3 249.4,70.0 249.8,69.8 250.2,69.5 250.6,69.2 251.0,69.0 251.3,68.7 251.7,68.5 252.1,68.3 252.5,68.1 252.9,67.9 253.2,67.7 253.6,67.5 254.0,67.3 254.4,67.2 254.8,67.0 255.1,66.9 255.5,66.7 255.9,66.6 256.3,66.5 256.7,66.4 257.0,66.3 257.4,66.2 257.8,66.1 258.2,66.1 258.6,66.0 258.9,66.0 259.3,65.9 259.7,65.9 260.1,65.9 260.5,65.9 260.8,65.9 261.2,65.9 261.6,65.9 262.0,66.0 262.4,66.0 262.7,66.1 263.1,66.1 263.5,66.2 263.9,66.3 264.3,66.4 264.6,66.5 265.0,66.6 265.4,66.7 265.8,66.9 266.2,67.0 266.5,67.2 266.9,67.3 267.3,67.5 267.7,67.7 268.1,67.9 268.4,68.1 268.8,68.3 269.2,68.5 269.6,68.7 269.9,69.0 270.3,69.2 270.7,69.5 271.1,69.8 271.5,70.0 271.8,70.3 272.2,70.6 272.6,70.9 273.0,71.3 273.4,71.6 273.7,71.9 274.1,72.3 274.5,72.6 274.9,73.0 275.3,73.4 275.6,73.8 276.0,74.2 276.4,74.6 276.8,75.0 277.2,75.4 277.5,75.9 277.9,76.3 278.3,76.8 278.7,77.2 279.1,77.7 279.4,78.2 279.4,176.8" fill="#BA7517" fill-opacity="0.2" stroke="none"/>
+      <text id="ar l" class="fig-el" x="222.5" y="231.0" fill="#9A5A12" font-size="11">h(3)=∫[0→3](g−f)=7/2</text>
+      <text id="ans" class="fig-el" x="47.8" y="270.4" fill="#B23A1B" font-size="12">k+h(3)=4+7/2=15/2</text>
+      </svg>
+    <span class="cs-taphint">탭하면 다음 ▸</span>
+  </div>
+  <div class="cs-stage" id="stage">
+    <section class="cs-panel" data-panel="0">
+      <div class="cs-prob"><span class="lead">문제</span><br>$f(x)=\begin{cases}-x^2 & (x\lt0)\\ x^2-x & (x\ge0)\end{cases}$ 이고, 양수 $a$에 대하여 $g(x)=\begin{cases}ax+a & (x\lt-1)\\ 0 & (-1\le x\lt1)\\ ax-a & (x\ge1)\end{cases}$ 이다. $h(x)=\displaystyle\int_0^x(g(t)-f(t))\,dt$가 오직 하나의 극값을 갖도록 하는 $a$의 최댓값을 $k$라 하자. $a=k$일 때 <b>$k+h(3)$</b>의 값을 구하시오.</div>
+    </section>
+    <section class="cs-panel" data-panel="1"><div class="cs-head"><span class="cs-badge">1단계</span><span class="cs-title">h′(x)=g(x)−f(x) 를 구간별로</span> <span class="cs-key">핵심</span><span class="cs-type">계산</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$h(x)=\displaystyle\int_0^x(g-f)\,dt$이니 $h'=g-f$예요. $f,g$의 경계 $-1,0,1$로 구간을 나눠 $g-f$를 적어보면?</div><div class="cs-body" data-step="1"><div class="cs-draw"><b>이 단계로 넘어가는 이유 — </b>각 구간에서 $g-f$를 계산: $x\lt-1$에선 $x^2+ax+a$, $-1\le x\lt0$에선 $x^2$, $0\le x\lt1$에선 $-x^2+x$, $x\ge1$에선 $-(x-1)(x-a)$.</div><div class="cs-math">$$h'(x)=\begin{cases}x^2+ax+a & (x\lt-1)\\ x^2 & (-1\le x\lt0)\\ -x^2+x & (0\le x\lt1)\\ -(x-1)(x-a) & (x\ge1)\end{cases}$$</div><div class="cs-tags"><span class="cs-tag">적분과 미분</span><span class="cs-tag">구간 함수</span></div></div></section>
+<section class="cs-panel" data-panel="2"><div class="cs-head"><span class="cs-badge">2단계</span><span class="cs-title">[-1,1)에선 부호가 안 바뀐다</span> <span class="cs-key">핵심</span><span class="cs-type">조건 활용</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$h$가 극값을 가지려면 $h'=g-f$의 <b>부호가 바뀌어야</b> 해요. $-1\le x\lt1$에서 $h'$는 $x^2$ 또는 $-x^2+x=x(1-x)$인데, 이 구간에서 부호는?</div><div class="cs-body" data-step="2"><div class="cs-draw"><b>이 단계로 넘어가는 이유 — </b>$[-1,0)$에서 $x^2\ge0$, $[0,1)$에서 $x(1-x)\ge0$ → 줄곧 $\ge0$이라 부호가 안 바뀜. 그래서 극값 후보는 $x\lt-1$ 또는 $x\ge1$ 영역뿐.</div><div class="cs-math">$$-1\le x\lt1:\ h'\ge0\ \Rightarrow\ \text{부호 변화 없음}$$</div><div class="cs-tags"><span class="cs-tag">증감과 부호</span><span class="cs-tag">극값 조건</span></div></div></section>
+<section class="cs-panel" data-panel="3"><div class="cs-head"><span class="cs-badge">3단계</span><span class="cs-title">경우 (i) 0 &lt; a ≤ 1</span><span class="cs-type">목표 역산</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$x\ge1$에서 $h'=-(x-1)(x-a)$. $0\lt a\le1$이면 $x\ge1$에서 부호가 어떻게 되나요? $x\lt-1$의 $x^2+ax+a$는 판별식 $a^2-4a\lt0$이라 항상 양수예요.</div><div class="cs-body" data-step="3"><div class="cs-draw"><b>이 단계로 넘어가는 이유 — </b>$x\lt-1$에선 $h'\gt0$(부호 변화 없음). $x\ge1$에선 $x=1$에서 $+\to-$로 한 번 바뀜 → <b>극값 정확히 1개($x=1$)</b>. 그래서 $0\lt a\le1$ 모두 만족.</div><div class="cs-math">$$0\lt a\le1\ \Rightarrow\ x=1\text{에서만 극값}\ (\text{만족})$$</div><div class="cs-tags"><span class="cs-tag">판별식</span><span class="cs-tag">부호 변화</span></div></div></section>
+<section class="cs-panel" data-panel="4"><div class="cs-head"><span class="cs-badge">4단계</span><span class="cs-title">경우 (ii) a &gt; 1 → 판별식으로 a ≤ 4</span> <span class="cs-key">핵심</span><span class="cs-type">목표 역산</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$a\gt1$이면 $x\ge1$에서 $x=a$에서 부호가 $+\to-$로 바뀌어 극값 1개가 생겨요. 그런데 $x\lt-1$의 $x^2+ax+a$가 부호를 또 바꾸면 극값이 늘어나니, 그게 없으려면?</div><div class="cs-body" data-step="4"><div class="cs-draw"><b>이 단계로 넘어가는 이유 — </b>$x^2+ax+a=0$이 실근을 가지면(그래서 부호가 바뀌면) 극값이 추가됨. 그걸 막으려면 판별식 $a^2-4a\le0$ → $a\le4$. 따라서 $1\lt a\le4$.</div><div class="cs-math">$$D=a^2-4a\le0\ \Rightarrow\ a\le4,\quad \therefore\ 1\lt a\le4$$</div><div class="cs-tags"><span class="cs-tag">이차식 판별식</span><span class="cs-tag">극값 개수</span></div></div></section>
+<section class="cs-panel" data-panel="5"><div class="cs-head"><span class="cs-badge">5단계</span><span class="cs-title">k=4, 그리고 k+h(3)</span><span class="cs-type">계산</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>(i)(ii) 합치면 $0\lt a\le4$, 최댓값 $k=4$. $a=4$로 $h(3)=\displaystyle\int_0^3(g-f)\,dt$를 계산하고 $k+h(3)$을 구하면?</div><div class="cs-body" data-step="5"><div class="cs-math">$$h(3)=\int_0^1(-t^2+t)\,dt+\int_1^3 -(t-1)(t-4)\,dt=\tfrac16+\tfrac{10}{3}=\tfrac72$$</div><div class="cs-math">$$k+h(3)=4+\tfrac72=\tfrac{15}{2}$$</div><div class="cs-tags"><span class="cs-tag">정적분</span><span class="cs-tag">구간 적분</span></div><div class="cs-ans">정답 &nbsp; k+h(3) = 15/2</div></div></section>
+  </div>
+  <nav class="cs-nav">
+    <button class="cs-prev" id="prevBtn">이전</button>
+    <div class="cs-mid"><div class="cs-dots"><span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span></div><div class="cs-prog" id="prog"></div></div>
+    <button class="cs-next" id="nextBtn">풀이 시작 ▸</button>
+  </nav>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script>
+(function(){
+  var T=5, figMap={"hp": 1, "hpl": 1, "touch": 3, "cr": 4, "crl": 4, "ar": 5, "ar l": 5, "ans": 5};
+  // views: 0=문제, 이후 단계마다 (hint, show) 2개
+  var views=[{step:0,phase:'p'}];
+  for(var k=1;k<=T;k++){views.push({step:k,phase:'hint'});views.push({step:k,phase:'show'});}
+  var vi=0;
+  var panels={}; document.querySelectorAll('.cs-panel').forEach(function(p){panels[+p.dataset.panel]=p;});
+  function figReveal(n){
+    Object.keys(figMap).forEach(function(id){var el=document.getElementById(id);
+      if(el) el.classList.toggle('on', n>=figMap[id]);});
+  }
+  function render(){
+    var v=views[vi];
+    // 패널 표시
+    Object.keys(panels).forEach(function(k){panels[k].classList.toggle('active', (+k)===v.step);});
+    // body 공개 여부
+    var body=panels[v.step] ? panels[v.step].querySelector('.cs-body') : null;
+    if(body) body.classList.toggle('show', v.phase==='show');
+    // 도형 reveal 수
+    var rc = v.step===0 ? 0 : (v.phase==='show' ? v.step : v.step-1);
+    figReveal(rc);
+    // 버튼
+    var nb=document.getElementById('nextBtn'), pb=document.getElementById('prevBtn');
+    pb.disabled = (vi===0);
+    nb.classList.remove('reveal');
+    if(v.step===0){ nb.textContent='풀이 시작 ▸'; nb.disabled=false; }
+    else if(v.phase==='hint'){ nb.textContent='풀이 보기 ▾'; nb.classList.add('reveal'); nb.disabled=false; }
+    else if(v.step<T){ nb.textContent='다음 단계 ▸'; nb.disabled=false; }
+    else { nb.textContent='처음부터'; nb.disabled=false; }
+    // 진행도
+    var done = v.step===0?0:(v.phase==='show'?v.step:v.step-1);
+    document.querySelectorAll('.cs-dot').forEach(function(d,i){d.classList.toggle('fill', i<done);});
+    document.getElementById('prog').textContent = v.step===0 ? ('문제 · 총 '+T+'단계') : (v.step+' / '+T+'단계');
+    // 새 패널은 위로 스크롤
+    document.getElementById('stage').scrollTop=0;
+  }
+  function next(){
+    var v=views[vi];
+    if(v.step===T && v.phase==='show'){ vi=0; render(); return; }   // 처음부터
+    if(vi<views.length-1){ vi++; render(); }
+  }
+  function prev(){ if(vi>0){ vi--; render(); } }
+  document.getElementById('nextBtn').onclick=next;
+  document.getElementById('prevBtn').onclick=prev;
+  document.getElementById('figtap').onclick=next;
+  document.addEventListener('keydown',function(e){
+    if(e.metaKey||e.ctrlKey||e.altKey)return;
+    if(['ArrowLeft','ArrowUp','Backspace','PageUp'].indexOf(e.key)>=0){e.preventDefault();prev();}
+    else if([' ','ArrowRight','ArrowDown','Enter','PageDown'].indexOf(e.key)>=0){e.preventDefault();next();}
+  });
+  render();
+  (function tex(){
+    if(!window.renderMathInElement)return setTimeout(tex,60);
+    renderMathInElement(document.getElementById('app'),{delimiters:[
+      {left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+  })();
+})();
+</script>
+</body>
+</html>

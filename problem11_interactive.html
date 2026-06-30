@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>코스터디 단계별 풀이</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<style>
+:root{--tx:#222;--mut:#666;--faint:#9a988f;--line:#e6e5e1;--surf:#f6f5f1;--pri:#185FA5;
+ --info:#E6F1FB;--infotx:#0C447C;--warnbg:#FAEEDA;--warntx:#854F0B;--okbg:#E1F5EE;--oktx:#0F6E56;--bd:#dcdbd6}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic","Apple SD Gothic Neo",sans-serif;color:var(--tx);background:#fff}
+.cs-app{display:flex;flex-direction:column;height:100vh;height:100dvh;max-width:680px;margin:0 auto;border-left:1px solid var(--line);border-right:1px solid var(--line)}
+/* 헤더 */
+.cs-doc{flex:0 0 auto;font-size:12px;color:var(--faint);padding:9px 14px;border-bottom:1px solid var(--line);
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cs-doc b{color:var(--mut);font-weight:600}
+/* 도형: 상단 고정 */
+.cs-figwrap{flex:0 0 auto;height:38vh;min-height:200px;padding:8px;display:flex;align-items:center;justify-content:center;
+ background:#fff;border-bottom:1px solid var(--line);position:relative;cursor:pointer}
+.cs-figwrap svg{width:100%;height:100%}
+.cs-taphint{position:absolute;right:10px;bottom:8px;font-size:11px;color:var(--faint);background:#fff;
+ padding:2px 8px;border-radius:10px;border:1px solid var(--line);opacity:.85}
+.fig-el{opacity:0;transition:opacity .4s ease}
+.fig-el.on{opacity:1}
+.dl{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .7s ease,opacity .25s ease}
+.dl.on{stroke-dashoffset:0}
+/* 본문(스크롤 영역) */
+.cs-stage{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 16px 18px}
+.cs-panel{display:none;animation:fade .25s ease}
+.cs-panel.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* 문제 패널 */
+.cs-prob{font-size:15.5px;line-height:1.75;color:#333}
+.cs-prob .lead{display:inline-block;font-size:12px;font-weight:600;color:var(--infotx);background:var(--info);
+ padding:3px 10px;border-radius:9px;margin-bottom:10px}
+/* 단계 패널 */
+.cs-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.cs-badge{font-size:12px;font-weight:600;background:var(--info);color:var(--infotx);padding:3px 10px;border-radius:9px}
+.cs-title{font-size:16px;font-weight:600}
+.cs-key{font-size:11px;font-weight:600;background:#FAEEDA;color:#854F0B;padding:2px 8px;border-radius:9px}
+.cs-type{font-size:11px;color:var(--faint);margin-left:auto}
+.cs-hint{font-size:14.5px;color:#4a4a44;background:var(--surf);border-radius:11px;padding:12px 14px;line-height:1.65}
+.cs-hint-tag{display:block;font-size:12px;font-weight:600;color:var(--warntx);margin-bottom:5px}
+.cs-body{display:none;margin-top:12px}
+.cs-body.show{display:block;animation:fade .25s ease}
+.cs-draw{font-size:14px;color:var(--warntx);background:var(--warnbg);padding:11px 13px;border-radius:11px;margin-bottom:10px;line-height:1.65}
+.cs-why{font-size:14px;color:var(--mut);line-height:1.65;margin:6px 0}
+.cs-math{margin:8px 0;font-size:1.02em;overflow-x:auto}
+.cs-tags{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
+.cs-tag{font-size:11px;color:var(--mut);background:var(--surf);padding:3px 9px;border-radius:9px}
+.cs-ans{font-size:16px;font-weight:600;color:var(--oktx);background:var(--okbg);padding:11px 14px;border-radius:11px;margin-top:12px;text-align:center}
+/* 하단 고정 내비 */
+.cs-nav{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:10px 14px;
+ border-top:1px solid var(--bd);background:#fff;box-shadow:0 -2px 10px rgba(0,0,0,.04)}
+.cs-prev{flex:0 0 auto;font-size:14px;font-family:inherit;background:#fff;border:1px solid var(--bd);border-radius:10px;
+ padding:11px 14px;color:var(--mut);cursor:pointer}
+.cs-prev:disabled{opacity:.4}
+.cs-mid{flex:1 1 auto;text-align:center}
+.cs-dots{display:flex;gap:5px;justify-content:center;margin-bottom:3px}
+.cs-dot{width:7px;height:7px;border-radius:50%;background:#d6d5cf}
+.cs-dot.fill{background:var(--pri)}
+.cs-prog{font-size:11px;color:var(--faint)}
+.cs-next{flex:0 0 auto;font-size:15px;font-weight:600;font-family:inherit;background:var(--pri);border:none;border-radius:10px;
+ padding:12px 18px;color:#fff;cursor:pointer;min-width:120px}
+.cs-next.reveal{background:#fff;color:var(--infotx);border:1px solid #9cc2e8}
+.cs-next:disabled{background:#cfd8e2;color:#fff}
+.katex{font-size:1.0em}
+.katex-display{margin:.5em 0}
+</style>
+</head>
+<body>
+<div class="cs-app" id="app">
+  <div class="cs-doc"><b>11. 빈칸 채우기 — 증가 조건·2실근으로 F(5)+G(4)+k</b> &middot; COSTUDY 수II · 삼차함수의 증가와 실근</div>
+  <div class="cs-figwrap" id="figtap">
+    <svg viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet">
+      <title>h(x)=x^3+3x^2-9x 와 수평선 y=9a</title>
+      <line x1="44.0" y1="239.6" x2="344.0" y2="239.6" stroke="#888780" stroke-width="1.6"/>
+      <line x1="228.9" y1="322.0" x2="228.9" y2="20.0" stroke="#888780" stroke-width="1.6"/>
+      <text x="338.0" y="255.6" fill="#888780" font-size="13" font-style="italic">x</text>
+      <text x="120.2" y="255.6" fill="#9A988F" font-size="11">-3</text>
+      <text x="259.8" y="255.6" fill="#9A988F" font-size="11">1</text>
+      <path id="hc" class="fig-el" d="M 52.7 286.5 L 53.4 281.4 L 54.1 276.4 L 54.8 271.5 L 55.5 266.6 L 56.2 261.8 L 56.9 257.1 L 57.6 252.4 L 58.3 247.8 L 59.0 243.2 L 59.7 238.7 L 60.4 234.3 L 61.1 229.9 L 61.8 225.6 L 62.5 221.4 L 63.2 217.2 L 63.9 213.1 L 64.6 209.1 L 65.3 205.1 L 66.0 201.1 L 66.7 197.3 L 67.4 193.5 L 68.1 189.7 L 68.8 186.0 L 69.5 182.4 L 70.2 178.8 L 70.9 175.3 L 71.6 171.8 L 72.3 168.5 L 73.0 165.1 L 73.7 161.8 L 74.3 158.6 L 75.0 155.4 L 75.7 152.3 L 76.4 149.3 L 77.1 146.3 L 77.8 143.3 L 78.5 140.4 L 79.2 137.6 L 79.9 134.8 L 80.6 132.1 L 81.3 129.4 L 82.0 126.8 L 82.7 124.2 L 83.4 121.7 L 84.1 119.2 L 84.8 116.8 L 85.5 114.4 L 86.2 112.1 L 86.9 109.9 L 87.6 107.7 L 88.3 105.5 L 89.0 103.4 L 89.7 101.3 L 90.4 99.3 L 91.1 97.4 L 91.8 95.5 L 92.5 93.6 L 93.2 91.8 L 93.9 90.0 L 94.6 88.3 L 95.3 86.6 L 96.0 85.0 L 96.7 83.4 L 97.4 81.9 L 98.1 80.4 L 98.8 78.9 L 99.5 77.5 L 100.2 76.2 L 100.9 74.9 L 101.6 73.6 L 102.3 72.4 L 103.0 71.2 L 103.7 70.1 L 104.3 69.0 L 105.0 67.9 L 105.7 66.9 L 106.4 65.9 L 107.1 65.0 L 107.8 64.1 L 108.5 63.3 L 109.2 62.5 L 109.9 61.7 L 110.6 61.0 L 111.3 60.3 L 112.0 59.7 L 112.7 59.0 L 113.4 58.5 L 114.1 57.9 L 114.8 57.5 L 115.5 57.0 L 116.2 56.6 L 116.9 56.2 L 117.6 55.9 L 118.3 55.5 L 119.0 55.3 L 119.7 55.0 L 120.4 54.8 L 121.1 54.7 L 121.8 54.5 L 122.5 54.4 L 123.2 54.4 L 123.9 54.3 L 124.6 54.3 L 125.3 54.4 L 126.0 54.4 L 126.7 54.5 L 127.4 54.6 L 128.1 54.8 L 128.8 55.0 L 129.5 55.2 L 130.2 55.5 L 130.9 55.8 L 131.6 56.1 L 132.3 56.4 L 133.0 56.8 L 133.7 57.2 L 134.3 57.6 L 135.0 58.1 L 135.7 58.6 L 136.4 59.1 L 137.1 59.6 L 137.8 60.2 L 138.5 60.8 L 139.2 61.4 L 139.9 62.0 L 140.6 62.7 L 141.3 63.4 L 142.0 64.1 L 142.7 64.9 L 143.4 65.6 L 144.1 66.4 L 144.8 67.2 L 145.5 68.1 L 146.2 68.9 L 146.9 69.8 L 147.6 70.7 L 148.3 71.7 L 149.0 72.6 L 149.7 73.6 L 150.4 74.6 L 151.1 75.6 L 151.8 76.6 L 152.5 77.7 L 153.2 78.8 L 153.9 79.9 L 154.6 81.0 L 155.3 82.1 L 156.0 83.2 L 156.7 84.4 L 157.4 85.6 L 158.1 86.8 L 158.8 88.0 L 159.5 89.3 L 160.2 90.5 L 160.9 91.8 L 161.6 93.1 L 162.3 94.4 L 163.0 95.7 L 163.7 97.0 L 164.3 98.3 L 165.0 99.7 L 165.7 101.1 L 166.4 102.5 L 167.1 103.8 L 167.8 105.3 L 168.5 106.7 L 169.2 108.1 L 169.9 109.6 L 170.6 111.0 L 171.3 112.5 L 172.0 114.0 L 172.7 115.5 L 173.4 117.0 L 174.1 118.5 L 174.8 120.0 L 175.5 121.5 L 176.2 123.0 L 176.9 124.6 L 177.6 126.1 L 178.3 127.7 L 179.0 129.3 L 179.7 130.8 L 180.4 132.4 L 181.1 134.0 L 181.8 135.6 L 182.5 137.2 L 183.2 138.8 L 183.9 140.4 L 184.6 142.0 L 185.3 143.7 L 186.0 145.3 L 186.7 146.9 L 187.4 148.5 L 188.1 150.2 L 188.8 151.8 L 189.5 153.4 L 190.2 155.1 L 190.9 156.7 L 191.6 158.4 L 192.3 160.0 L 193.0 161.7 L 193.7 163.3 L 194.3 165.0 L 195.0 166.6 L 195.7 168.3 L 196.4 169.9 L 197.1 171.5 L 197.8 173.2 L 198.5 174.8 L 199.2 176.5 L 199.9 178.1 L 200.6 179.7 L 201.3 181.4 L 202.0 183.0 L 202.7 184.6 L 203.4 186.2 L 204.1 187.9 L 204.8 189.5 L 205.5 191.1 L 206.2 192.7 L 206.9 194.3 L 207.6 195.9 L 208.3 197.4 L 209.0 199.0 L 209.7 200.6 L 210.4 202.1 L 211.1 203.7 L 211.8 205.2 L 212.5 206.8 L 213.2 208.3 L 213.9 209.8 L 214.6 211.3 L 215.3 212.8 L 216.0 214.3 L 216.7 215.8 L 217.4 217.3 L 218.1 218.7 L 218.8 220.2 L 219.5 221.6 L 220.2 223.0 L 220.9 224.4 L 221.6 225.8 L 222.3 227.2 L 223.0 228.6 L 223.7 229.9 L 224.3 231.3 L 225.0 232.6 L 225.7 233.9 L 226.4 235.2 L 227.1 236.5 L 227.8 237.8 L 228.5 239.0 L 229.2 240.3 L 229.9 241.5 L 230.6 242.7 L 231.3 243.9 L 232.0 245.0 L 232.7 246.2 L 233.4 247.3 L 234.1 248.4 L 234.8 249.5 L 235.5 250.6 L 236.2 251.6 L 236.9 252.7 L 237.6 253.7 L 238.3 254.7 L 239.0 255.7 L 239.7 256.6 L 240.4 257.5 L 241.1 258.4 L 241.8 259.3 L 242.5 260.2 L 243.2 261.0 L 243.9 261.8 L 244.6 262.6 L 245.3 263.4 L 246.0 264.2 L 246.7 264.9 L 247.4 265.6 L 248.1 266.2 L 248.8 266.9 L 249.5 267.5 L 250.2 268.1 L 250.9 268.7 L 251.6 269.2 L 252.3 269.7 L 253.0 270.2 L 253.7 270.7 L 254.3 271.1 L 255.0 271.5 L 255.7 271.9 L 256.4 272.2 L 257.1 272.5 L 257.8 272.8 L 258.5 273.1 L 259.2 273.3 L 259.9 273.5 L 260.6 273.6 L 261.3 273.8 L 262.0 273.9 L 262.7 273.9 L 263.4 274.0 L 264.1 274.0 L 264.8 273.9 L 265.5 273.9 L 266.2 273.8 L 266.9 273.6 L 267.6 273.4 L 268.3 273.2 L 269.0 273.0 L 269.7 272.7 L 270.4 272.4 L 271.1 272.1 L 271.8 271.7 L 272.5 271.3 L 273.2 270.8 L 273.9 270.3 L 274.6 269.8 L 275.3 269.2 L 276.0 268.6 L 276.7 268.0 L 277.4 267.3 L 278.1 266.6 L 278.8 265.8 L 279.5 265.0 L 280.2 264.1 L 280.9 263.3 L 281.6 262.3 L 282.3 261.4 L 283.0 260.4 L 283.7 259.3 L 284.3 258.2 L 285.0 257.1 L 285.7 255.9 L 286.4 254.7 L 287.1 253.4 L 287.8 252.1 L 288.5 250.7 L 289.2 249.3 L 289.9 247.9 L 290.6 246.4 L 291.3 244.9 L 292.0 243.3 L 292.7 241.7 L 293.4 240.0 L 294.1 238.3 L 294.8 236.5 L 295.5 234.7 L 296.2 232.8 L 296.9 230.9 L 297.6 228.9 L 298.3 226.9 L 299.0 224.9 L 299.7 222.8 L 300.4 220.6 L 301.1 218.4 L 301.8 216.1 L 302.5 213.8 L 303.2 211.5 L 303.9 209.1 L 304.6 206.6 L 305.3 204.1 L 306.0 201.5 L 306.7 198.9 L 307.4 196.2 L 308.1 193.5 L 308.8 190.7 L 309.5 187.9 L 310.2 185.0 L 310.9 182.0 L 311.6 179.0 L 312.3 176.0 L 313.0 172.8 L 313.7 169.7 L 314.3 166.4 L 315.0 163.2 L 315.7 159.8 L 316.4 156.4 L 317.1 153.0 L 317.8 149.5 L 318.5 145.9 L 319.2 142.3 L 319.9 138.6 L 320.6 134.8 L 321.3 131.0 L 322.0 127.1 L 322.7 123.2 L 323.4 119.2 L 324.1 115.2 L 324.8 111.1 L 325.5 106.9 L 326.2 102.6 L 326.9 98.3 L 327.6 94.0 L 328.3 89.6 L 329.0 85.1 L 329.7 80.5 L 330.4 75.9 L 331.1 71.2 L 331.8 66.5 L 332.5 61.7 L 333.2 56.8 L 333.9 51.8 L 334.6 46.8 L 335.3 41.8" fill="none" stroke="#185FA5" stroke-width="3"/>
+      <text id="hlab" class="fig-el" x="141.7" y="33.7" fill="#185FA5" font-size="12" font-style="italic">h(x)=x³+3x²-9x</text>
+      <g id="pmax" class="fig-el"><circle cx="124.2" cy="54.3" r="3.6" fill="#BA7517"/></g>
+      <g id="pmin" class="fig-el"><circle cx="263.8" cy="274.0" r="3.6" fill="#1E7F5C"/></g>
+      <text id="maxv" class="fig-el" x="129.2" y="50.3" fill="#BA7517" font-size="11">극대 27</text>
+      <text id="minv" class="fig-el" x="268.8" y="288.0" fill="#1E7F5C" font-size="11">극소 -5</text>
+      <line id="l27" class="fig-el" x1="44.0" y1="54.3" x2="344.0" y2="54.3" stroke="#BA7517" stroke-width="1.5" stroke-dasharray="5 4"/>
+      <line id="lm5" class="fig-el" x1="44.0" y1="274.0" x2="344.0" y2="274.0" stroke="#1E7F5C" stroke-width="1.3" stroke-dasharray="5 4"/>
+      <text id="l27lab" class="fig-el" x="180.0" y="49.3" fill="#BA7517" font-size="11">y=9a=27 → 2실근</text>
+      <text id="lm5lab" class="fig-el" x="54.5" y="288.0" fill="#1E7F5C" font-size="11">9a=-5 → a&lt;0 기각</text>
+      <text id="a3" class="fig-el" x="54.5" y="102.4" fill="#993C1D" font-size="13">a&gt;0 → a=3</text>
+      </svg>
+    <span class="cs-taphint">탭하면 다음 ▸</span>
+  </div>
+  <div class="cs-stage" id="stage">
+    <section class="cs-panel" data-panel="0">
+      <div class="cs-prob"><span class="lead">문제</span><br>두 실수 $a\,(a\ne0),\ b$에 대하여 $f(x)=\tfrac13 ax^3-bx^2-(a-4)x-3a^2,\ \ g(x)=(a+b)x^2-2(a+2)x$가 다음을 만족한다.<br>$f(x)$는 실수 전체에서 증가하고, $f(x)+g(x)=0$이 서로 다른 $2$개의 실근을 갖는다.<br>빈칸 $(가)=F(a),\ (나)=G(a),\ (다)=k$일 때 <b>$F(5)+G(4)+k$</b>의 값을 구하시오.</div>
+    </section>
+    <section class="cs-panel" data-panel="1"><div class="cs-head"><span class="cs-badge">1단계</span><span class="cs-title">(가) f가 증가 → 판별식 ≤ 0</span> <span class="cs-key">핵심</span><span class="cs-type">조건 활용</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$f$가 실수 전체에서 <b>증가</b>하려면 $f'(x)\ge0$이 항상 성립해야 해요. $f'(x)=ax^2-2bx-(a-4)$가 항상 0 이상이려면?</div><div class="cs-body" data-step="1"><div class="cs-draw"><b>이 단계로 넘어가는 이유 — </b>이차식 $f'$이 항상 $\ge0$ ⇔ $a\gt0$이고 판별식 $D\le0$. 이 $D$의 빈칸이 $(가)$.</div><div class="cs-math">$$D=(-2b)^2-4a\{-(a-4)\}=4b^2+\underbrace{(4a^2-16a)}_{(\text{가})}\le0$$</div><div class="cs-tags"><span class="cs-tag">삼차함수의 증가</span><span class="cs-tag">이차식의 부호·판별식</span></div></div></section>
+<section class="cs-panel" data-panel="2"><div class="cs-head"><span class="cs-badge">2단계</span><span class="cs-title">(나) f+g=0 정리</span><span class="cs-type">계산</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$f(x)+g(x)$를 정리하면 삼차식이 돼요. $a\gt0$로 양변을 나눠 깔끔히 만들면 우변에 무엇이 남죠?</div><div class="cs-body" data-step="2"><div class="cs-why">$f+g=\tfrac13 ax^3+ax^2-3ax-3a^2=0$, $\times\tfrac{3}{a}$ → $x^3+3x^2-9x-9a=0$.</div><div class="cs-math">$$x^3+3x^2-9x=\underbrace{9a}_{(\text{나})}$$</div><div class="cs-tags"><span class="cs-tag">식 정리</span><span class="cs-tag">삼차방정식</span></div></div></section>
+<section class="cs-panel" data-panel="3"><div class="cs-head"><span class="cs-badge">3단계</span><span class="cs-title">h(x)=x³+3x²−9x 의 증감</span><span class="cs-type">계산</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$h(x)=x^3+3x^2-9x$의 도함수로 극대·극소를 찾으면?</div><div class="cs-body" data-step="3"><div class="cs-math">$$h'(x)=3(x+3)(x-1)=0\ \Rightarrow\ x=-3,\ 1$$</div><div class="cs-math">$$\text{극대}\ h(-3)=27,\qquad \text{극소}\ h(1)=-5$$</div><div class="cs-tags"><span class="cs-tag">삼차함수의 극값</span></div></div></section>
+<section class="cs-panel" data-panel="4"><div class="cs-head"><span class="cs-badge">4단계</span><span class="cs-title">(다) 서로 다른 2실근 → a=3</span> <span class="cs-key">핵심</span><span class="cs-type">목표 역산</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$x^3+3x^2-9x=9a$가 <b>서로 다른 2실근</b> — 수평선 $y=9a$가 $h$와 정확히 2점에서 만나려면 어디를 지나야 할까요?</div><div class="cs-body" data-step="4"><div class="cs-draw"><b>이 단계로 넘어가는 이유 — </b>삼차곡선과 수평선이 서로 다른 2점에서 만나는 건 <b>극값을 지날 때(접점+교점)</b>뿐. 그래서 $9a=27$ 또는 $9a=-5$. $a\gt0$이므로 $a=3$ → $(다)\ k=3$.</div><div class="cs-math">$$9a=27\ \text{또는}\ 9a=-5,\quad a\gt0\ \Rightarrow\ a=3$$</div><div class="cs-tags"><span class="cs-tag">실근의 개수와 극값</span><span class="cs-tag">그래프와 직선</span></div></div></section>
+<section class="cs-panel" data-panel="5"><div class="cs-head"><span class="cs-badge">5단계</span><span class="cs-title">b 범위와 F(5)+G(4)+k</span><span class="cs-type">계산</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$a=3$을 $\text{㉠}$에 넣어 $b$ 범위를 구하고, 마지막에 $F(5)+G(4)+k$를 계산해요.</div><div class="cs-body" data-step="5"><div class="cs-why">$4b^2+4(9)-16(3)=4b^2-12\le0 \Rightarrow b^2\le3 \Rightarrow -\sqrt3\le b\le\sqrt3$.</div><div class="cs-math">$$F(a)=4a^2-16a,\quad G(a)=9a,\quad k=3$$</div><div class="cs-math">$$F(5)+G(4)+k=20+36+3=59$$</div><div class="cs-tags"><span class="cs-tag">대입</span><span class="cs-tag">최종 계산</span></div><div class="cs-ans">정답 &nbsp; F(5)+G(4)+k = 59</div></div></section>
+  </div>
+  <nav class="cs-nav">
+    <button class="cs-prev" id="prevBtn">이전</button>
+    <div class="cs-mid"><div class="cs-dots"><span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span></div><div class="cs-prog" id="prog"></div></div>
+    <button class="cs-next" id="nextBtn">풀이 시작 ▸</button>
+  </nav>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script>
+(function(){
+  var T=5, figMap={"hc": 3, "hlab": 3, "pmax": 3, "pmin": 3, "maxv": 3, "minv": 3, "l27": 4, "lm5": 4, "l27lab": 4, "lm5lab": 4, "a3": 5};
+  // views: 0=문제, 이후 단계마다 (hint, show) 2개
+  var views=[{step:0,phase:'p'}];
+  for(var k=1;k<=T;k++){views.push({step:k,phase:'hint'});views.push({step:k,phase:'show'});}
+  var vi=0;
+  var panels={}; document.querySelectorAll('.cs-panel').forEach(function(p){panels[+p.dataset.panel]=p;});
+  function figReveal(n){
+    Object.keys(figMap).forEach(function(id){var el=document.getElementById(id);
+      if(el) el.classList.toggle('on', n>=figMap[id]);});
+  }
+  function render(){
+    var v=views[vi];
+    // 패널 표시
+    Object.keys(panels).forEach(function(k){panels[k].classList.toggle('active', (+k)===v.step);});
+    // body 공개 여부
+    var body=panels[v.step] ? panels[v.step].querySelector('.cs-body') : null;
+    if(body) body.classList.toggle('show', v.phase==='show');
+    // 도형 reveal 수
+    var rc = v.step===0 ? 0 : (v.phase==='show' ? v.step : v.step-1);
+    figReveal(rc);
+    // 버튼
+    var nb=document.getElementById('nextBtn'), pb=document.getElementById('prevBtn');
+    pb.disabled = (vi===0);
+    nb.classList.remove('reveal');
+    if(v.step===0){ nb.textContent='풀이 시작 ▸'; nb.disabled=false; }
+    else if(v.phase==='hint'){ nb.textContent='풀이 보기 ▾'; nb.classList.add('reveal'); nb.disabled=false; }
+    else if(v.step<T){ nb.textContent='다음 단계 ▸'; nb.disabled=false; }
+    else { nb.textContent='처음부터'; nb.disabled=false; }
+    // 진행도
+    var done = v.step===0?0:(v.phase==='show'?v.step:v.step-1);
+    document.querySelectorAll('.cs-dot').forEach(function(d,i){d.classList.toggle('fill', i<done);});
+    document.getElementById('prog').textContent = v.step===0 ? ('문제 · 총 '+T+'단계') : (v.step+' / '+T+'단계');
+    // 새 패널은 위로 스크롤
+    document.getElementById('stage').scrollTop=0;
+  }
+  function next(){
+    var v=views[vi];
+    if(v.step===T && v.phase==='show'){ vi=0; render(); return; }   // 처음부터
+    if(vi<views.length-1){ vi++; render(); }
+  }
+  function prev(){ if(vi>0){ vi--; render(); } }
+  document.getElementById('nextBtn').onclick=next;
+  document.getElementById('prevBtn').onclick=prev;
+  document.getElementById('figtap').onclick=next;
+  document.addEventListener('keydown',function(e){
+    if(e.metaKey||e.ctrlKey||e.altKey)return;
+    if(['ArrowLeft','ArrowUp','Backspace','PageUp'].indexOf(e.key)>=0){e.preventDefault();prev();}
+    else if([' ','ArrowRight','ArrowDown','Enter','PageDown'].indexOf(e.key)>=0){e.preventDefault();next();}
+  });
+  render();
+  (function tex(){
+    if(!window.renderMathInElement)return setTimeout(tex,60);
+    renderMathInElement(document.getElementById('app'),{delimiters:[
+      {left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+  })();
+})();
+</script>
+</body>
+</html>

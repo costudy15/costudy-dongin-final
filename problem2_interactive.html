@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>코스터디 단계별 풀이</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<style>
+:root{--tx:#222;--mut:#666;--faint:#9a988f;--line:#e6e5e1;--surf:#f6f5f1;--pri:#185FA5;
+ --info:#E6F1FB;--infotx:#0C447C;--warnbg:#FAEEDA;--warntx:#854F0B;--okbg:#E1F5EE;--oktx:#0F6E56;--bd:#dcdbd6}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic","Apple SD Gothic Neo",sans-serif;color:var(--tx);background:#fff}
+.cs-app{display:flex;flex-direction:column;height:100vh;height:100dvh;max-width:680px;margin:0 auto;border-left:1px solid var(--line);border-right:1px solid var(--line)}
+/* 헤더 */
+.cs-doc{flex:0 0 auto;font-size:12px;color:var(--faint);padding:9px 14px;border-bottom:1px solid var(--line);
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cs-doc b{color:var(--mut);font-weight:600}
+/* 도형: 상단 고정 */
+.cs-figwrap{flex:0 0 auto;height:38vh;min-height:200px;padding:8px;display:flex;align-items:center;justify-content:center;
+ background:#fff;border-bottom:1px solid var(--line);position:relative;cursor:pointer}
+.cs-figwrap svg{width:100%;height:100%}
+.cs-taphint{position:absolute;right:10px;bottom:8px;font-size:11px;color:var(--faint);background:#fff;
+ padding:2px 8px;border-radius:10px;border:1px solid var(--line);opacity:.85}
+.fig-el{opacity:0;transition:opacity .4s ease}
+.fig-el.on{opacity:1}
+.dl{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .7s ease,opacity .25s ease}
+.dl.on{stroke-dashoffset:0}
+/* 본문(스크롤 영역) */
+.cs-stage{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 16px 18px}
+.cs-panel{display:none;animation:fade .25s ease}
+.cs-panel.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* 문제 패널 */
+.cs-prob{font-size:15.5px;line-height:1.75;color:#333}
+.cs-prob .lead{display:inline-block;font-size:12px;font-weight:600;color:var(--infotx);background:var(--info);
+ padding:3px 10px;border-radius:9px;margin-bottom:10px}
+/* 단계 패널 */
+.cs-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.cs-badge{font-size:12px;font-weight:600;background:var(--info);color:var(--infotx);padding:3px 10px;border-radius:9px}
+.cs-title{font-size:16px;font-weight:600}
+.cs-key{font-size:11px;font-weight:600;background:#FAEEDA;color:#854F0B;padding:2px 8px;border-radius:9px}
+.cs-type{font-size:11px;color:var(--faint);margin-left:auto}
+.cs-hint{font-size:14.5px;color:#4a4a44;background:var(--surf);border-radius:11px;padding:12px 14px;line-height:1.65}
+.cs-hint-tag{display:block;font-size:12px;font-weight:600;color:var(--warntx);margin-bottom:5px}
+.cs-body{display:none;margin-top:12px}
+.cs-body.show{display:block;animation:fade .25s ease}
+.cs-draw{font-size:14px;color:var(--warntx);background:var(--warnbg);padding:11px 13px;border-radius:11px;margin-bottom:10px;line-height:1.65}
+.cs-why{font-size:14px;color:var(--mut);line-height:1.65;margin:6px 0}
+.cs-math{margin:8px 0;font-size:1.02em;overflow-x:auto}
+.cs-tags{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
+.cs-tag{font-size:11px;color:var(--mut);background:var(--surf);padding:3px 9px;border-radius:9px}
+.cs-ans{font-size:16px;font-weight:600;color:var(--oktx);background:var(--okbg);padding:11px 14px;border-radius:11px;margin-top:12px;text-align:center}
+/* 하단 고정 내비 */
+.cs-nav{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:10px 14px;
+ border-top:1px solid var(--bd);background:#fff;box-shadow:0 -2px 10px rgba(0,0,0,.04)}
+.cs-prev{flex:0 0 auto;font-size:14px;font-family:inherit;background:#fff;border:1px solid var(--bd);border-radius:10px;
+ padding:11px 14px;color:var(--mut);cursor:pointer}
+.cs-prev:disabled{opacity:.4}
+.cs-mid{flex:1 1 auto;text-align:center}
+.cs-dots{display:flex;gap:5px;justify-content:center;margin-bottom:3px}
+.cs-dot{width:7px;height:7px;border-radius:50%;background:#d6d5cf}
+.cs-dot.fill{background:var(--pri)}
+.cs-prog{font-size:11px;color:var(--faint)}
+.cs-next{flex:0 0 auto;font-size:15px;font-weight:600;font-family:inherit;background:var(--pri);border:none;border-radius:10px;
+ padding:12px 18px;color:#fff;cursor:pointer;min-width:120px}
+.cs-next.reveal{background:#fff;color:var(--infotx);border:1px solid #9cc2e8}
+.cs-next:disabled{background:#cfd8e2;color:#fff}
+.katex{font-size:1.0em}
+.katex-display{margin:.5em 0}
+</style>
+</head>
+<body>
+<div class="cs-app" id="app">
+  <div class="cs-doc"><b>2. f′ 그래프와 h=f+2x — 옳은 보기 고르기</b> &middot; COSTUDY 수II · 도함수·증감·실근</div>
+  <div class="cs-figwrap" id="figtap">
+    <svg viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet">
+      <title>h(x) 개형 (극소 β&lt;0, h(0)=0, 두 실근)</title>
+      <line x1="44.0" y1="219.3" x2="344.0" y2="219.3" stroke="#888780" stroke-width="1.6"/>
+      <line x1="241.1" y1="322.0" x2="241.1" y2="20.0" stroke="#888780" stroke-width="1.6"/>
+      <text x="338.0" y="235.3" fill="#888780" font-size="13" font-style="italic">x</text>
+      <path id="hc" class="fig-el" d="M 48.3 44.7 L 49.3 50.1 L 50.3 55.5 L 51.4 60.7 L 52.4 65.8 L 53.4 70.9 L 54.5 75.8 L 55.5 80.7 L 56.5 85.5 L 57.5 90.1 L 58.6 94.7 L 59.6 99.2 L 60.6 103.6 L 61.7 107.9 L 62.7 112.1 L 63.7 116.3 L 64.7 120.3 L 65.8 124.3 L 66.8 128.2 L 67.8 132.0 L 68.9 135.7 L 69.9 139.4 L 70.9 143.0 L 71.9 146.5 L 73.0 149.9 L 74.0 153.2 L 75.0 156.5 L 76.1 159.7 L 77.1 162.8 L 78.1 165.9 L 79.1 168.8 L 80.2 171.8 L 81.2 174.6 L 82.2 177.4 L 83.3 180.1 L 84.3 182.8 L 85.3 185.3 L 86.3 187.9 L 87.4 190.3 L 88.4 192.7 L 89.4 195.1 L 90.5 197.3 L 91.5 199.5 L 92.5 201.7 L 93.5 203.8 L 94.6 205.9 L 95.6 207.8 L 96.6 209.8 L 97.7 211.7 L 98.7 213.5 L 99.7 215.3 L 100.7 217.0 L 101.8 218.7 L 102.8 220.3 L 103.8 221.9 L 104.9 223.4 L 105.9 224.9 L 106.9 226.4 L 107.9 227.7 L 109.0 229.1 L 110.0 230.4 L 111.0 231.7 L 112.1 232.9 L 113.1 234.1 L 114.1 235.2 L 115.1 236.3 L 116.2 237.4 L 117.2 238.4 L 118.2 239.3 L 119.3 240.3 L 120.3 241.2 L 121.3 242.1 L 122.3 242.9 L 123.4 243.7 L 124.4 244.5 L 125.4 245.2 L 126.5 245.9 L 127.5 246.6 L 128.5 247.2 L 129.5 247.8 L 130.6 248.4 L 131.6 248.9 L 132.6 249.4 L 133.7 249.9 L 134.7 250.4 L 135.7 250.8 L 136.7 251.2 L 137.8 251.6 L 138.8 252.0 L 139.8 252.3 L 140.9 252.6 L 141.9 252.9 L 142.9 253.1 L 143.9 253.4 L 145.0 253.6 L 146.0 253.8 L 147.0 253.9 L 148.1 254.1 L 149.1 254.2 L 150.1 254.3 L 151.1 254.4 L 152.2 254.5 L 153.2 254.5 L 154.2 254.5 L 155.3 254.6 L 156.3 254.5 L 157.3 254.5 L 158.3 254.5 L 159.4 254.4 L 160.4 254.4 L 161.4 254.3 L 162.5 254.2 L 163.5 254.1 L 164.5 253.9 L 165.5 253.8 L 166.6 253.6 L 167.6 253.4 L 168.6 253.3 L 169.7 253.1 L 170.7 252.9 L 171.7 252.6 L 172.7 252.4 L 173.8 252.2 L 174.8 251.9 L 175.8 251.6 L 176.9 251.3 L 177.9 251.1 L 178.9 250.8 L 179.9 250.5 L 181.0 250.1 L 182.0 249.8 L 183.0 249.5 L 184.1 249.1 L 185.1 248.8 L 186.1 248.4 L 187.1 248.0 L 188.2 247.7 L 189.2 247.3 L 190.2 246.9 L 191.3 246.5 L 192.3 246.1 L 193.3 245.7 L 194.3 245.2 L 195.4 244.8 L 196.4 244.4 L 197.4 243.9 L 198.5 243.5 L 199.5 243.0 L 200.5 242.5 L 201.5 242.1 L 202.6 241.6 L 203.6 241.1 L 204.6 240.6 L 205.7 240.1 L 206.7 239.6 L 207.7 239.1 L 208.7 238.6 L 209.8 238.1 L 210.8 237.6 L 211.8 237.0 L 212.9 236.5 L 213.9 236.0 L 214.9 235.4 L 215.9 234.9 L 217.0 234.3 L 218.0 233.7 L 219.0 233.2 L 220.1 232.6 L 221.1 232.0 L 222.1 231.4 L 223.1 230.8 L 224.2 230.2 L 225.2 229.6 L 226.2 229.0 L 227.3 228.4 L 228.3 227.8 L 229.3 227.1 L 230.3 226.5 L 231.4 225.8 L 232.4 225.2 L 233.4 224.5 L 234.5 223.9 L 235.5 223.2 L 236.5 222.5 L 237.5 221.8 L 238.6 221.1 L 239.6 220.4 L 240.6 219.7 L 241.7 219.0 L 242.7 218.2 L 243.7 217.5 L 244.7 216.7 L 245.8 216.0 L 246.8 215.2 L 247.8 214.4 L 248.9 213.6 L 249.9 212.8 L 250.9 212.0 L 251.9 211.2 L 253.0 210.4 L 254.0 209.5 L 255.0 208.6 L 256.1 207.8 L 257.1 206.9 L 258.1 206.0 L 259.1 205.1 L 260.2 204.2 L 261.2 203.2 L 262.2 202.3 L 263.3 201.3 L 264.3 200.3 L 265.3 199.3 L 266.3 198.3 L 267.4 197.3 L 268.4 196.3 L 269.4 195.2 L 270.5 194.1 L 271.5 193.0 L 272.5 191.9 L 273.5 190.8 L 274.6 189.6 L 275.6 188.5 L 276.6 187.3 L 277.7 186.1 L 278.7 184.8 L 279.7 183.6 L 280.7 182.3 L 281.8 181.0 L 282.8 179.7 L 283.8 178.3 L 284.9 177.0 L 285.9 175.6 L 286.9 174.2 L 287.9 172.7 L 289.0 171.3 L 290.0 169.8 L 291.0 168.2 L 292.1 166.7 L 293.1 165.1 L 294.1 163.5 L 295.1 161.9 L 296.2 160.2 L 297.2 158.5 L 298.2 156.8 L 299.3 155.0 L 300.3 153.2 L 301.3 151.4 L 302.3 149.5 L 303.4 147.7 L 304.4 145.7 L 305.4 143.8 L 306.5 141.8 L 307.5 139.7 L 308.5 137.6 L 309.5 135.5 L 310.6 133.4 L 311.6 131.2 L 312.6 129.0 L 313.7 126.7 L 314.7 124.4 L 315.7 122.0 L 316.7 119.6 L 317.8 117.2 L 318.8 114.7 L 319.8 112.1 L 320.9 109.5 L 321.9 106.9 L 322.9 104.2 L 323.9 101.5 L 325.0 98.7 L 326.0 95.9 L 327.0 93.0 L 328.1 90.1 L 329.1 87.1 L 330.1 84.0 L 331.1 80.9 L 332.2 77.8 L 333.2 74.6 L 334.2 71.3 L 335.3 68.0 L 336.3 64.6" fill="none" stroke="#185FA5" stroke-width="3"/>
+      <text id="hclab" class="fig-el" x="266.9" y="38.1" fill="#185FA5" font-size="12" font-style="italic">y=h(x) 개형</text>
+      <line id="vb" class="fig-el" x1="155.4" y1="219.3" x2="155.4" y2="254.6" stroke="#BA7517" stroke-width="1.2" stroke-dasharray="5 4"/>
+      <g id="pb" class="fig-el"><circle cx="155.4" cy="254.6" r="3.6" fill="#BA7517"/></g>
+      <text id="pbl" class="fig-el" x="147.4" y="213.3" fill="#BA7517" font-size="13" font-style="italic">β</text>
+      <text id="hbl" class="fig-el" x="161.4" y="258.6" fill="#BA7517" font-size="11">극소 h(β)&lt;0</text>
+      <g id="r0" class="fig-el"><circle cx="241.1" cy="219.3" r="3.4" fill="#1E7F5C"/></g>
+      <g id="rn" class="fig-el"><circle cx="102.2" cy="219.3" r="3.4" fill="#1E7F5C"/></g>
+      <text id="twol" class="fig-el" x="74.0" y="122.7" fill="#9A5A12" font-size="11">h(x)=0 : 서로 다른 두 실근 (ㄷ 참)</text>
+      </svg>
+    <span class="cs-taphint">탭하면 다음 ▸</span>
+  </div>
+  <div class="cs-stage" id="stage">
+    <section class="cs-panel" data-panel="0">
+      <div class="cs-prob"><span class="lead">문제</span><br>최고차항 계수가 양수인 사차함수 $f$의 도함수 $f'$ 그래프가 주어져 있다. 양수 $\alpha$에 대하여 $f'(\alpha)\gt-2$이고 $f(0)=0$, $f'$은 $x=\alpha$에서 극소이다. $h(x)=f(x)+2x$일 때 옳은 것만 고르시오.<br>ㄱ. $h'(\alpha)\gt0$<br>ㄴ. $y=h(x)$는 열린구간 $(0,\alpha)$에서 감소한다.<br>ㄷ. 방정식 $h(x)=0$은 서로 다른 두 실근을 갖는다.</div>
+    </section>
+    <section class="cs-panel" data-panel="1"><div class="cs-head"><span class="cs-badge">1단계</span><span class="cs-title">핵심 변환 h′(x)=f′(x)+2</span> <span class="cs-key">핵심</span><span class="cs-type">계산</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$h(x)=f(x)+2x$를 미분하면 $h'(x)$는 $f'(x)$와 어떤 관계?</div><div class="cs-body" data-step="1"><div class="cs-draw"><b>이 단계로 넘어가는 이유 — </b>$h'(x)=f'(x)+2$. 그래서 주어진 $f'$ 그래프를 <b>위로 2만큼</b> 올린 게 $h'$ — 모든 보기를 이 한 줄로 판단한다.</div><div class="cs-math">$$h'(x)=f'(x)+2$$</div><div class="cs-tags"><span class="cs-tag">도함수</span><span class="cs-tag">평행이동</span></div></div></section>
+<section class="cs-panel" data-panel="2"><div class="cs-head"><span class="cs-badge">2단계</span><span class="cs-title">ㄱ. h′(α)&gt;0 ?</span><span class="cs-type">조건 활용</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$f'(\alpha)\gt-2$가 주어졌어요. $h'(\alpha)=f'(\alpha)+2$의 부호는?</div><div class="cs-body" data-step="2"><div class="cs-math">$$h'(\alpha)=f'(\alpha)+2\gt-2+2=0\ \Rightarrow\ \text{ㄱ 참}$$</div><div class="cs-tags"><span class="cs-tag">부등식</span></div></div></section>
+<section class="cs-panel" data-panel="3"><div class="cs-head"><span class="cs-badge">3단계</span><span class="cs-title">ㄴ. (0,α)에서 h는 감소? </span> <span class="cs-key">핵심</span><span class="cs-type">조건 활용</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$f'$의 극소가 $\alpha$이고 $f'(\alpha)\gt-2$. 구간 $(0,\alpha)$에서 $f'(x)$의 범위는? 그럼 $h'$는?</div><div class="cs-body" data-step="3"><div class="cs-draw"><b>이 단계로 넘어가는 이유 — </b>$(0,\alpha)$에서 $-2\lt f'(x)\lt0$ → $0\lt h'(x)\lt2$, 즉 $h'\gt0$ → $h$는 <b>증가</b>. 보기 ㄴ(감소)은 <b>거짓</b>.</div><div class="cs-math">$$0\lt h'(x)\lt2\ \text{ on }(0,\alpha)\ \Rightarrow\ h\ \text{증가}\ (\text{ㄴ 거짓})$$</div><div class="cs-tags"><span class="cs-tag">증가·감소 판정</span></div></div></section>
+<section class="cs-panel" data-panel="4"><div class="cs-head"><span class="cs-badge">4단계</span><span class="cs-title">ㄷ. h(x)=0의 실근 개수</span> <span class="cs-key">핵심</span><span class="cs-type">목표 역산</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$h(0)=f(0)+0=0$. 그리고 $h'(x)=f'(x)+2=0$은 어디서 성립할까요? ($f'+2$는 왼쪽에서 한 번만 0)</div><div class="cs-body" data-step="4"><div class="cs-draw"><b>이 단계로 넘어가는 이유 — </b>$h'=0$의 해 $\beta\,(\lt0)$ 한 곳에서만 부호가 $-\to+$ → $h$는 $\beta$에서 <b>극소 하나</b>. $h(\beta)\lt0$, $h(0)=0$, 양끝 $\to\infty$ → 그래프가 $x$축과 <b>두 점</b>에서 만난다.</div><div class="cs-math">$$h(0)=0,\quad \text{극소 }h(\beta)\lt0\ \Rightarrow\ \text{서로 다른 두 실근 (ㄷ 참)}$$</div><div class="cs-tags"><span class="cs-tag">증감표</span><span class="cs-tag">실근의 개수</span></div></div></section>
+<section class="cs-panel" data-panel="5"><div class="cs-head"><span class="cs-badge">5단계</span><span class="cs-title">옳은 것</span><span class="cs-type">계산</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>ㄱ, ㄴ, ㄷ 중 참인 것만 고르면?</div><div class="cs-body" data-step="5"><div class="cs-math">$$\text{ㄱ 참},\ \text{ㄴ 거짓},\ \text{ㄷ 참}$$</div><div class="cs-tags"><span class="cs-tag">보기 판정</span></div><div class="cs-ans">정답 &nbsp; ㄱ, ㄷ</div></div></section>
+  </div>
+  <nav class="cs-nav">
+    <button class="cs-prev" id="prevBtn">이전</button>
+    <div class="cs-mid"><div class="cs-dots"><span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span></div><div class="cs-prog" id="prog"></div></div>
+    <button class="cs-next" id="nextBtn">풀이 시작 ▸</button>
+  </nav>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script>
+(function(){
+  var T=5, figMap={"hc": 4, "hclab": 4, "vb": 4, "pb": 4, "pbl": 4, "hbl": 4, "r0": 4, "rn": 4, "twol": 5};
+  // views: 0=문제, 이후 단계마다 (hint, show) 2개
+  var views=[{step:0,phase:'p'}];
+  for(var k=1;k<=T;k++){views.push({step:k,phase:'hint'});views.push({step:k,phase:'show'});}
+  var vi=0;
+  var panels={}; document.querySelectorAll('.cs-panel').forEach(function(p){panels[+p.dataset.panel]=p;});
+  function figReveal(n){
+    Object.keys(figMap).forEach(function(id){var el=document.getElementById(id);
+      if(el) el.classList.toggle('on', n>=figMap[id]);});
+  }
+  function render(){
+    var v=views[vi];
+    // 패널 표시
+    Object.keys(panels).forEach(function(k){panels[k].classList.toggle('active', (+k)===v.step);});
+    // body 공개 여부
+    var body=panels[v.step] ? panels[v.step].querySelector('.cs-body') : null;
+    if(body) body.classList.toggle('show', v.phase==='show');
+    // 도형 reveal 수
+    var rc = v.step===0 ? 0 : (v.phase==='show' ? v.step : v.step-1);
+    figReveal(rc);
+    // 버튼
+    var nb=document.getElementById('nextBtn'), pb=document.getElementById('prevBtn');
+    pb.disabled = (vi===0);
+    nb.classList.remove('reveal');
+    if(v.step===0){ nb.textContent='풀이 시작 ▸'; nb.disabled=false; }
+    else if(v.phase==='hint'){ nb.textContent='풀이 보기 ▾'; nb.classList.add('reveal'); nb.disabled=false; }
+    else if(v.step<T){ nb.textContent='다음 단계 ▸'; nb.disabled=false; }
+    else { nb.textContent='처음부터'; nb.disabled=false; }
+    // 진행도
+    var done = v.step===0?0:(v.phase==='show'?v.step:v.step-1);
+    document.querySelectorAll('.cs-dot').forEach(function(d,i){d.classList.toggle('fill', i<done);});
+    document.getElementById('prog').textContent = v.step===0 ? ('문제 · 총 '+T+'단계') : (v.step+' / '+T+'단계');
+    // 새 패널은 위로 스크롤
+    document.getElementById('stage').scrollTop=0;
+  }
+  function next(){
+    var v=views[vi];
+    if(v.step===T && v.phase==='show'){ vi=0; render(); return; }   // 처음부터
+    if(vi<views.length-1){ vi++; render(); }
+  }
+  function prev(){ if(vi>0){ vi--; render(); } }
+  document.getElementById('nextBtn').onclick=next;
+  document.getElementById('prevBtn').onclick=prev;
+  document.getElementById('figtap').onclick=next;
+  document.addEventListener('keydown',function(e){
+    if(e.metaKey||e.ctrlKey||e.altKey)return;
+    if(['ArrowLeft','ArrowUp','Backspace','PageUp'].indexOf(e.key)>=0){e.preventDefault();prev();}
+    else if([' ','ArrowRight','ArrowDown','Enter','PageDown'].indexOf(e.key)>=0){e.preventDefault();next();}
+  });
+  render();
+  (function tex(){
+    if(!window.renderMathInElement)return setTimeout(tex,60);
+    renderMathInElement(document.getElementById('app'),{delimiters:[
+      {left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+  })();
+})();
+</script>
+</body>
+</html>

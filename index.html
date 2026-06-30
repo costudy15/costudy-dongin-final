@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>동인고 2학년 미적분1 파이널 | 코스터디</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="app.js?v=integral-22"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#intro" aria-label="코스터디 홈">
+      <img class="brand-logo" src="assets/costudy-logo.png" alt="">
+      <span>
+        <strong>코스터디</strong>
+        <small>동인고 2학년 미적분1 파이널</small>
+      </span>
+    </a>
+    <nav class="nav" aria-label="페이지 이동">
+      <a href="#video-section">영상</a>
+      <a href="#hand-section">손풀이</a>
+      <a href="#step-section">단계풀이</a>
+      <a href="#writing-section">서술형</a>
+      <a href="#variation-section">변형문제</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="intro" id="intro">
+      <div class="intro-copy">
+        <img class="hero-logo" src="assets/costudy-logo.png" alt="코스터디">
+        <p class="eyebrow">DONGIN HIGH SCHOOL FINAL REVIEW</p>
+        <h1>동인고 2학년 미적분1 기말고사 대비 파이널</h1>
+        <p class="summary">기출 흐름, 핵심 계산, 고난도 변형까지 한 페이지에서 정리하는 코스터디 마무리 학습 자료입니다.</p>
+        <div class="stats" aria-label="자료 현황">
+          <span><b id="video-count">0/40</b>영상 준비</span>
+          <span><b id="hand-count">0/40</b>손풀이 준비</span>
+          <span><b id="step-count">0/40</b>단계풀이 준비</span>
+          <span><b id="writing-count">0</b>개 서술형</span>
+          <span><b id="variation-count">0</b>개 변형문제</span>
+        </div>
+      </div>
+      <figure class="intro-visual">
+        <img src="problem15_video_preview.png" alt="코스터디 풀이 미리보기">
+      </figure>
+    </section>
+
+    <section class="academy">
+      <div>
+        <p class="eyebrow">COSTUDY FINAL CARE</p>
+        <h2>마지막 정리는 가볍게, 복습은 촘촘하게</h2>
+      </div>
+      <p>문항별 풀이 영상, 손풀이, HTML 단계별 풀이를 같은 문항 흐름 안에서 바로 확인하고, 학습지 변형문제는 별도 섹션에서 문제지 순서대로 볼 수 있도록 구성했습니다.</p>
+    </section>
+
+    <section class="workspace" aria-label="학습 자료 보기">
+      <aside class="library">
+        <div class="library-head">
+          <h2>문항 목록</h2>
+          <label class="search">
+            <span>검색</span>
+            <input id="material-search" type="search" placeholder="문항 번호, 분류">
+          </label>
+        </div>
+        <div class="filters" role="group" aria-label="분류 필터">
+          <button class="filter active" type="button" data-filter="all">전체</button>
+          <button class="filter" type="button" data-filter="derivative">도함수</button>
+          <button class="filter" type="button" data-filter="integral">적분</button>
+          <button class="filter" type="button" data-filter="draft">제작중</button>
+        </div>
+        <div class="material-list" id="material-list"></div>
+      </aside>
+
+      <section class="viewer">
+        <div class="viewer-head">
+          <div>
+            <p class="eyebrow" id="selected-group">도함수의 활용</p>
+            <h2 id="selected-title">도함수의 활용 1</h2>
+          </div>
+          <div class="mode-tabs" role="tablist" aria-label="자료 종류">
+            <button class="mode-tab active" type="button" data-mode="video">영상</button>
+            <button class="mode-tab" type="button" data-mode="hand">손풀이</button>
+            <button class="mode-tab" type="button" data-mode="step">단계풀이</button>
+          </div>
+        </div>
+
+        <article class="mode-panel active" id="video-section" data-panel="video">
+          <div class="video-shell">
+            <video id="solution-video" controls playsinline preload="metadata"></video>
+            <div class="empty-state" id="video-empty">등록된 영상 파일이 없습니다.</div>
+          </div>
+        </article>
+
+        <article class="mode-panel" id="hand-section" data-panel="hand">
+          <div class="hand-stage">
+            <img id="hand-image" alt="문항별 손풀이">
+            <iframe id="hand-frame" title="문항별 손풀이"></iframe>
+            <div class="empty-state" id="hand-empty">이 문항의 손풀이가 아직 등록되지 않았습니다.</div>
+          </div>
+        </article>
+
+        <article class="mode-panel" id="step-section" data-panel="step">
+          <iframe id="step-frame" title="인터랙티브 단계별 풀이" loading="lazy" allow="fullscreen"></iframe>
+          <div class="empty-state" id="step-empty">등록된 단계별 풀이가 없습니다.</div>
+        </article>
+      </section>
+    </section>
+
+    <section class="writing" id="writing-section" aria-label="서술형 대비">
+      <div class="writing-head">
+        <div>
+          <p class="eyebrow">WRITTEN RESPONSE</p>
+          <h2>서술형 대비</h2>
+        </div>
+        <p>서술형 문항 이미지를 한 장씩 넘겨 보며 마지막 풀이 흐름을 점검하는 자료입니다.</p>
+      </div>
+
+      <article class="writing-viewer">
+        <div class="writing-viewer-head">
+          <div>
+            <p class="eyebrow" id="writing-counter">0 / 0</p>
+            <h2 id="writing-title">서술형 대비</h2>
+          </div>
+          <div class="writing-actions">
+            <button class="writing-control" type="button" id="writing-prev" aria-label="이전 서술형 문제">이전</button>
+            <button class="writing-control primary" type="button" id="writing-reveal" aria-label="서술형 정답 보기">정답 보기</button>
+            <button class="writing-control" type="button" id="writing-next" aria-label="다음 서술형 문제">다음</button>
+            <a class="open-pdf" id="writing-open" href="#" target="_blank" rel="noreferrer">크게 열기</a>
+          </div>
+        </div>
+        <div class="writing-stage">
+          <img id="writing-image" alt="서술형 대비 문제">
+          <div class="empty-state" id="writing-empty">등록된 서술형 PNG가 없습니다.</div>
+        </div>
+        <div class="writing-strip" id="writing-strip" aria-label="서술형 문제 선택"></div>
+      </article>
+    </section>
+
+    <section class="variation" id="variation-section" aria-label="학습지 변형문제">
+      <div class="variation-head">
+        <div>
+          <p class="eyebrow">WORKSHEET VARIATIONS</p>
+          <h2>학습지 변형문제</h2>
+        </div>
+        <p>문제를 먼저 보고 생각한 뒤, 클릭해서 해설을 확인하는 문항별 변형문제 자료입니다.</p>
+      </div>
+
+      <div class="variation-layout">
+        <div class="variation-list" id="variation-list"></div>
+        <article class="variation-viewer">
+          <div class="variation-viewer-head">
+            <div>
+              <p class="eyebrow" id="variation-kind-label">문제 1 / 36</p>
+              <h2 id="variation-title">변형문제</h2>
+            </div>
+            <div class="variation-actions">
+              <button class="variation-control" type="button" id="variation-prev" aria-label="이전 변형문제">이전</button>
+              <button class="variation-control primary" type="button" id="variation-reveal" aria-label="변형문제 해설 보기">해설 보기</button>
+              <button class="variation-control" type="button" id="variation-next" aria-label="다음 변형문제">다음</button>
+              <a class="open-pdf" id="variation-open" href="#" target="_blank" rel="noreferrer">크게 열기</a>
+            </div>
+          </div>
+          <div class="variation-stage">
+            <img id="variation-image" alt="학습지 변형문제">
+            <div class="empty-state" id="variation-empty">PNG 파일을 넣으면 문항별로 표시됩니다.</div>
+          </div>
+          <div class="variation-strip" id="variation-strip" aria-label="변형문제 문항 선택"></div>
+        </article>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

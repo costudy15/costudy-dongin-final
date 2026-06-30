@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>코스터디 단계별 풀이</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<style>
+:root{--tx:#222;--mut:#666;--faint:#9a988f;--line:#e6e5e1;--surf:#f6f5f1;--pri:#185FA5;
+ --info:#E6F1FB;--infotx:#0C447C;--warnbg:#FAEEDA;--warntx:#854F0B;--okbg:#E1F5EE;--oktx:#0F6E56;--bd:#dcdbd6}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic","Apple SD Gothic Neo",sans-serif;color:var(--tx);background:#fff}
+.cs-app{display:flex;flex-direction:column;height:100vh;height:100dvh;max-width:680px;margin:0 auto;border-left:1px solid var(--line);border-right:1px solid var(--line)}
+/* 헤더 */
+.cs-doc{flex:0 0 auto;font-size:12px;color:var(--faint);padding:9px 14px;border-bottom:1px solid var(--line);
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cs-doc b{color:var(--mut);font-weight:600}
+/* 도형: 상단 고정 */
+.cs-figwrap{flex:0 0 auto;height:38vh;min-height:200px;padding:8px;display:flex;align-items:center;justify-content:center;
+ background:#fff;border-bottom:1px solid var(--line);position:relative;cursor:pointer}
+.cs-figwrap svg{width:100%;height:100%}
+.cs-taphint{position:absolute;right:10px;bottom:8px;font-size:11px;color:var(--faint);background:#fff;
+ padding:2px 8px;border-radius:10px;border:1px solid var(--line);opacity:.85}
+.fig-el{opacity:0;transition:opacity .4s ease}
+.fig-el.on{opacity:1}
+.dl{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .7s ease,opacity .25s ease}
+.dl.on{stroke-dashoffset:0}
+/* 본문(스크롤 영역) */
+.cs-stage{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 16px 18px}
+.cs-panel{display:none;animation:fade .25s ease}
+.cs-panel.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* 문제 패널 */
+.cs-prob{font-size:15.5px;line-height:1.75;color:#333}
+.cs-prob .lead{display:inline-block;font-size:12px;font-weight:600;color:var(--infotx);background:var(--info);
+ padding:3px 10px;border-radius:9px;margin-bottom:10px}
+/* 단계 패널 */
+.cs-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.cs-badge{font-size:12px;font-weight:600;background:var(--info);color:var(--infotx);padding:3px 10px;border-radius:9px}
+.cs-title{font-size:16px;font-weight:600}
+.cs-key{font-size:11px;font-weight:600;background:#FAEEDA;color:#854F0B;padding:2px 8px;border-radius:9px}
+.cs-type{font-size:11px;color:var(--faint);margin-left:auto}
+.cs-hint{font-size:14.5px;color:#4a4a44;background:var(--surf);border-radius:11px;padding:12px 14px;line-height:1.65}
+.cs-hint-tag{display:block;font-size:12px;font-weight:600;color:var(--warntx);margin-bottom:5px}
+.cs-body{display:none;margin-top:12px}
+.cs-body.show{display:block;animation:fade .25s ease}
+.cs-draw{font-size:14px;color:var(--warntx);background:var(--warnbg);padding:11px 13px;border-radius:11px;margin-bottom:10px;line-height:1.65}
+.cs-why{font-size:14px;color:var(--mut);line-height:1.65;margin:6px 0}
+.cs-math{margin:8px 0;font-size:1.02em;overflow-x:auto}
+.cs-tags{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
+.cs-tag{font-size:11px;color:var(--mut);background:var(--surf);padding:3px 9px;border-radius:9px}
+.cs-ans{font-size:16px;font-weight:600;color:var(--oktx);background:var(--okbg);padding:11px 14px;border-radius:11px;margin-top:12px;text-align:center}
+/* 하단 고정 내비 */
+.cs-nav{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:10px 14px;
+ border-top:1px solid var(--bd);background:#fff;box-shadow:0 -2px 10px rgba(0,0,0,.04)}
+.cs-prev{flex:0 0 auto;font-size:14px;font-family:inherit;background:#fff;border:1px solid var(--bd);border-radius:10px;
+ padding:11px 14px;color:var(--mut);cursor:pointer}
+.cs-prev:disabled{opacity:.4}
+.cs-mid{flex:1 1 auto;text-align:center}
+.cs-dots{display:flex;gap:5px;justify-content:center;margin-bottom:3px}
+.cs-dot{width:7px;height:7px;border-radius:50%;background:#d6d5cf}
+.cs-dot.fill{background:var(--pri)}
+.cs-prog{font-size:11px;color:var(--faint)}
+.cs-next{flex:0 0 auto;font-size:15px;font-weight:600;font-family:inherit;background:var(--pri);border:none;border-radius:10px;
+ padding:12px 18px;color:#fff;cursor:pointer;min-width:120px}
+.cs-next.reveal{background:#fff;color:var(--infotx);border:1px solid #9cc2e8}
+.cs-next:disabled{background:#cfd8e2;color:#fff}
+.katex{font-size:1.0em}
+.katex-display{margin:.5em 0}
+</style>
+</head>
+<body>
+<div class="cs-app" id="app">
+  <div class="cs-doc"><b>3. 정사각형 안의 포물선 — 삼각형 넓이의 최댓값</b> &middot; COSTUDY 미적분/수II · 도형과 함수 최대·최소</div>
+  <div class="cs-figwrap" id="figtap">
+    <svg viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet">
+      <title>정사각형 ABCD, 꼭짓점 E의 포물선, 직선 AF, 점 P·Q·G</title>
+      <polygon id="tri-aqp" class="fig-el" points="30.0,30.0 205.0,321.7 205.0,117.5" fill="#993C1D" fill-opacity="0.15" stroke="none"/>
+      <line x1="30.0" y1="30.0" x2="30.0" y2="330.0" stroke="#888780" stroke-width="2"/>
+      <line x1="30.0" y1="330.0" x2="330.0" y2="330.0" stroke="#888780" stroke-width="2"/>
+      <line x1="330.0" y1="330.0" x2="330.0" y2="30.0" stroke="#888780" stroke-width="2"/>
+      <line x1="330.0" y1="30.0" x2="30.0" y2="30.0" stroke="#888780" stroke-width="2"/>
+      <path id="parabola" class="fig-el" d="M 30.0 30.0 L 37.5 59.2 L 45.0 87.0 L 52.5 113.3 L 60.0 138.0 L 67.5 161.2 L 75.0 183.0 L 82.5 203.2 L 90.0 222.0 L 97.5 239.2 L 105.0 255.0 L 112.5 269.2 L 120.0 282.0 L 127.5 293.2 L 135.0 303.0 L 142.5 311.2 L 150.0 318.0 L 157.5 323.2 L 165.0 327.0 L 172.5 329.2 L 180.0 330.0 L 187.5 329.2 L 195.0 327.0 L 202.5 323.2 L 210.0 318.0 L 217.5 311.2 L 225.0 303.0 L 232.5 293.2 L 240.0 282.0 L 247.5 269.2 L 255.0 255.0 L 262.5 239.2 L 270.0 222.0 L 277.5 203.3 L 285.0 183.0 L 292.5 161.2 L 300.0 138.0 L 307.5 113.2 L 315.0 87.0 L 322.5 59.2 L 330.0 30.0" fill="none" stroke="#185FA5" stroke-width="2.5"/>
+      <line id="line-af" class="fig-el dl" pathLength="1" x1="30.0" y1="30.0" x2="330.0" y2="180.0" stroke="#BA7517" stroke-width="2"/>
+      <line id="seg-pq" class="fig-el" x1="205.0" y1="117.5" x2="205.0" y2="321.7" stroke="#993C1D" stroke-width="2" stroke-dasharray="5 4"/>
+      <line id="seg-aq" class="fig-el dl" pathLength="1" x1="30.0" y1="30.0" x2="205.0" y2="321.7" stroke="#993C1D" stroke-width="2"/>
+      <text id="tag-e" class="fig-el" x="174.0" y="346.0" fill="#5F5E5A" font-size="11">(2,0)</text>
+      <text id="tag-f" class="fig-el" x="336.0" y="184.0" fill="#5F5E5A" font-size="11">(4,2)</text>
+      <text id="tag-para" class="fig-el" x="238.0" y="46.0" fill="#185FA5" font-size="12" font-style="italic">y=(x-2)²</text>
+      <text id="tag-g" class="fig-el" x="230.5" y="154.2" fill="#BA7517" font-size="11">(7/2, 9/4)</text>
+      <text id="tag-t" class="fig-el" x="201.0" y="339.7" fill="#993C1D" font-size="11" font-style="italic">x=t</text>
+      <g><circle cx="30.0" cy="30.0" r="3.2" fill="#222"/><text x="14.0" y="24.0" fill="#222" font-size="14" font-weight="500">A</text></g>
+      <g><circle cx="30.0" cy="330.0" r="3.2" fill="#222"/><text x="14.0" y="344.0" fill="#222" font-size="14" font-weight="500">B</text></g>
+      <g><circle cx="330.0" cy="330.0" r="3.2" fill="#222"/><text x="336.0" y="344.0" fill="#222" font-size="14" font-weight="500">C</text></g>
+      <g><circle cx="330.0" cy="30.0" r="3.2" fill="#222"/><text x="336.0" y="24.0" fill="#222" font-size="14" font-weight="500">D</text></g>
+      <g id="pt-e" class="fig-el"><circle cx="180.0" cy="330.0" r="3.2" fill="#185FA5"/><text x="176.0" y="323.0" fill="#185FA5" font-size="14" font-weight="500">E</text></g>
+      <g id="pt-f" class="fig-el"><circle cx="330.0" cy="180.0" r="3.2" fill="#BA7517"/><text x="314.0" y="174.0" fill="#BA7517" font-size="14" font-weight="500">F</text></g>
+      <g id="pt-g" class="fig-el"><circle cx="292.5" cy="161.2" r="3.2" fill="#BA7517"/><text x="276.5" y="175.2" fill="#BA7517" font-size="14" font-weight="500">G</text></g>
+      <g id="pt-p" class="fig-el"><circle cx="205.0" cy="117.5" r="3.2" fill="#993C1D"/><text x="189.0" y="113.5" fill="#993C1D" font-size="14" font-weight="500">P</text></g>
+      <g id="pt-q" class="fig-el"><circle cx="205.0" cy="321.7" r="3.2" fill="#993C1D"/><text x="211.0" y="333.7" fill="#993C1D" font-size="14" font-weight="500">Q</text></g>
+      </svg>
+    <span class="cs-taphint">탭하면 다음 ▸</span>
+  </div>
+  <div class="cs-stage" id="stage">
+    <section class="cs-panel" data-panel="0">
+      <div class="cs-prob"><span class="lead">문제</span><br>한 변의 길이가 $4$인 정사각형 $ABCD$에서 $\overline{BC},\ \overline{CD}$의 중점을 각각 $E,\ F$라 하자. 점 $E$를 꼭짓점으로 하고 두 점 $A,\ D$를 지나는 포물선과 선분 $AF$가 만나는 점을 $G$라 하자.<br>선분 $AG$ 위를 움직이는 점 $P$를 지나고 직선 $AB$와 평행한 직선이 포물선과 만나는 점을 $Q$라 할 때, <b>삼각형 $AQP$의 넓이의 최댓값</b>은? (단, 점 $P$는 점 $A$와 점 $G$가 아니다.)</div>
+    </section>
+    <section class="cs-panel" data-panel="1"><div class="cs-head"><span class="cs-badge">1단계</span><span class="cs-title">좌표평면 위에 올리기</span><span class="cs-type">조건 활용</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>정사각형·포물선이 섞인 도형 — 길이를 식으로 다루려면 가장 먼저 무엇을 정해야 할까?</div><div class="cs-body" data-step="1"><div class="cs-draw"><b>이 단계로 넘어가는 이유 — </b>꼭짓점 $B$를 <b>원점</b>, $BC$를 $x$축, $BA$를 $y$축으로 두면 정사각형의 모든 점과 두 중점 $E,F$의 좌표가 한 번에 정해진다 → 포물선·직선을 식으로 쓰기 위한 토대.</div><div class="cs-math">$$A(0,4),\;B(0,0),\;C(4,0),\;D(4,4),\quad E(2,0),\;F(4,2)$$</div><div class="cs-tags"><span class="cs-tag">좌표평면 설정</span><span class="cs-tag">중점</span></div></div></section>
+<section class="cs-panel" data-panel="2"><div class="cs-head"><span class="cs-badge">2단계</span><span class="cs-title">포물선의 식 구하기</span><span class="cs-type">계산</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>꼭짓점이 $E(2,0)$인 포물선은 $y=a(x-2)^2$ 꼴이다. 남은 $a$는 어떤 조건으로?</div><div class="cs-body" data-step="2"><div class="cs-why">꼭짓점이 $E(2,0)$이므로 $y=a(x-2)^2$. 점 $A(0,4)$를 지나므로 $a$가 정해진다.</div><div class="cs-math">$$4=a(0-2)^2\ \Rightarrow\ a=1\ \Rightarrow\ y=(x-2)^2$$</div><div class="cs-tags"><span class="cs-tag">포물선의 꼭짓점 형태</span></div></div></section>
+<section class="cs-panel" data-panel="3"><div class="cs-head"><span class="cs-badge">3단계</span><span class="cs-title">직선 AF와 교점 G — t의 범위</span><span class="cs-type">계산</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$P$는 선분 $AG$ 위를 움직인다. $G$가 어디인지 알아야 $P$의 $x$좌표 범위가 잡힌다.</div><div class="cs-body" data-step="3"><div class="cs-why">직선 $AF$는 $y=-\tfrac12 x+4$. 포물선과의 교점에서 $G$의 $x$좌표가 나온다.</div><div class="cs-math">$$(x-2)^2=-\tfrac12 x+4\ \Rightarrow\ x^2-\tfrac72 x=0\ \Rightarrow\ x=0,\ \tfrac72$$</div><div class="cs-math">$$\therefore\ G\!\left(\tfrac72,\tfrac94\right),\qquad 0\lt t\lt\tfrac72$$</div><div class="cs-tags"><span class="cs-tag">직선의 방정식</span><span class="cs-tag">교점 연립</span></div></div></section>
+<section class="cs-panel" data-panel="4"><div class="cs-head"><span class="cs-badge">4단계</span><span class="cs-title">P, Q를 t로 나타내기</span> <span class="cs-key">핵심</span><span class="cs-type">보조선·발상</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$P$를 지나 $AB$(수직선)에 평행한 직선이 포물선과 만나는 점이 $Q$다. 두 점의 좌표는?</div><div class="cs-body" data-step="4"><div class="cs-draw"><b>이 단계로 넘어가는 이유 — </b>$P$의 $x$좌표를 $t$로 잡으면, $P$를 지나는 <b>수직선 $x=t$</b>가 곧 $Q$를 정한다 → $P$는 직선 $AF$ 위, $Q$는 포물선 위라 둘 다 같은 $t$로 표현된다.</div><div class="cs-math">$$P\!\left(t,\,-\tfrac12 t+4\right),\qquad Q\!\left(t,\,(t-2)^2\right)$$</div><div class="cs-tags"><span class="cs-tag">평행과 수직선</span></div></div></section>
+<section class="cs-panel" data-panel="5"><div class="cs-head"><span class="cs-badge">5단계</span><span class="cs-title">삼각형 AQP의 넓이 S(t)</span> <span class="cs-key">핵심</span><span class="cs-type">목표 역산</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$\overline{PQ}$는 수직(밑변), $A$에서 직선 $x=t$까지의 거리는 $t$(높이). 넓이는?</div><div class="cs-body" data-step="5"><div class="cs-draw"><b>이 단계로 넘어가는 이유 — </b>구하려는 건 <b>넓이의 최댓값</b> → 넓이를 $t$ 하나의 함수 $S(t)$로 만들어야 미분으로 최대를 찾을 수 있다. 밑변 $\overline{PQ}$, 높이 $t$로 환원.</div><div class="cs-why">$\overline{PQ}=\left(-\tfrac12 t+4\right)-(t-2)^2$, 높이 $=t$.</div><div class="cs-math">$$S(t)=\tfrac12\cdot t\left\{-\tfrac12 t+4-(t-2)^2\right\}=-\tfrac14\left(2t^3-7t^2\right)$$</div><div class="cs-tags"><span class="cs-tag">삼각형 넓이</span><span class="cs-tag">함수로 모델링</span></div></div></section>
+<section class="cs-panel" data-panel="6"><div class="cs-head"><span class="cs-badge">6단계</span><span class="cs-title">미분 → 최댓값</span><span class="cs-type">계산</span></div><div class="cs-hint"><span class="cs-hint-tag">💭 먼저 생각해보세요</span>$0\lt t\lt\tfrac72$에서 $S(t)$의 최대 — 도함수의 부호가 바뀌는 곳은?</div><div class="cs-body" data-step="6"><div class="cs-why">$S'(t)=0$의 해 $t=\tfrac73$에서 $S'$의 부호가 $+\to-$로 바뀌므로 극대이자 최대.</div><div class="cs-math">$$S'(t)=-\tfrac14(6t^2-14t)=-\tfrac12 t(3t-7)=0\ \Rightarrow\ t=\tfrac73$$</div><div class="cs-math">$$S\!\left(\tfrac73\right)=-\tfrac14\left(2\cdot\tfrac{343}{27}-7\cdot\tfrac{49}{9}\right)=\frac{343}{108}$$</div><div class="cs-tags"><span class="cs-tag">다항함수의 미분</span><span class="cs-tag">증감과 극값</span></div><div class="cs-ans">정답 &nbsp; 최댓값 = 343/108</div></div></section>
+  </div>
+  <nav class="cs-nav">
+    <button class="cs-prev" id="prevBtn">이전</button>
+    <div class="cs-mid"><div class="cs-dots"><span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span></div><div class="cs-prog" id="prog"></div></div>
+    <button class="cs-next" id="nextBtn">풀이 시작 ▸</button>
+  </nav>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script>
+(function(){
+  var T=6, figMap={"tri-aqp": 5, "parabola": 2, "line-af": 3, "seg-pq": 4, "seg-aq": 5, "tag-e": 1, "tag-f": 1, "tag-para": 2, "tag-g": 3, "tag-t": 4, "pt-e": 1, "pt-f": 1, "pt-g": 3, "pt-p": 4, "pt-q": 4};
+  // views: 0=문제, 이후 단계마다 (hint, show) 2개
+  var views=[{step:0,phase:'p'}];
+  for(var k=1;k<=T;k++){views.push({step:k,phase:'hint'});views.push({step:k,phase:'show'});}
+  var vi=0;
+  var panels={}; document.querySelectorAll('.cs-panel').forEach(function(p){panels[+p.dataset.panel]=p;});
+  function figReveal(n){
+    Object.keys(figMap).forEach(function(id){var el=document.getElementById(id);
+      if(el) el.classList.toggle('on', n>=figMap[id]);});
+  }
+  function render(){
+    var v=views[vi];
+    // 패널 표시
+    Object.keys(panels).forEach(function(k){panels[k].classList.toggle('active', (+k)===v.step);});
+    // body 공개 여부
+    var body=panels[v.step] ? panels[v.step].querySelector('.cs-body') : null;
+    if(body) body.classList.toggle('show', v.phase==='show');
+    // 도형 reveal 수
+    var rc = v.step===0 ? 0 : (v.phase==='show' ? v.step : v.step-1);
+    figReveal(rc);
+    // 버튼
+    var nb=document.getElementById('nextBtn'), pb=document.getElementById('prevBtn');
+    pb.disabled = (vi===0);
+    nb.classList.remove('reveal');
+    if(v.step===0){ nb.textContent='풀이 시작 ▸'; nb.disabled=false; }
+    else if(v.phase==='hint'){ nb.textContent='풀이 보기 ▾'; nb.classList.add('reveal'); nb.disabled=false; }
+    else if(v.step<T){ nb.textContent='다음 단계 ▸'; nb.disabled=false; }
+    else { nb.textContent='처음부터'; nb.disabled=false; }
+    // 진행도
+    var done = v.step===0?0:(v.phase==='show'?v.step:v.step-1);
+    document.querySelectorAll('.cs-dot').forEach(function(d,i){d.classList.toggle('fill', i<done);});
+    document.getElementById('prog').textContent = v.step===0 ? ('문제 · 총 '+T+'단계') : (v.step+' / '+T+'단계');
+    // 새 패널은 위로 스크롤
+    document.getElementById('stage').scrollTop=0;
+  }
+  function next(){
+    var v=views[vi];
+    if(v.step===T && v.phase==='show'){ vi=0; render(); return; }   // 처음부터
+    if(vi<views.length-1){ vi++; render(); }
+  }
+  function prev(){ if(vi>0){ vi--; render(); } }
+  document.getElementById('nextBtn').onclick=next;
+  document.getElementById('prevBtn').onclick=prev;
+  document.getElementById('figtap').onclick=next;
+  document.addEventListener('keydown',function(e){
+    if(e.metaKey||e.ctrlKey||e.altKey)return;
+    if(['ArrowLeft','ArrowUp','Backspace','PageUp'].indexOf(e.key)>=0){e.preventDefault();prev();}
+    else if([' ','ArrowRight','ArrowDown','Enter','PageDown'].indexOf(e.key)>=0){e.preventDefault();next();}
+  });
+  render();
+  (function tex(){
+    if(!window.renderMathInElement)return setTimeout(tex,60);
+    renderMathInElement(document.getElementById('app'),{delimiters:[
+      {left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+  })();
+})();
+</script>
+</body>
+</html>
