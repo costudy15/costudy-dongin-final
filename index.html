@@ -2,8 +2,11 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
   <title>동인고 2학년 미적분1 파이널 | 코스터디</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="styles.css">
   <script defer src="app.js?v=integral-22"></script>
 </head>
@@ -13,22 +16,37 @@
       <img class="brand-logo" src="assets/costudy-logo.png" alt="">
       <span>
         <strong>코스터디</strong>
-        <small>동인고 2학년 미적분1 파이널</small>
+        <small>동인고 2학년 · 미적분1 파이널</small>
       </span>
     </a>
     <nav class="nav" aria-label="페이지 이동">
-      <a href="#video-section">영상</a>
-      <a href="#hand-section">손풀이</a>
-      <a href="#step-section">단계풀이</a>
-      <a href="#writing-section">서술형</a>
-      <a href="#variation-section">변형문제</a>
+      <a href="#video-section">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6.5v11l9-5.5z"/></svg>
+        <span>영상</span>
+      </a>
+      <a href="#hand-section">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 9.5-9.5-3-3L5 16zM15.5 6l3 3 1.4-1.4a1.5 1.5 0 0 0 0-2.2l-.8-.8a1.5 1.5 0 0 0-2.2 0z"/></svg>
+        <span>손풀이</span>
+      </a>
+      <a href="#step-section">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 4.5-8 4.5-8-4.5zM4 12l8 4.5 8-4.5M4 16.5l8 4.5 8-4.5"/></svg>
+        <span>단계풀이</span>
+      </a>
+      <a href="#writing-section">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l5 5v13H7zM14 3v5h5M9.5 13h6M9.5 16.5h6"/></svg>
+        <span>서술형</span>
+      </a>
+      <a href="#variation-section">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg>
+        <span>변형</span>
+      </a>
     </nav>
   </header>
 
   <main>
     <section class="intro" id="intro">
       <div class="intro-copy">
-        <img class="hero-logo" src="assets/costudy-logo.png" alt="코스터디">
+        <img class="hero-logo" src="assets/logo-full.png" alt="코스터디">
         <p class="eyebrow">DONGIN HIGH SCHOOL FINAL REVIEW</p>
         <h1>동인고 2학년 미적분1 기말고사 대비 파이널</h1>
         <p class="summary">기출 흐름, 핵심 계산, 고난도 변형까지 한 페이지에서 정리하는 코스터디 마무리 학습 자료입니다.</p>
@@ -41,7 +59,11 @@
         </div>
       </div>
       <figure class="intro-visual">
-        <img src="problem15_video_preview.png" alt="코스터디 풀이 미리보기">
+        <div class="poster-fallback" aria-hidden="true">
+          <span class="poster-play"></span>
+          <span class="poster-label">풀이 영상 미리보기</span>
+        </div>
+        <img src="problem15_video_preview.png" alt="코스터디 풀이 미리보기" onerror="this.style.display='none'">
       </figure>
     </section>
 
