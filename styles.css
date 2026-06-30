@@ -260,7 +260,7 @@ h1 {
 .intro-visual {
   position: relative;
   margin: 0;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 4 / 3;
   border-radius: var(--r-lg);
   overflow: hidden;
   background:
@@ -268,13 +268,22 @@ h1 {
   box-shadow: var(--shadow);
 }
 
-.intro-visual img {
+.intro-visual img,
+.hero-step-preview {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
   display: block;
+}
+
+.intro-visual img {
+  object-fit: cover;
+}
+
+.hero-step-preview {
+  border: 0;
+  background: #111318;
 }
 
 .poster-fallback {

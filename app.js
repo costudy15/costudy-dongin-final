@@ -180,6 +180,43 @@ function selectedWritingProblem() {
   return writingProblems[state.writingIndex] || null;
 }
 
+function prepareHeroPreview() {
+  const frame = document.querySelector(".hero-step-preview");
+  if (!frame) {
+    return;
+  }
+
+  const applyPreviewStyle = () => {
+    try {
+      const doc = frame.contentDocument;
+      if (!doc?.head || doc.getElementById("hero-preview-style")) {
+        return;
+      }
+      const style = doc.createElement("style");
+      style.id = "hero-preview-style";
+      style.textContent = `
+        html,
+        body {
+          overflow: hidden !important;
+          scrollbar-width: none !important;
+        }
+
+        body::-webkit-scrollbar,
+        *::-webkit-scrollbar {
+          display: none !important;
+        }
+      `;
+      doc.head.appendChild(style);
+      frame.contentWindow?.scrollTo(0, 0);
+    } catch (error) {
+      // The preview is decorative; keep the page usable if the iframe is not ready.
+    }
+  };
+
+  frame.addEventListener("load", applyPreviewStyle);
+  applyPreviewStyle();
+}
+
 function useInlineMaterialViewer() {
   return window.matchMedia("(max-width: 680px)").matches;
 }
@@ -587,6 +624,7 @@ els.writingImage.addEventListener("click", handleWritingImageClick);
 window.addEventListener("resize", () => placeMaterialViewer(false));
 
 updateCounts();
+prepareHeroPreview();
 renderList();
 renderCurrentMaterial();
 placeMaterialViewer(false);

@@ -7,8 +7,8 @@
   <title>동인고 2학년 미적분1 파이널 | 코스터디</title>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-  <link rel="stylesheet" href="styles.css?v=writing-readable">
-  <script defer src="app.js?v=writing-readable"></script>
+  <link rel="stylesheet" href="styles.css?v=hero-interactive-2">
+  <script defer src="app.js?v=hero-interactive-2"></script>
 </head>
 <body>
   <header class="topbar">
@@ -59,11 +59,14 @@
         </div>
       </div>
       <figure class="intro-visual">
-        <div class="poster-fallback" aria-hidden="true">
-          <span class="poster-play"></span>
-          <span class="poster-label">풀이 영상 미리보기</span>
-        </div>
-        <img src="problem15_video_preview.png" alt="코스터디 풀이 미리보기" onerror="this.style.display='none'">
+        <iframe
+          class="hero-step-preview"
+          src="problem15_interactive.html"
+          title="코스터디 단계별 풀이 미리보기"
+          loading="eager"
+          allow="fullscreen"
+          scrolling="no"
+        ></iframe>
       </figure>
     </section>
 
