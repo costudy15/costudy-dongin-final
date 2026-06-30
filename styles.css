@@ -960,7 +960,8 @@ video {
   padding: clamp(10px, 3vw, 18px);
 }
 
-.writing-stage {
+.writing-stage,
+.variation-stage {
   place-items: start center;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
@@ -977,7 +978,8 @@ video {
   cursor: pointer;
 }
 
-#writing-image {
+#writing-image,
+#variation-image {
   width: min(100%, 1180px);
   max-height: none;
 }
@@ -1189,13 +1191,15 @@ video {
     padding: 12px;
   }
 
-  .writing-stage {
+  .writing-stage,
+  .variation-stage {
     place-items: start start;
     min-height: 72vh;
     padding: 8px;
   }
 
-  #writing-image {
+  #writing-image,
+  #variation-image {
     width: clamp(720px, 185vw, 980px);
     max-width: none;
     border-radius: 10px;
